@@ -1,6 +1,6 @@
 # South Florida Airboat Adventures — Astro
 
-A full rebuild of [sfairboatadventures.com](https://www.sfairboatadventures.com) on [Astro](https://astro.build), with the SEO fixes we discussed applied: proper title tags, JSON-LD schema markup on every page type, a correct footer, cleaner markup, no placeholder content, built-in sitemap, and faster static output.
+A full rebuild of [sfairboatadventures.com](https://www.sfairboatadventures.com) on [Astro](https://astro.build), with the SEO fixes we discussed applied: proper title tags, JSON-LD schema markup on every page type, a correct footer, cleaner markup, no placeholder content, built-in sitemap, and faster static output. Ttest
 
 ## What's in here
 
