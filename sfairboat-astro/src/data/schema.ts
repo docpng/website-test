@@ -1,7 +1,6 @@
 import { business, addressLine } from "./business";
 import { services, type Service } from "./services";
 import { serviceAreas } from "./service-areas";
-import { aggregateRating } from "./reviews";
 import { faqs, type FAQ } from "./faqs";
 
 const BUSINESS_ID = `${business.siteUrl}/#business`;
@@ -59,13 +58,6 @@ export const localBusinessSchema = () => ({
   founder: {
     "@type": "Person",
     name: business.owner.name,
-  },
-  aggregateRating: {
-    "@type": "AggregateRating",
-    ratingValue: aggregateRating.value,
-    reviewCount: aggregateRating.count,
-    bestRating: 5,
-    worstRating: 1,
   },
   hasOfferCatalog: {
     "@type": "OfferCatalog",
