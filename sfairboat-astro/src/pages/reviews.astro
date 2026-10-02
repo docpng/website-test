@@ -1,0 +1,69 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import PageHeader from "../components/PageHeader.astro";
+import ReviewCard from "../components/ReviewCard.astro";
+import CTABand from "../components/CTABand.astro";
+import { reviews, aggregateRating } from "../data/reviews";
+import { business } from "../data/business";
+import { breadcrumbSchema } from "../data/schema";
+
+const title = `Reviews | ${business.name}`;
+const description =
+  "Read what guests have to say about our Everglades airboat tours, fishing trips, fish gigging, and python hunts out of Miami.";
+
+const schemas = [
+  breadcrumbSchema([
+    { name: "Home", url: business.siteUrl },
+    { name: "Reviews", url: `${business.siteUrl}/reviews` },
+  ]),
+];
+---
+
+<BaseLayout title={title} description={description} schema={schemas}>
+  <PageHeader
+    eyebrow="Reviews"
+    title="What our guests say"
+    intro="Real reviews from real trips. If you've been out with us, we'd love to hear from you — leave us a review on Google."
+  />
+
+  <section class="py-20 lg:py-24">
+    <div class="max-w-7xl mx-auto px-5 lg:px-8">
+      <div class="flex items-center gap-6 mb-10">
+        <div class="font-display text-5xl text-moss-900">
+          {aggregateRating.value.toFixed(1)}
+        </div>
+        <div>
+          <div class="flex items-center gap-1 text-sand-500">
+            {
+              Array.from({ length: 5 }, (_, i) => (
+                <svg class="w-5 h-5" viewBox="0 0 20 20" fill={i < Math.round(aggregateRating.value) ? "currentColor" : "none"} stroke="currentColor">
+                  <path d="M10 2l2.47 5 5.53.8-4 3.9.94 5.5L10 14.6l-4.94 2.6L6 11.7 2 7.8l5.53-.8L10 2z" stroke-width="1.5" stroke-linejoin="round"/>
+                </svg>
+              ))
+            }
+          </div>
+          <div class="text-sm text-moss-800 mt-1">
+            Based on {aggregateRating.count} guest reviews
+          </div>
+        </div>
+        <a
+          href={business.googleReviewUrl}
+          target="_blank"
+          rel="noopener"
+          class="ml-auto hidden sm:inline-flex bg-moss-900 text-bone px-5 py-2.5 text-sm hover:bg-moss-800"
+        >
+          Leave us a review
+        </a>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+        {reviews.map((r) => <ReviewCard review={r} />)}
+      </div>
+    </div>
+  </section>
+
+  <CTABand
+    heading="Ready to make your own memory?"
+    subheading="Book a private trip and come find out what everyone's talking about."
+  />
+</BaseLayout>

@@ -1,0 +1,84 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import PageHeader from "../components/PageHeader.astro";
+import CTABand from "../components/CTABand.astro";
+import { business } from "../data/business";
+import { breadcrumbSchema } from "../data/schema";
+
+const title = `Gallery | ${business.name}`;
+const description =
+  "Photos from our Everglades airboat tours, fishing trips, fish gigging, and python hunts out of Miami, Florida.";
+
+// Placeholder images — replace src with real photos uploaded to /public/images/gallery/
+const photos = [
+  { src: "/images/gallery/placeholder-1.jpg", alt: "Alligator resting in Everglades sawgrass" },
+  { src: "/images/gallery/placeholder-2.jpg", alt: "Airboat crossing open water at sunset" },
+  { src: "/images/gallery/placeholder-3.jpg", alt: "Angler holding a largemouth bass caught in the Everglades" },
+  { src: "/images/gallery/placeholder-4.jpg", alt: "Great blue heron in Everglades marshland" },
+  { src: "/images/gallery/placeholder-5.jpg", alt: "Night fish gigging on the water" },
+  { src: "/images/gallery/placeholder-6.jpg", alt: "Guide handling a captured Burmese python" },
+  { src: "/images/gallery/placeholder-7.jpg", alt: "Open Everglades water with cypress silhouettes" },
+  { src: "/images/gallery/placeholder-8.jpg", alt: "Airboat dock at dawn" },
+];
+
+const schemas = [
+  breadcrumbSchema([
+    { name: "Home", url: business.siteUrl },
+    { name: "Gallery", url: `${business.siteUrl}/gallery` },
+  ]),
+];
+---
+
+<BaseLayout title={title} description={description} schema={schemas}>
+  <PageHeader
+    eyebrow="Gallery"
+    title="From the water"
+    intro="Photos from recent tours, trips, and nights out on the Glades."
+  />
+
+  <section class="py-20 lg:py-24">
+    <div class="max-w-7xl mx-auto px-5 lg:px-8">
+      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+        {
+          photos.map((p) => (
+            <figure class="aspect-square bg-moss-800 overflow-hidden relative">
+              <img
+                src={p.src}
+                alt={p.alt}
+                loading="lazy"
+                decoding="async"
+                class="w-full h-full object-cover"
+                onerror="this.style.display='none'; this.parentElement.classList.add('placeholder')"
+              />
+              <figcaption class="sr-only">{p.alt}</figcaption>
+            </figure>
+          ))
+        }
+      </div>
+
+      <!-- Placeholder note shown if images aren't available -->
+      <style>
+        .placeholder {
+          background-image: linear-gradient(135deg, var(--color-moss-800) 0%, var(--color-moss-600) 100%);
+        }
+        .placeholder::after {
+          content: "Photo";
+          position: absolute;
+          inset: 0;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: var(--color-sand-200);
+          font-family: var(--font-display);
+          opacity: 0.5;
+        }
+      </style>
+
+      <p class="mt-10 text-sm text-moss-600 italic">
+        Replace the placeholder images in <code class="not-italic">/public/images/gallery/</code> with real photos from your trips.
+      </p>
+    </div>
+  </section>
+
+  <CTABand />
+</BaseLayout>

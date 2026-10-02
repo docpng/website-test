@@ -1,0 +1,180 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Hero from "../components/Hero.astro";
+import ServiceCard from "../components/ServiceCard.astro";
+import FAQList from "../components/FAQList.astro";
+import CTABand from "../components/CTABand.astro";
+import { services } from "../data/services";
+import { faqs } from "../data/faqs";
+import { serviceAreas } from "../data/service-areas";
+import { business } from "../data/business";
+import { localBusinessSchema, faqPageSchema } from "../data/schema";
+
+const title =
+  "Miami Airboat Tours & Everglades Adventures | South Florida Airboat Adventures";
+const description =
+  "Veteran-owned, private Everglades airboat tours out of Miami. Guided fishing trips, nighttime fish gigging, and python hunts led by a true Gladesman.";
+
+const topFaqs = faqs.slice(0, 4);
+
+const whyChooseUs = [
+  {
+    title: "Veteran-owned, small business values",
+    body: "As a veteran-owned small business, we bring discipline, dedication, and a personal touch to every airboat and fishing tour. We value integrity and take pride in delivering an experience that reflects our roots and commitment.",
+  },
+  {
+    title: "Private, tailored experiences",
+    body: "We keep things personal. Our tours are private and crafted to fit your group, giving you the freedom to explore the Everglades on your own terms — not on someone else's schedule.",
+  },
+  {
+    title: "Custom tours, your way",
+    body: "Every outing is shaped around what you want to do — whether it's fishing, sightseeing, or tracking the wild. We believe no two adventures should be the same.",
+  },
+  {
+    title: "Led by a true Gladesman",
+    body: "You're not just getting a guide — you're riding with a real Gladesman. Born and raised in the culture of the Everglades, we bring generations of knowledge and an authentic edge to your tour.",
+  },
+];
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  schema={[localBusinessSchema(), faqPageSchema(topFaqs)]}
+>
+  <Hero />
+
+  <!-- Services grid -->
+  <section class="py-20 lg:py-24">
+    <div class="max-w-7xl mx-auto px-5 lg:px-8">
+      <div class="flex items-end justify-between gap-6 mb-10">
+        <div>
+          <div class="text-xs tracking-[0.2em] uppercase text-moss-600 font-medium mb-3">
+            What we do
+          </div>
+          <h2 class="text-moss-950">Four ways to experience the Everglades</h2>
+        </div>
+        <a href="/areas-we-serve" class="hidden md:block text-sm font-medium text-moss-900 border-b border-moss-900 pb-0.5">
+          See service areas
+        </a>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+        {services.map((s) => <ServiceCard service={s} />)}
+      </div>
+    </div>
+  </section>
+
+  <!-- Why choose us -->
+  <section class="bg-sand-50 py-20 lg:py-24">
+    <div class="max-w-7xl mx-auto px-5 lg:px-8">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-12">
+        <div class="lg:col-span-4">
+          <div class="text-xs tracking-[0.2em] uppercase text-moss-600 font-medium mb-3">
+            Why ride with us
+          </div>
+          <h2 class="text-moss-950">
+            A local operation that still runs like one.
+          </h2>
+          <p class="mt-6 text-moss-800">
+            {business.name} offers private, customized airboat tours and
+            Everglades experiences throughout Miami and the surrounding areas.
+            Owned and operated by {business.owner.name}, a true Gladesman with
+            over {business.foundedYears} years of combined experience, our
+            business is built on local knowledge, passion, and authenticity.
+          </p>
+        </div>
+        <div class="lg:col-span-8 grid grid-cols-1 sm:grid-cols-2 gap-6">
+          {
+            whyChooseUs.map((item, i) => (
+              <div class="relative">
+                <div class="font-display text-sand-500 text-sm mb-2">
+                  {String(i + 1).padStart(2, "0")}
+                </div>
+                <h3 class="text-moss-950 text-xl">{item.title}</h3>
+                <p class="mt-3 text-moss-800 text-sm">{item.body}</p>
+              </div>
+            ))
+          }
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- About -->
+  <section class="py-20 lg:py-24">
+    <div class="max-w-4xl mx-auto px-5 lg:px-8">
+      <div class="text-xs tracking-[0.2em] uppercase text-moss-600 font-medium mb-3">
+        About
+      </div>
+      <h2 class="text-moss-950">
+        It's not just a tour — it's your adventure, your way.
+      </h2>
+      <div class="mt-8 space-y-5 text-moss-800">
+        <p>
+          We specialize in thrilling airboat rides, peaceful Everglades fishing
+          trips, nighttime fish gigging, and even python hunts — all tailored
+          specifically to your group's preferences. Every tour is private and
+          built around your adventure, ensuring a personal experience guided by
+          someone who lives and breathes the Everglades.
+        </p>
+        <p>
+          As a proud veteran-owned small business, we're committed to delivering
+          safe, unforgettable experiences that connect you with Florida's wild
+          side — whether you're a first-time visitor or a returning
+          thrill-seeker.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ preview -->
+  <section class="bg-sand-50 py-20 lg:py-24">
+    <div class="max-w-5xl mx-auto px-5 lg:px-8">
+      <div class="flex items-end justify-between gap-6 mb-10">
+        <div>
+          <div class="text-xs tracking-[0.2em] uppercase text-moss-600 font-medium mb-3">
+            Frequently asked
+          </div>
+          <h2 class="text-moss-950">Common questions, answered</h2>
+        </div>
+        <a href="/faqs" class="hidden md:block text-sm font-medium text-moss-900 border-b border-moss-900 pb-0.5">
+          See all FAQs
+        </a>
+      </div>
+      <FAQList items={topFaqs} />
+    </div>
+  </section>
+
+  <!-- Service areas -->
+  <section class="py-20 lg:py-24">
+    <div class="max-w-7xl mx-auto px-5 lg:px-8">
+      <div class="text-xs tracking-[0.2em] uppercase text-moss-600 font-medium mb-3">
+        Where we serve
+      </div>
+      <h2 class="text-moss-950 mb-10">Serving all of South Florida</h2>
+      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+        <div class="border border-moss-900/10 p-4 bg-moss-900 text-bone">
+          <div class="font-display text-lg">Miami, FL</div>
+          <div class="text-xs text-sand-200 mt-1">Our home base</div>
+        </div>
+        {
+          serviceAreas.map((a) => (
+            <a
+              href={`/service-area/${a.slug}`}
+              class="border border-moss-900/10 p-4 bg-bone hover:border-moss-600 transition group"
+            >
+              <div class="font-display text-lg text-moss-950">
+                {a.city}, {a.stateAbbr}
+              </div>
+              <div class="text-xs text-moss-600 mt-1 group-hover:text-moss-800">
+                View area →
+              </div>
+            </a>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <CTABand />
+</BaseLayout>

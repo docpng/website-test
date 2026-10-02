@@ -1,0 +1,59 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import PageHeader from "../components/PageHeader.astro";
+import FAQList from "../components/FAQList.astro";
+import CTABand from "../components/CTABand.astro";
+import { faqs } from "../data/faqs";
+import { business } from "../data/business";
+import { faqPageSchema, breadcrumbSchema } from "../data/schema";
+
+const title = `FAQs | ${business.name}`;
+const description =
+  "Frequently asked questions about our Everglades airboat tours, fishing trips, fish gigging, python hunts, booking, and what to bring.";
+
+const groups: {
+  key: "tours" | "fishing" | "python" | "logistics" | "general";
+  label: string;
+}[] = [
+  { key: "tours", label: "Airboat tours" },
+  { key: "fishing", label: "Fishing" },
+  { key: "python", label: "Python hunts" },
+  { key: "logistics", label: "Booking & logistics" },
+  { key: "general", label: "General" },
+];
+
+const schemas = [
+  faqPageSchema(faqs),
+  breadcrumbSchema([
+    { name: "Home", url: business.siteUrl },
+    { name: "FAQs", url: `${business.siteUrl}/faqs` },
+  ]),
+];
+---
+
+<BaseLayout title={title} description={description} schema={schemas}>
+  <PageHeader
+    eyebrow="FAQs"
+    title="Frequently asked questions"
+    intro="If you don't see what you're looking for, give us a call — we're happy to answer anything about tours, booking, or what to expect."
+  />
+
+  <section class="py-20 lg:py-24">
+    <div class="max-w-4xl mx-auto px-5 lg:px-8 space-y-16">
+      {
+        groups.map((g) => {
+          const items = faqs.filter((f) => f.category === g.key);
+          if (items.length === 0) return null;
+          return (
+            <div>
+              <h2 class="text-moss-950 mb-8">{g.label}</h2>
+              <FAQList items={items} />
+            </div>
+          );
+        })
+      }
+    </div>
+  </section>
+
+  <CTABand />
+</BaseLayout>

@@ -1,0 +1,73 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import PageHeader from "../components/PageHeader.astro";
+import CTABand from "../components/CTABand.astro";
+import { serviceAreas } from "../data/service-areas";
+import { business } from "../data/business";
+import { breadcrumbSchema } from "../data/schema";
+
+const title = `Areas We Serve | ${business.name}`;
+const description =
+  "We serve guests from across Miami-Dade and Broward counties — Miami, Miami Beach, Fort Lauderdale, Hollywood, Hialeah, South Miami, and Pinecrest.";
+
+const schemas = [
+  breadcrumbSchema([
+    { name: "Home", url: business.siteUrl },
+    { name: "Areas We Serve", url: `${business.siteUrl}/areas-we-serve` },
+  ]),
+];
+---
+
+<BaseLayout title={title} description={description} schema={schemas}>
+  <PageHeader
+    eyebrow="Service areas"
+    title="Serving all of South Florida"
+    intro="We pick up and host guests from across Miami-Dade and Broward counties. Our dock is in Miami, and most of our regulars make a half-day of it from anywhere in the metro."
+  />
+
+  <section class="py-20 lg:py-24">
+    <div class="max-w-7xl mx-auto px-5 lg:px-8">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+        <div class="border border-moss-900/10 p-7 bg-moss-900 text-bone">
+          <div class="text-xs tracking-[0.2em] uppercase text-sand-300 mb-3">
+            Home base
+          </div>
+          <h3 class="text-bone">Miami, FL</h3>
+          <p class="mt-3 text-sm text-sand-100">
+            Our dock is at {business.address.street}, {business.address.city},
+            {business.address.region} {business.address.postalCode}.
+          </p>
+          <a
+            href={business.googleMapsUrl}
+            target="_blank"
+            rel="noopener"
+            class="mt-5 inline-flex text-sm font-semibold text-sand-300 border-b border-sand-300 pb-0.5"
+          >
+            Open in Maps →
+          </a>
+        </div>
+        {
+          serviceAreas.map((a) => (
+            <a
+              href={`/service-area/${a.slug}`}
+              class="group border border-moss-900/10 p-7 bg-bone hover:border-moss-600 transition"
+            >
+              <div class="text-xs tracking-[0.2em] uppercase text-moss-600 mb-3">
+                {a.driveTime}
+              </div>
+              <h3 class="text-moss-950">
+                {a.city}, {a.stateAbbr}
+              </h3>
+              <p class="mt-3 text-sm text-moss-800 line-clamp-3">{a.intro}</p>
+              <div class="mt-5 text-sm font-semibold text-moss-900 group-hover:text-moss-600">
+                See details →
+              </div>
+            </a>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <CTABand />
+</BaseLayout>
