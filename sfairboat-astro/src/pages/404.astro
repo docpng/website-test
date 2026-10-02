@@ -1,0 +1,38 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { business } from "../data/business";
+import { services } from "../data/services";
+---
+
+<BaseLayout
+  title={`Page not found | ${business.name}`}
+  description="The page you're looking for doesn't exist or has moved."
+>
+  <section class="py-24 lg:py-32">
+    <div class="max-w-3xl mx-auto px-5 lg:px-8">
+      <h1 class="text-moss-950">This page drifted off course.</h1>
+      <p class="mt-6 text-lg text-moss-800">
+        The page you're looking for doesn't exist or has moved. Try one of
+        these instead, or call us at
+        <a href={business.phoneHref} class="font-semibold border-b border-moss-900">{business.phoneDisplay}</a>.
+      </p>
+      <ul class="mt-10 grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <li>
+          <a href="/" class="block border border-moss-900/10 p-4 hover:border-moss-600">Home</a>
+        </li>
+        {
+          services.map((s) => (
+            <li>
+              <a href={`/${s.slug}`} class="block border border-moss-900/10 p-4 hover:border-moss-600">
+                {s.shortName}
+              </a>
+            </li>
+          ))
+        }
+        <li>
+          <a href="/contact-us" class="block border border-moss-900/10 p-4 hover:border-moss-600">Contact us</a>
+        </li>
+      </ul>
+    </div>
+  </section>
+</BaseLayout>
