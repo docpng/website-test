@@ -1,4 +1,4 @@
----
+------
 import BaseLayout from "../layouts/BaseLayout.astro";
 import PageHeader from "../components/PageHeader.astro";
 import { business, addressLine } from "../data/business";
@@ -90,10 +90,19 @@ const schemas = [
             you quickly.
           </p>
           <form
+            id="quote-form"
+            data-phone={business.phoneDisplay}
             class="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-5"
-            action="https://formspree.io/f/YOUR_FORM_ID"
+            action="https://api.web3forms.com/submit"
             method="POST"
           >
+            <!-- Web3Forms settings (hidden from visitors) -->
+            <input type="hidden" name="access_key" value={business.formAccessKey} />
+            <input type="hidden" name="subject" value="New quote request from the website" />
+            <input type="hidden" name="from_name" value={`${business.name} Website`} />
+            <!-- Spam trap: real visitors never see or check this -->
+            <input type="checkbox" name="botcheck" class="hidden" style="display: none;" tabindex="-1" autocomplete="off" />
+
             <label class="block">
               <span class="block text-sm font-medium text-moss-900 mb-1.5">Name</span>
               <input
@@ -161,12 +170,62 @@ const schemas = [
                 Or book online now
               </a>
             </div>
-            <p class="sm:col-span-2 text-xs text-moss-600">
-              Replace <code>YOUR_FORM_ID</code> in the form action with a real Formspree, Basin, or Netlify Forms endpoint before launch.
-            </p>
+            <p
+              id="form-status"
+              class="sm:col-span-2 text-sm hidden"
+              role="status"
+              aria-live="polite"
+            ></p>
           </form>
         </div>
       </div>
     </div>
   </section>
+
+<script>
+  // Sends the form in the background so visitors stay on the page,
+  // then shows a thank-you (or error) message under the button.
+  const form = document.getElementById("quote-form") as HTMLFormElement | null;
+  const statusEl = document.getElementById("form-status");
+
+  function showStatus(message: string, colorClass: string) {
+    if (!statusEl) return;
+    statusEl.textContent = message;
+    statusEl.className = `sm:col-span-2 text-sm font-medium ${colorClass}`;
+  }
+
+  form?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const button = form.querySelector<HTMLButtonElement>('button[type="submit"]');
+    const originalLabel = button?.textContent ?? "Send request";
+    if (button) {
+      button.disabled = true;
+      button.textContent = "Sending...";
+    }
+
+    try {
+      const data = Object.fromEntries(new FormData(form).entries());
+      const response = await fetch(form.action, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify(data),
+      });
+      const result = await response.json();
+      if (!result.success) throw new Error(result.message);
+
+      form.reset();
+      showStatus("Thanks! Your request was sent. We'll get back to you shortly.", "text-moss-700");
+    } catch {
+      showStatus(
+        `Sorry, something went wrong sending your request. Please call us at ${form.dataset.phone}.`,
+        "text-rust-600"
+      );
+    } finally {
+      if (button) {
+        button.disabled = false;
+        button.textContent = originalLabel;
+      }
+    }
+  });
+</script>
 </BaseLayout>
