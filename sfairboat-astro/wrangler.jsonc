@@ -1,0 +1,12 @@
+{
+  // Cloudflare Workers static-assets config for the Astro build output.
+  // The dashboard build runs `npm run build` (creates ./dist),
+  // then `npx wrangler deploy` uploads ./dist using the settings below.
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "sfairboat-astro",
+  "compatibility_date": "2025-09-01",
+  "assets": {
+    "directory": "./dist",
+    "not_found_handling": "404-page"
+  }
+}
