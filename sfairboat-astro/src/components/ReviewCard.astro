@@ -1,0 +1,32 @@
+---
+import type { Review } from "../data/reviews";
+
+type Props = { review: Review };
+const { review } = Astro.props;
+
+const stars = Array.from({ length: 5 }, (_, i) => i < review.rating);
+const dateFmt = new Date(review.date).toLocaleDateString("en-US", {
+  year: "numeric",
+  month: "long",
+});
+---
+
+<article class="bg-bone border border-moss-900/10 p-7">
+  <div class="flex items-center gap-1 text-sand-500" aria-label={`${review.rating} out of 5 stars`}>
+    {
+      stars.map((filled) => (
+        <svg class="w-4 h-4" viewBox="0 0 20 20" fill={filled ? "currentColor" : "none"} stroke="currentColor">
+          <path d="M10 2l2.47 5 5.53.8-4 3.9.94 5.5L10 14.6l-4.94 2.6L6 11.7 2 7.8l5.53-.8L10 2z" stroke-width="1.5" stroke-linejoin="round"/>
+        </svg>
+      ))
+    }
+  </div>
+  <p class="mt-4 text-moss-900">{review.text}</p>
+  <div class="mt-6 pt-4 border-t border-moss-900/10 flex items-center justify-between text-sm">
+    <div>
+      <div class="font-semibold text-moss-900">{review.author}</div>
+      <div class="text-moss-600 text-xs mt-0.5">{review.service}</div>
+    </div>
+    <div class="text-xs text-moss-600">{dateFmt}</div>
+  </div>
+</article>

@@ -1,0 +1,25 @@
+---
+type Props = {
+  eyebrow?: string;
+  title: string;
+  intro?: string;
+};
+const { eyebrow, title, intro } = Astro.props;
+---
+
+<section class="bg-moss-900 text-bone">
+  <div class="max-w-7xl mx-auto px-5 lg:px-8 py-16 lg:py-24">
+    {
+      eyebrow && (
+        <div class="flex items-center gap-3 mb-5">
+          <span class="h-px w-10 bg-sand-400" />
+          <span class="text-xs tracking-[0.2em] uppercase text-sand-300 font-medium">
+            {eyebrow}
+          </span>
+        </div>
+      )
+    }
+    <h1 class="text-bone max-w-4xl">{title}</h1>
+    {intro && <p class="mt-6 text-lg text-sand-100 max-w-3xl">{intro}</p>}
+  </div>
+</section>

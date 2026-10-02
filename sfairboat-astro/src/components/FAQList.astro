@@ -1,0 +1,36 @@
+---
+import type { FAQ } from "../data/faqs";
+
+type Props = { items: FAQ[] };
+const { items } = Astro.props;
+---
+
+<ul class="divide-y divide-moss-900/10 border-y border-moss-900/10">
+  {
+    items.map((f) => (
+      <li>
+        <details class="group">
+          <summary class="flex items-start justify-between gap-6 py-5 cursor-pointer list-none">
+            <span class="font-display text-lg text-moss-950 group-open:text-moss-700">
+              {f.question}
+            </span>
+            <svg
+              class="w-5 h-5 shrink-0 mt-1 text-moss-700 transition group-open:rotate-45"
+              viewBox="0 0 20 20"
+              fill="none"
+              aria-hidden="true"
+            >
+              <path
+                d="M10 4v12M4 10h12"
+                stroke="currentColor"
+                stroke-width="1.5"
+                stroke-linecap="round"
+              />
+            </svg>
+          </summary>
+          <p class="pb-6 pr-8 text-moss-800">{f.answer}</p>
+        </details>
+      </li>
+    ))
+  }
+</ul>

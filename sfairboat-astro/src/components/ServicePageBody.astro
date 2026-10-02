@@ -1,0 +1,155 @@
+---
+import type { Service } from "../data/services";
+import { business } from "../data/business";
+import { faqs } from "../data/faqs";
+import FAQList from "./FAQList.astro";
+import CTABand from "./CTABand.astro";
+
+type Props = { service: Service };
+const { service } = Astro.props;
+
+const otherServices = (await import("../data/services")).services.filter(
+  (s) => s.slug !== service.slug
+);
+
+// Pick 3 relevant FAQs for this service
+const relevantFaqs = faqs.filter((f) => {
+  if (service.slug === "airboat-tours") return ["tours", "general", "logistics"].includes(f.category);
+  if (service.slug === "everglades-fishing-trips") return ["fishing", "general", "logistics"].includes(f.category);
+  if (service.slug === "fish-gigging") return ["fishing", "tours", "logistics"].includes(f.category);
+  if (service.slug === "python-hunts") return ["python", "general", "logistics"].includes(f.category);
+  return true;
+}).slice(0, 4);
+---
+
+<!-- Hero -->
+<section class="bg-moss-900 text-bone">
+  <div class="max-w-7xl mx-auto px-5 lg:px-8 py-16 lg:py-24">
+    <nav class="text-xs text-sand-200 mb-6" aria-label="Breadcrumb">
+      <ol class="flex items-center gap-2">
+        <li><a href="/" class="hover:text-bone">Home</a></li>
+        <li aria-hidden="true">/</li>
+        <li class="text-bone">{service.shortName}</li>
+      </ol>
+    </nav>
+    <div class="flex items-center gap-3 mb-5">
+      <span class="h-px w-10 bg-sand-400"></span>
+      <span class="text-xs tracking-[0.2em] uppercase text-sand-300 font-medium">
+        {service.schemaCategory}
+      </span>
+    </div>
+    <h1 class="text-bone max-w-4xl">{service.name}</h1>
+    <p class="mt-6 text-lg text-sand-100 max-w-3xl">{service.tagline}</p>
+    <div class="mt-10 flex flex-col sm:flex-row gap-4">
+      <a
+        href={business.bookingUrl}
+        class="inline-flex items-center bg-sand-400 text-moss-950 px-7 py-3.5 font-medium hover:bg-sand-300"
+      >
+        Book {service.shortName}
+      </a>
+      <a
+        href={business.phoneHref}
+        class="inline-flex items-center text-bone border border-sand-200/30 px-7 py-3.5 font-medium hover:border-sand-200/60"
+      >
+        Call {business.phoneDisplay}
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- Overview + highlights -->
+<section class="py-20 lg:py-24">
+  <div class="max-w-7xl mx-auto px-5 lg:px-8 grid grid-cols-1 lg:grid-cols-12 gap-12">
+    <div class="lg:col-span-7">
+      <div class="text-xs tracking-[0.2em] uppercase text-moss-600 font-medium mb-3">
+        Overview
+      </div>
+      <h2 class="text-moss-950">What to expect</h2>
+      <div class="mt-6 space-y-5 text-moss-800">
+        {service.longDescription.map((p) => <p>{p}</p>)}
+      </div>
+    </div>
+    <aside class="lg:col-span-5">
+      <div class="bg-sand-50 border border-moss-900/10 p-7">
+        <h3 class="text-moss-950">Trip highlights</h3>
+        <ul class="mt-5 space-y-3">
+          {
+            service.highlights.map((h) => (
+              <li class="flex items-start gap-3 text-sm text-moss-900">
+                <svg class="w-4 h-4 mt-1 shrink-0 text-moss-600" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                  <path d="M3 8l3 3 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <span>{h}</span>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </aside>
+  </div>
+</section>
+
+<!-- Who it's for + what's included -->
+<section class="bg-sand-50 py-20 lg:py-24">
+  <div class="max-w-7xl mx-auto px-5 lg:px-8 grid grid-cols-1 md:grid-cols-2 gap-10">
+    <div>
+      <div class="text-xs tracking-[0.2em] uppercase text-moss-600 font-medium mb-3">
+        Who it's for
+      </div>
+      <h2 class="text-moss-950">Who this trip is for</h2>
+      <p class="mt-5 text-moss-800">{service.whoItsFor}</p>
+    </div>
+    <div>
+      <div class="text-xs tracking-[0.2em] uppercase text-moss-600 font-medium mb-3">
+        What's included
+      </div>
+      <h2 class="text-moss-950">What's included</h2>
+      <ul class="mt-5 space-y-3">
+        {
+          service.whatsIncluded.map((item) => (
+            <li class="flex items-start gap-3 text-moss-900">
+              <span class="font-display text-sand-500 shrink-0">—</span>
+              <span>{item}</span>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="py-20 lg:py-24">
+  <div class="max-w-4xl mx-auto px-5 lg:px-8">
+    <div class="text-xs tracking-[0.2em] uppercase text-moss-600 font-medium mb-3">
+      FAQ
+    </div>
+    <h2 class="text-moss-950 mb-10">Questions about this trip</h2>
+    <FAQList items={relevantFaqs} />
+  </div>
+</section>
+
+<!-- Other services -->
+<section class="bg-sand-50 py-20 lg:py-24">
+  <div class="max-w-7xl mx-auto px-5 lg:px-8">
+    <div class="text-xs tracking-[0.2em] uppercase text-moss-600 font-medium mb-3">
+      Also offered
+    </div>
+    <h2 class="text-moss-950 mb-10">Other ways to get on the water</h2>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+      {
+        otherServices.map((s) => (
+          <a href={`/${s.slug}`} class="group bg-bone border border-moss-900/10 p-6 hover:border-moss-600 transition">
+            <h3 class="text-moss-950">{s.shortName}</h3>
+            <p class="mt-3 text-sm text-moss-800 line-clamp-3">{s.tagline}</p>
+            <div class="mt-5 text-sm font-semibold text-moss-900 group-hover:text-moss-600">
+              Learn more →
+            </div>
+          </a>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<CTABand heading={`Ready to book ${service.shortName.toLowerCase()}?`} />

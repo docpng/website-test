@@ -1,0 +1,37 @@
+---
+import { business } from "../data/business";
+
+type Props = {
+  heading?: string;
+  subheading?: string;
+};
+const {
+  heading = "Ready to get out on the water?",
+  subheading = "Call us or book online. We'll put something together for your group.",
+} = Astro.props;
+---
+
+<section class="bg-moss-800 text-bone">
+  <div class="max-w-7xl mx-auto px-5 lg:px-8 py-16 lg:py-20">
+    <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-8">
+      <div>
+        <h2 class="text-bone">{heading}</h2>
+        <p class="mt-3 text-sand-100">{subheading}</p>
+      </div>
+      <div class="flex flex-col sm:flex-row gap-3 shrink-0">
+        <a
+          href={business.phoneHref}
+          class="inline-flex items-center justify-center bg-bone text-moss-900 px-6 py-3.5 font-medium hover:bg-sand-100"
+        >
+          Call {business.phoneDisplay}
+        </a>
+        <a
+          href={business.bookingUrl}
+          class="inline-flex items-center justify-center bg-sand-400 text-moss-950 px-6 py-3.5 font-medium hover:bg-sand-300"
+        >
+          Book Online
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
