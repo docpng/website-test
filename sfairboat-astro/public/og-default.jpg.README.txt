@@ -1,0 +1,9 @@
+Replace this with a real 1200x630 JPEG at /public/og-default.jpg.
+
+This image is used for:
+- Open Graph social sharing (Facebook, LinkedIn, iMessage)
+- Twitter cards
+- Default schema.org image references
+
+Recommended: a strong hero shot of an airboat on the water,
+with the business name legible or a simple identifier at the bottom.
