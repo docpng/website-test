@@ -1,0 +1,148 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import CTABand from "../../components/CTABand.astro";
+import { serviceAreas } from "../../data/service-areas";
+import { services } from "../../data/services";
+import { business } from "../../data/business";
+import {
+  serviceAreaSchema,
+  breadcrumbSchema,
+} from "../../data/schema";
+
+export function getStaticPaths() {
+  return serviceAreas.map((a) => ({ params: { slug: a.slug }, props: { area: a } }));
+}
+
+const { area } = Astro.props;
+
+const schemas = [
+  serviceAreaSchema(area.slug)!,
+  breadcrumbSchema([
+    { name: "Home", url: business.siteUrl },
+    { name: "Areas We Serve", url: `${business.siteUrl}/areas-we-serve` },
+    {
+      name: `${area.city}, ${area.stateAbbr}`,
+      url: `${business.siteUrl}/service-area/${area.slug}`,
+    },
+  ]),
+];
+---
+
+<BaseLayout
+  title={area.seoTitle}
+  description={area.metaDescription}
+  schema={schemas}
+>
+  <!-- Hero -->
+  <section class="bg-moss-900 text-bone">
+    <div class="max-w-7xl mx-auto px-5 lg:px-8 py-16 lg:py-24">
+      <nav class="text-xs text-sand-200 mb-6" aria-label="Breadcrumb">
+        <ol class="flex items-center gap-2 flex-wrap">
+          <li><a href="/" class="hover:text-bone">Home</a></li>
+          <li aria-hidden="true">/</li>
+          <li><a href="/areas-we-serve" class="hover:text-bone">Areas We Serve</a></li>
+          <li aria-hidden="true">/</li>
+          <li class="text-bone">{area.city}, {area.stateAbbr}</li>
+        </ol>
+      </nav>
+      <div class="flex items-center gap-3 mb-5">
+        <span class="h-px w-10 bg-sand-400"></span>
+        <span class="text-xs tracking-[0.2em] uppercase text-sand-300 font-medium">
+          Serving {area.city}, {area.stateAbbr}
+        </span>
+      </div>
+      <h1 class="text-bone max-w-4xl">
+        Everglades airboat tours & fishing for {area.city}
+      </h1>
+      <p class="mt-6 text-lg text-sand-100 max-w-3xl">{area.intro}</p>
+      <div class="mt-8 inline-flex items-center gap-3 text-sm text-sand-200">
+        <svg class="w-5 h-5" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+          <path d="M10 2a6 6 0 00-6 6c0 4.5 6 10 6 10s6-5.5 6-10a6 6 0 00-6-6zm0 8a2 2 0 110-4 2 2 0 010 4z" fill="currentColor"/>
+        </svg>
+        {area.driveTime}
+      </div>
+    </div>
+  </section>
+
+  <!-- Pitch -->
+  <section class="py-20 lg:py-24">
+    <div class="max-w-4xl mx-auto px-5 lg:px-8">
+      <div class="text-xs tracking-[0.2em] uppercase text-moss-600 font-medium mb-3">
+        Local to {area.city}
+      </div>
+      <h2 class="text-moss-950">Why {area.city} guests book with us</h2>
+      <p class="mt-6 text-moss-800">{area.localAngle}</p>
+      <p class="mt-5 text-moss-800">
+        Every trip we run is private, led by a lifelong Gladesman, and shaped
+        around what your group wants to do. We've hosted families, groups of
+        friends, out-of-town visitors, and plenty of {area.city} locals who
+        wanted to finally see this side of South Florida.
+      </p>
+    </div>
+  </section>
+
+  <!-- Services -->
+  <section class="bg-sand-50 py-20 lg:py-24">
+    <div class="max-w-7xl mx-auto px-5 lg:px-8">
+      <h2 class="text-moss-950 mb-10">
+        What we offer {area.city} guests
+      </h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+        {
+          services.map((s) => (
+            <a
+              href={`/${s.slug}`}
+              class="group bg-bone border border-moss-900/10 p-7 hover:border-moss-600 transition"
+            >
+              <h3 class="text-moss-950">{s.shortName}</h3>
+              <p class="mt-3 text-sm text-moss-800">{s.summary}</p>
+              <div class="mt-5 text-sm font-semibold text-moss-900 group-hover:text-moss-600">
+                Learn more →
+              </div>
+            </a>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- Logistics -->
+  <section class="py-20 lg:py-24">
+    <div class="max-w-5xl mx-auto px-5 lg:px-8">
+      <h2 class="text-moss-950 mb-8">Getting here from {area.city}</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+        <div>
+          <div class="text-xs tracking-[0.2em] uppercase text-moss-600 mb-2">
+            Our dock
+          </div>
+          <div class="font-display text-xl text-moss-950">
+            {business.address.street}<br />
+            {business.address.city}, {business.address.region} {business.address.postalCode}
+          </div>
+          <a
+            href={business.googleMapsUrl}
+            target="_blank"
+            rel="noopener"
+            class="mt-3 inline-block text-sm font-semibold text-moss-900 border-b border-moss-900"
+          >
+            Open in Google Maps →
+          </a>
+        </div>
+        <div>
+          <div class="text-xs tracking-[0.2em] uppercase text-moss-600 mb-2">
+            Drive from {area.city}
+          </div>
+          <div class="font-display text-xl text-moss-950">{area.driveTime}</div>
+          <p class="mt-3 text-sm text-moss-800">
+            Parking available on site. Call ahead if you're arriving outside normal hours.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <CTABand
+    heading={`Ready to book from ${area.city}?`}
+    subheading="Give us a call or reserve online. We'll put something together for your group."
+  />
+</BaseLayout>
