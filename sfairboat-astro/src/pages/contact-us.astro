@@ -145,6 +145,26 @@ const schemas = [
                 <option>Not sure — looking for recommendations</option>
               </select>
             </label>
+            <label class="block">
+              <span class="block text-sm font-medium text-moss-900 mb-1.5">Preferred date</span>
+              <input
+                required
+                type="date"
+                name="requested_date"
+                id="requested-date"
+                class="w-full border border-moss-900/20 bg-bone px-4 py-3 focus:border-moss-700 focus:outline-none"
+              />
+            </label>
+            <label class="block">
+              <span class="block text-sm font-medium text-moss-900 mb-1.5">Preferred time</span>
+              <input
+                required
+                type="time"
+                name="requested_time"
+                step="900"
+                class="w-full border border-moss-900/20 bg-bone px-4 py-3 focus:border-moss-700 focus:outline-none"
+              />
+            </label>
             <label class="block sm:col-span-2">
               <span class="block text-sm font-medium text-moss-900 mb-1.5">
                 Tell us more
@@ -153,7 +173,7 @@ const schemas = [
                 name="message"
                 rows="5"
                 class="w-full border border-moss-900/20 bg-bone px-4 py-3 focus:border-moss-700 focus:outline-none resize-y"
-                placeholder="Group size, dates you're considering, anything else we should know"
+                placeholder="Group size, flexibility on dates, anything else we should know"
               ></textarea>
             </label>
             <div class="sm:col-span-2 flex flex-col sm:flex-row gap-3 pt-2">
@@ -194,6 +214,35 @@ const schemas = [
     statusEl.className = `sm:col-span-2 text-sm font-medium ${colorClass}`;
   }
 
+  // Don't allow past dates. Set in the browser so "today" is always current
+  // (the site is pre-built, so setting it at build time would go stale).
+  const dateInput = document.getElementById("requested-date") as HTMLInputElement | null;
+  if (dateInput) {
+    const now = new Date();
+    const pad = (n: number) => String(n).padStart(2, "0");
+    dateInput.min = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
+  }
+
+  // "2026-10-10" -> "Saturday, October 10, 2026"
+  function formatDate(value: string) {
+    const [y, m, d] = value.split("-").map(Number);
+    if (!y || !m || !d) return value;
+    return new Date(y, m - 1, d).toLocaleDateString("en-US", {
+      weekday: "long",
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+  }
+
+  // "14:30" -> "2:30 PM"
+  function formatTime(value: string) {
+    const [h, min] = value.split(":").map(Number);
+    if (Number.isNaN(h) || Number.isNaN(min)) return value;
+    const suffix = h >= 12 ? "PM" : "AM";
+    return `${h % 12 || 12}:${String(min).padStart(2, "0")} ${suffix}`;
+  }
+
   form?.addEventListener("submit", async (event) => {
     event.preventDefault();
     const button = form.querySelector<HTMLButtonElement>('button[type="submit"]');
@@ -204,7 +253,9 @@ const schemas = [
     }
 
     try {
-      const data = Object.fromEntries(new FormData(form).entries());
+      const data: Record<string, FormDataEntryValue> = Object.fromEntries(new FormData(form).entries());
+      if (typeof data.requested_date === "string") data.requested_date = formatDate(data.requested_date);
+      if (typeof data.requested_time === "string") data.requested_time = formatTime(data.requested_time);
       const response = await fetch(form.action, {
         method: "POST",
         headers: { "Content-Type": "application/json", Accept: "application/json" },
