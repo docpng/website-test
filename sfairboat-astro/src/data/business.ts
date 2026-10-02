@@ -24,7 +24,7 @@ export const business = {
     "https://www.google.com/maps/place/South+Florida+Airboat+Adventures/data=!4m2!3m1!1s0x0:0x6e8ee5ce38bae2f9?sa=X&ved=1t:2428&ictx=111",
   googleReviewUrl:
     "https://search.google.com/local/writereview?placeid=ChIJa0mIKKGV2YgR-eK6OM7ljm4",
-  siteUrl: "https://www.tekanelectronics.com",
+  siteUrl: "https://www.sfairboatadventures.com",
   owner: {
     name: "Eian Mislow",
     title: "Owner & Lead Guide",
