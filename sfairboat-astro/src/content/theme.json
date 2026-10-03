@@ -4,6 +4,6 @@
   "darkColor": "#053314",
   "accentColor": "#c2a35e",
   "backgroundColor": "#ffffff",
-  "sectionSpacing": "normal",
+  "sectionSpacing": "compact",
   "buttonCorners": "square"
 }
