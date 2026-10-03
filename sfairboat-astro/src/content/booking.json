@@ -1,0 +1,98 @@
+{
+  "enabled": true,
+  "tourTypes": [
+    {
+      "id": "regular",
+      "label": "Daytime tour",
+      "description": "Private airboat tour any time from 8am to 3pm.",
+      "timing": "fixed",
+      "firstStart": "08:00",
+      "lastStart": "15:00",
+      "every": 30,
+      "sunOffset": 0,
+      "prices": [
+        {
+          "minutes": 60,
+          "price": 250
+        },
+        {
+          "minutes": 90,
+          "price": 350
+        },
+        {
+          "minutes": 120,
+          "price": 450
+        }
+      ]
+    },
+    {
+      "id": "sunrise",
+      "label": "Sunrise tour",
+      "description": "Head out before first light and watch the sun come up over the Glades.",
+      "timing": "sunriseStart",
+      "firstStart": "",
+      "lastStart": "",
+      "every": 30,
+      "sunOffset": -30,
+      "prices": [
+        {
+          "minutes": 90,
+          "price": 450
+        },
+        {
+          "minutes": 120,
+          "price": 550
+        }
+      ]
+    },
+    {
+      "id": "sunset",
+      "label": "Sunset tour",
+      "description": "Timed so you're on the water as the sun goes down.",
+      "timing": "sunsetEnd",
+      "firstStart": "",
+      "lastStart": "",
+      "every": 30,
+      "sunOffset": 30,
+      "prices": [
+        {
+          "minutes": 90,
+          "price": 450
+        },
+        {
+          "minutes": 120,
+          "price": 550
+        }
+      ]
+    },
+    {
+      "id": "night",
+      "label": "Nighttime tour",
+      "description": "Spotlight the Everglades after dark, from 7:30pm to midnight.",
+      "timing": "fixed",
+      "firstStart": "19:30",
+      "lastStart": "00:00",
+      "every": 30,
+      "sunOffset": 0,
+      "prices": [
+        {
+          "minutes": 90,
+          "price": 450
+        },
+        {
+          "minutes": 120,
+          "price": 550
+        }
+      ]
+    }
+  ],
+  "includedGuests": 2,
+  "extraGuestPrice": 60,
+  "maxGuests": 7,
+  "boats": 1,
+  "minNoticeHours": 24,
+  "maxDaysAhead": 365,
+  "blockedDates": [],
+  "policy": "Payment is due in full when you book. Need to change or cancel? Contact us at {phone} and we'll take care of it, including any refund.",
+  "ownerEmail": ""
+}
