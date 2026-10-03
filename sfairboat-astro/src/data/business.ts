@@ -35,7 +35,7 @@ export const business = {
   social: {
     facebook:
       "https://facebook.com/people/South-Florida-Airboat-Adventures/61569997021652/",
-    instagram: "https://instagram.com/sfairboatadventures",
+    instagram: "https://www.instagram.com/southfloridaairboatadventures",
     google:
       "https://www.google.com/maps/place/South+Florida+Airboat+Adventures/data=!4m2!3m1!1s0x0:0x6e8ee5ce38bae2f9?sa=X&ved=1t:2428&ictx=111",
   },
