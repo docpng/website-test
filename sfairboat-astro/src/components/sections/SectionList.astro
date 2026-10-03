@@ -28,8 +28,17 @@ import AreaServices from "./parts/AreaServices.astro";
 import AreaLogistics from "./parts/AreaLogistics.astro";
 import { validateSection, type Section, type SectionContext } from "../../data/sections";
 
-type Props = { sections?: Section[]; source: string; context?: SectionContext };
-const { sections = [], source, context = {} } = Astro.props;
+type Props = {
+  sections?: Section[];
+  source: string;
+  context?: SectionContext;
+  // For Arrange mode (/admin/arrange): the content file and field these
+  // sections are stored in, and whether they're the built-in default layout.
+  file?: string;
+  field?: string;
+  isDefault?: boolean;
+};
+const { sections = [], source, context = {}, file, field, isDefault = false } = Astro.props;
 
 const components: Record<string, any> = {
   hero: Hero,
@@ -63,6 +72,10 @@ const parts: Record<string, any> = {
   "areaPart:logistics": AreaLogistics,
 };
 
+// JSON inside an HTML comment; "-" is escaped so "--" can never end the comment.
+const marker = (kind: string, data: object) =>
+  `<!--arrange-${kind} ${JSON.stringify(data).replace(/-/g, "\\u002d")}-->`;
+
 const items = sections.map((section, i) => {
   validateSection(section, `${source} (section #${i + 1})`, context);
   const Component = components[section.type] ?? parts[`${section.type}:${section.part}`];
@@ -70,4 +83,14 @@ const items = sections.map((section, i) => {
 });
 ---
 
-{items.map(({ Component, section }) => <Component section={section} context={context} />)}
+{/* Invisible markers that let Arrange mode map the page back to its content */}
+{file && <Fragment set:html={marker("start", { file, field, defaultLayout: isDefault ? sections : undefined })} />}
+{
+  items.map(({ Component, section }, i) => (
+    <>
+      {file && <Fragment set:html={marker("section", { index: i, type: section.type })} />}
+      <Component section={section} context={context} />
+    </>
+  ))
+}
+{file && <Fragment set:html={marker("end", {})} />}

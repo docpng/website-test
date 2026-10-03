@@ -5,6 +5,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import SectionList from "../components/sections/SectionList.astro";
 import { fill } from "../components/sections/styles";
 import { pages, type Page } from "../data/pages";
+import { fileOf } from "../data/validate";
 import { business } from "../data/business";
 import { shownFaqs } from "../data/faq-sections";
 import { localBusinessSchema, faqPageSchema, breadcrumbSchema } from "../data/schema";
@@ -40,5 +41,5 @@ const schemas = isHome
   ogImage={page.ogImage ? new URL(page.ogImage, business.siteUrl).href : undefined}
   schema={schemas}
 >
-  <SectionList sections={page.sections} source={`src/content/pages (${page.title})`} />
+  <SectionList sections={page.sections} source={`src/content/pages (${page.title})`} file={fileOf(page)} field="sections" />
 </BaseLayout>

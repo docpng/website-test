@@ -30,6 +30,10 @@ export function requireOneOf<T>(value: T, allowed: readonly T[], field: string, 
   return value;
 }
 
+// Which content file each loaded item came from (used by Arrange mode).
+const files = new WeakMap<object, string>();
+export const fileOf = (item: object) => files.get(item);
+
 // Loads every JSON file in a CMS folder collection, sorted by "order".
 export function loadFolder<T extends { order?: number }>(
   modules: Record<string, unknown>,
@@ -38,7 +42,9 @@ export function loadFolder<T extends { order?: number }>(
   return Object.entries(modules)
     .map(([path, mod]) => {
       const source = path.replace(/^.*\/content\//, "src/content/");
-      return validate((mod as { default: T }).default, source);
+      const item = validate((mod as { default: T }).default, source);
+      files.set(item as object, source);
+      return item;
     })
     .sort((a, b) => (a.order ?? 999) - (b.order ?? 999));
 }
