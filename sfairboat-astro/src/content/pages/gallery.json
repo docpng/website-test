@@ -1,0 +1,23 @@
+{
+  "title": "Gallery",
+  "slug": "gallery",
+  "order": 2,
+  "seoTitle": "Gallery | {businessName}",
+  "metaDescription": "Photos from our Everglades airboat tours, fishing trips, fish gigging, and python hunts out of Miami, Florida.",
+  "sections": [
+    {
+      "type": "pageHeader",
+      "eyebrow": "Gallery",
+      "title": "From the water",
+      "intro": "Photos from recent tours, trips, and nights out on the Glades."
+    },
+    {
+      "type": "gallery",
+      "source": "site",
+      "columns": 4
+    },
+    {
+      "type": "cta"
+    }
+  ]
+}

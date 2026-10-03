@@ -1,0 +1,28 @@
+---
+// Cards for every service (from the Services collection).
+import Section from "./Section.astro";
+import SectionHeading from "./SectionHeading.astro";
+import ServiceCard from "../ServiceCard.astro";
+import { services } from "../../data/services";
+import { isDark, type SectionSettings } from "./styles";
+
+type Props = { section: SectionSettings & { eyebrow?: string; heading?: string; linkLabel?: string; link?: string } };
+const { section: s } = Astro.props;
+const dark = isDark(s);
+const hasHeading = Boolean(s.eyebrow || s.heading || s.linkLabel);
+---
+
+<Section settings={s}>
+  {
+    s.linkLabel && s.link ? (
+      <SectionHeading eyebrow={s.eyebrow} heading={s.heading} linkLabel={s.linkLabel} link={s.link} dark={dark} />
+    ) : hasHeading ? (
+      <div class="mb-10">
+        <SectionHeading eyebrow={s.eyebrow} heading={s.heading} dark={dark} />
+      </div>
+    ) : null
+  }
+  <div class={s.align === "center" ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 text-left" : "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5"}>
+    {services.map((service) => <ServiceCard service={service} />)}
+  </div>
+</Section>

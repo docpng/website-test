@@ -1,0 +1,22 @@
+{
+  "title": "FAQs",
+  "slug": "faqs",
+  "order": 4,
+  "seoTitle": "FAQs | {businessName}",
+  "metaDescription": "Frequently asked questions about our Everglades airboat tours, fishing trips, fish gigging, python hunts, booking, and what to bring.",
+  "sections": [
+    {
+      "type": "pageHeader",
+      "eyebrow": "FAQs",
+      "title": "Frequently asked questions",
+      "intro": "If you don't see what you're looking for, give us a call — we're happy to answer anything about tours, booking, or what to expect."
+    },
+    {
+      "type": "faq",
+      "show": "grouped"
+    },
+    {
+      "type": "cta"
+    }
+  ]
+}

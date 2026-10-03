@@ -1,0 +1,22 @@
+---
+// Empty space between sections, with an optional thin line.
+import { type SectionSettings } from "./styles";
+
+type Props = { section: SectionSettings & { size?: "small" | "medium" | "large"; divider?: boolean } };
+const { section: s } = Astro.props;
+const heights = { small: "h-8", medium: "h-16", large: "h-28" };
+const half = { small: "py-4", medium: "py-8", large: "py-14" };
+const size = s.size ?? "medium";
+const backgrounds = { light: "", sand: "bg-sand-50", dark: "bg-moss-900", brand: "bg-moss-800" };
+const bg = backgrounds[(s.background || "light") as keyof typeof backgrounds];
+---
+
+{
+  s.divider ? (
+    <div id={s.anchor || undefined} class={[bg, half[size]].filter(Boolean).join(" ")} aria-hidden="true">
+      <div class="max-w-7xl mx-auto px-5 lg:px-8"><div class="rule" /></div>
+    </div>
+  ) : (
+    <div id={s.anchor || undefined} class={[bg, heights[size]].filter(Boolean).join(" ")} aria-hidden="true" />
+  )
+}

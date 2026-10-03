@@ -1,0 +1,50 @@
+---
+// Renders a page's sections in order. Section types and their fields are
+// set up for the editor in public/admin/config.yml.
+import Hero from "./Hero.astro";
+import PageHeader from "./PageHeader.astro";
+import Text from "./Text.astro";
+import Image from "./Image.astro";
+import Video from "./Video.astro";
+import ImageText from "./ImageText.astro";
+import Features from "./Features.astro";
+import ServicesGrid from "./ServicesGrid.astro";
+import Faq from "./Faq.astro";
+import Areas from "./Areas.astro";
+import Gallery from "./Gallery.astro";
+import Reviews from "./Reviews.astro";
+import Contact from "./Contact.astro";
+import Cta from "./Cta.astro";
+import Map from "./Map.astro";
+import Spacer from "./Spacer.astro";
+import { validateSection, type Section } from "../../data/sections";
+
+type Props = { sections?: Section[]; source: string };
+const { sections = [], source } = Astro.props;
+
+const components: Record<string, any> = {
+  hero: Hero,
+  pageHeader: PageHeader,
+  text: Text,
+  image: Image,
+  video: Video,
+  imageText: ImageText,
+  features: Features,
+  servicesGrid: ServicesGrid,
+  faq: Faq,
+  areas: Areas,
+  gallery: Gallery,
+  reviews: Reviews,
+  contact: Contact,
+  cta: Cta,
+  map: Map,
+  spacer: Spacer,
+};
+
+const items = sections.map((section, i) => {
+  validateSection(section, `${source} (section #${i + 1})`);
+  return { Component: components[section.type], section };
+});
+---
+
+{items.map(({ Component, section }) => <Component section={section} />)}

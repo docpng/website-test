@@ -1,0 +1,46 @@
+---
+// Every page built in the site editor (src/content/pages), e.g. the homepage,
+// Gallery, Reviews, FAQs, Areas We Serve and Contact Us.
+import BaseLayout from "../layouts/BaseLayout.astro";
+import SectionList from "../components/sections/SectionList.astro";
+import { fill } from "../components/sections/styles";
+import { pages, type Page } from "../data/pages";
+import { business } from "../data/business";
+import { faqItemsFor, type FaqSection } from "../data/faq-sections";
+import { localBusinessSchema, faqPageSchema, breadcrumbSchema } from "../data/schema";
+
+export function getStaticPaths() {
+  return pages.map((page) => ({
+    params: { page: page.slug || undefined },
+    props: { page },
+  }));
+}
+
+const { page } = Astro.props as { page: Page };
+const isHome = page.slug === "";
+
+// FAQ markup for Google lists exactly the questions shown on the page.
+const shownFaqs = page.sections
+  .filter((s) => s.type === "faq")
+  .flatMap((s) => faqItemsFor(s as FaqSection));
+const faqSchema = shownFaqs.length > 0 ? [faqPageSchema(shownFaqs)] : [];
+
+const schemas = isHome
+  ? [localBusinessSchema(), ...faqSchema]
+  : [
+      ...faqSchema,
+      breadcrumbSchema([
+        { name: "Home", url: business.siteUrl },
+        { name: page.title, url: `${business.siteUrl}/${page.slug}` },
+      ]),
+    ];
+---
+
+<BaseLayout
+  title={fill(page.seoTitle)}
+  description={fill(page.metaDescription)}
+  ogImage={page.ogImage ? new URL(page.ogImage, business.siteUrl).href : undefined}
+  schema={schemas}
+>
+  <SectionList sections={page.sections} source={`src/content/pages (${page.title})`} />
+</BaseLayout>

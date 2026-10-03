@@ -1,6 +1,7 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import CTABand from "../../components/CTABand.astro";
+import SectionList from "../../components/sections/SectionList.astro";
 import { serviceAreas } from "../../data/service-areas";
 import { services } from "../../data/services";
 import { business } from "../../data/business";
@@ -140,6 +141,9 @@ const schemas = [
       </div>
     </div>
   </section>
+
+  {/* Extra sections added in the site editor */}
+  <SectionList sections={area.sections} source={`src/content/service-areas/${area.slug}.json`} />
 
   <CTABand
     heading={`Ready to book from ${area.city}?`}

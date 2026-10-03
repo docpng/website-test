@@ -1,0 +1,23 @@
+{
+  "title": "Reviews",
+  "slug": "reviews",
+  "order": 3,
+  "seoTitle": "Reviews | {businessName}",
+  "metaDescription": "Read what guests say about our Everglades airboat tours, fishing trips, fish gigging, and python hunts out of Miami, straight from Google.",
+  "sections": [
+    {
+      "type": "pageHeader",
+      "eyebrow": "Reviews",
+      "title": "What our guests say",
+      "intro": "Reviews from guests who've been out on the water with us, pulled live from our Google listing."
+    },
+    {
+      "type": "reviews"
+    },
+    {
+      "type": "cta",
+      "heading": "Ready to make your own memory?",
+      "subheading": "Book a private trip and come find out what everyone's talking about."
+    }
+  ]
+}

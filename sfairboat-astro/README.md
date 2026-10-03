@@ -19,6 +19,9 @@ sfairboat-astro/
 │   └── images/gallery/    # drop your photos here
 └── src/
     ├── content/           # editable content (JSON), managed in the site editor
+    │   ├── pages/         # pages built from sections (home, gallery, contact-us, ...)
+    │   ├── theme.json     # Site Design: fonts, colors, spacing, button corners
+    │   ├── navigation.json # header menu and footer
     │   ├── business.json  # name, phone, hours, booking URL, owner, social links
     │   ├── services/      # one file per service
     │   ├── service-areas/ # one file per city
@@ -29,18 +32,18 @@ sfairboat-astro/
     │   ├── services.ts
     │   ├── service-areas.ts
     │   ├── faqs.ts
+    │   ├── pages.ts       # loads pages, checks page addresses
+    │   ├── sections.ts    # section types and their required fields
+    │   ├── theme.ts       # turns Site Design settings into fonts + CSS
+    │   ├── navigation.ts
     │   └── schema.ts      # JSON-LD generators
     ├── layouts/
     │   └── BaseLayout.astro  # head, meta, OG, schema wiring
-    ├── components/        # Header, Footer, Hero, ServiceCard, FAQList, etc.
+    ├── components/        # Header, Footer, ServiceCard, FAQList, etc.
+    │   └── sections/      # one component per section type (Hero, Text, Video, ...)
     ├── pages/
-    │   ├── index.astro
+    │   ├── [...page].astro   # every page in src/content/pages (incl. the homepage)
     │   ├── [service].astro   # one page per service (airboat-tours, python-hunts, ...)
-    │   ├── reviews.astro
-    │   ├── faqs.astro
-    │   ├── gallery.astro
-    │   ├── areas-we-serve.astro
-    │   ├── contact-us.astro
     │   └── service-area/[slug].astro  # 6 city pages, generated statically
     └── styles/
         └── global.css     # Tailwind + custom design tokens
@@ -101,7 +104,7 @@ Notes:
 ### 4. Gallery images
 - Replace the placeholder photos in the site editor (**Gallery** at `/admin`).
 
-### 5. Contact form endpoint (`src/pages/contact-us.astro`)
+### 5. Contact form endpoint (`src/components/sections/Contact.astro`)
 - The form currently points at `https://formspree.io/f/YOUR_FORM_ID`. Options:
   - Sign up for [Formspree](https://formspree.io) (free tier), paste the real form ID
   - Use [Basin](https://usebasin.com) or [Netlify Forms](https://docs.netlify.com/forms/setup/)
@@ -142,13 +145,31 @@ Once live:
 
 ## Editing content (site editor at /admin)
 
-Gallery photos, FAQs, services, service areas and business info are edited at
-**/admin** on the site, e.g. https://tekanelectronics.com/admin while on the
+Pages, gallery photos, FAQs, services, service areas, the menu and footer, the
+site's fonts and colors, and business info are all edited at **/admin** on the site, e.g. https://tekanelectronics.com/admin while on the
 test domain ([Sveltia CMS](https://sveltiacms.app)).
 Pressing **Save** commits the change to GitHub, and Cloudflare rebuilds and
 publishes the site automatically, usually within 1–2 minutes. No code or manual
 deploys needed. Reviews still come from Google automatically.
 
+- **Pages** are built from sections. Open a page, click **Add Section** to pick
+  a type, drag sections to reorder them, and set each one's background, spacing,
+  width and alignment. The **Preview** pane shows changes as you type. To make a
+  new page, click **New** under Pages and give it a page address; add it to the
+  menu under **Menu & Footer**.
+- Section types: Hero (big banner with video or photo background), Page title
+  band, Text, Image, Video (upload or YouTube/Vimeo), Photo or video beside
+  text, Feature list, Services, FAQs, Service areas, Photo gallery, Google
+  reviews, Contact details + quote form, Call/Book banner, Map, and Space /
+  divider line. Service and city pages can also get extra sections.
+- In any text you can type `{phone}`, `{businessName}`, `{ownerName}`, `{years}`,
+  `{hours}` or `{address}`. In links, `{booking}`, `{phone}`, `{maps}` and
+  `{review}` point to the booking page, tap-to-call, Google Maps and the Google
+  review form.
+- **Site Design** changes fonts, colors, default section spacing and button
+  corners across the whole site. Settings left at their original values keep
+  the original design exactly.
+- Videos are saved in `public/videos`; keep them under about 10 MB (25 MB max).
 - Adding a **service** creates its page (at `/the-page-address`) and adds it to
   the menus and homepage. Adding a **service area** creates its city page.
 - Uploaded photos are converted to WebP and resized to at most 2000px automatically.

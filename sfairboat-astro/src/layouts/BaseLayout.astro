@@ -3,6 +3,7 @@ import "../styles/global.css";
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
 import { business } from "../data/business";
+import { fontLinkHref, themeCss } from "../data/theme";
 
 type Props = {
   title: string;
@@ -59,9 +60,11 @@ const schemaArray = schema
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap"
+      href={fontLinkHref}
       rel="stylesheet"
     />
+    {/* Site Design changes made in the site editor */}
+    {themeCss && <style is:inline set:html={themeCss} />}
 
     <!-- JSON-LD Schema -->
     {

@@ -1,0 +1,261 @@
+---
+// Phone, address and links, plus the "Request a quote" form (sent via Web3Forms).
+import Section from "./Section.astro";
+import { business, addressLine } from "../../data/business";
+import { services } from "../../data/services";
+import { fill, type SectionSettings } from "./styles";
+
+type Props = { section: SectionSettings & { formHeading?: string; formIntro?: string } };
+const { section: s } = Astro.props;
+---
+
+<Section settings={s} innerClass="grid grid-cols-1 lg:grid-cols-5 gap-12">
+  <!-- Contact details -->
+  <div class="lg:col-span-2 space-y-10">
+    <div>
+      <div class="text-xs tracking-[0.2em] uppercase text-moss-600 mb-2">
+        Phone
+      </div>
+      <a
+        href={business.phoneHref}
+        class="font-display text-3xl text-moss-950 hover:text-moss-700"
+      >
+        {business.phoneDisplay}
+      </a>
+      <div class="mt-2 text-sm text-moss-800">
+        Available {business.hours.toLowerCase()}.
+      </div>
+    </div>
+
+    <div>
+      <div class="text-xs tracking-[0.2em] uppercase text-moss-600 mb-2">
+        Address
+      </div>
+      <div class="font-display text-xl text-moss-950">{addressLine}</div>
+      <a
+        href={business.googleMapsUrl}
+        target="_blank"
+        rel="noopener"
+        class="mt-2 inline-block text-sm font-semibold text-moss-900 border-b border-moss-900"
+      >
+        Open in Google Maps →
+      </a>
+    </div>
+
+    <div>
+      <div class="text-xs tracking-[0.2em] uppercase text-moss-600 mb-2">
+        Online
+      </div>
+      <ul class="space-y-2 text-moss-900">
+        <li>
+          <a href={business.social.facebook} target="_blank" rel="noopener" class="border-b border-moss-900/40 hover:border-moss-900">
+            Facebook
+          </a>
+        </li>
+        <li>
+          <a href={business.social.instagram} target="_blank" rel="noopener" class="border-b border-moss-900/40 hover:border-moss-900">
+            Instagram
+          </a>
+        </li>
+        <li>
+          <a href={business.googleReviewUrl} target="_blank" rel="noopener" class="border-b border-moss-900/40 hover:border-moss-900">
+            Leave a Google review
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Form -->
+  <div class="lg:col-span-3" id="GetAQuote">
+    <div class="bg-sand-50 border border-moss-900/10 p-8 lg:p-10">
+      <h2 class="text-moss-950">{fill(s.formHeading || "Request a quote")}</h2>
+      <p class="mt-3 text-moss-800">
+      {fill(s.formIntro || "Tell us about your group and what you're interested in. We'll get back to you quickly.")}
+    </p>
+      <form
+        id="quote-form"
+        data-phone={business.phoneDisplay}
+        class="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-5"
+        action="https://api.web3forms.com/submit"
+        method="POST"
+      >
+        <!-- Web3Forms settings (hidden from visitors) -->
+        <input type="hidden" name="access_key" value={business.formAccessKey} />
+        <input type="hidden" name="subject" value="New quote request from the website" />
+        <input type="hidden" name="from_name" value={`${business.name} Website`} />
+        <!-- Spam trap: real visitors never see or check this -->
+        <input type="checkbox" name="botcheck" class="hidden" style="display: none;" tabindex="-1" autocomplete="off" />
+
+        <label class="block">
+          <span class="block text-sm font-medium text-moss-900 mb-1.5">Name</span>
+          <input
+            required
+            type="text"
+            name="name"
+            class="w-full border border-moss-900/20 bg-bone px-4 py-3 focus:border-moss-700 focus:outline-none"
+          />
+        </label>
+        <label class="block">
+          <span class="block text-sm font-medium text-moss-900 mb-1.5">Phone</span>
+          <input
+            required
+            type="tel"
+            name="phone"
+            class="w-full border border-moss-900/20 bg-bone px-4 py-3 focus:border-moss-700 focus:outline-none"
+          />
+        </label>
+        <label class="block sm:col-span-2">
+          <span class="block text-sm font-medium text-moss-900 mb-1.5">Email</span>
+          <input
+            required
+            type="email"
+            name="email"
+            class="w-full border border-moss-900/20 bg-bone px-4 py-3 focus:border-moss-700 focus:outline-none"
+          />
+        </label>
+        <label class="block sm:col-span-2">
+          <span class="block text-sm font-medium text-moss-900 mb-1.5">
+            What are you interested in?
+          </span>
+          <select
+            name="service"
+            class="w-full border border-moss-900/20 bg-bone px-4 py-3 focus:border-moss-700 focus:outline-none"
+          >
+            {services.map((s) => <option>{s.shortName}</option>)}
+            <option>Not sure — looking for recommendations</option>
+          </select>
+        </label>
+        <label class="block">
+          <span class="block text-sm font-medium text-moss-900 mb-1.5">Preferred date</span>
+          <input
+            required
+            type="date"
+            name="requested_date"
+            id="requested-date"
+            class="w-full border border-moss-900/20 bg-bone px-4 py-3 focus:border-moss-700 focus:outline-none"
+          />
+        </label>
+        <label class="block">
+          <span class="block text-sm font-medium text-moss-900 mb-1.5">Preferred time</span>
+          <input
+            required
+            type="time"
+            name="requested_time"
+            step="900"
+            class="w-full border border-moss-900/20 bg-bone px-4 py-3 focus:border-moss-700 focus:outline-none"
+          />
+        </label>
+        <label class="block sm:col-span-2">
+          <span class="block text-sm font-medium text-moss-900 mb-1.5">
+            Tell us more
+          </span>
+          <textarea
+            name="message"
+            rows="5"
+            class="w-full border border-moss-900/20 bg-bone px-4 py-3 focus:border-moss-700 focus:outline-none resize-y"
+            placeholder="Group size, flexibility on dates, anything else we should know"
+          ></textarea>
+        </label>
+        <div class="sm:col-span-2 flex flex-col sm:flex-row gap-3 pt-2">
+          <button
+            type="submit"
+            class="inline-flex items-center justify-center bg-moss-900 text-bone px-7 py-3.5 font-medium hover:bg-moss-800"
+          >
+            Send request
+          </button>
+          <a
+            href={business.bookingUrl}
+            class="inline-flex items-center justify-center bg-sand-400 text-moss-950 px-7 py-3.5 font-medium hover:bg-sand-300"
+          >
+            Or book online now
+          </a>
+        </div>
+        <p
+          id="form-status"
+          class="sm:col-span-2 text-sm hidden"
+          role="status"
+          aria-live="polite"
+        ></p>
+      </form>
+    </div>
+  </div>
+</Section>
+
+<script>
+  // Sends the form in the background so visitors stay on the page,
+  // then shows a thank-you (or error) message under the button.
+  const form = document.getElementById("quote-form") as HTMLFormElement | null;
+  const statusEl = document.getElementById("form-status");
+
+  function showStatus(message: string, colorClass: string) {
+    if (!statusEl) return;
+    statusEl.textContent = message;
+    statusEl.className = `sm:col-span-2 text-sm font-medium ${colorClass}`;
+  }
+
+  // Don't allow past dates. Set in the browser so "today" is always current
+  // (the site is pre-built, so setting it at build time would go stale).
+  const dateInput = document.getElementById("requested-date") as HTMLInputElement | null;
+  if (dateInput) {
+    const now = new Date();
+    const pad = (n: number) => String(n).padStart(2, "0");
+    dateInput.min = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
+  }
+
+  // "2026-10-10" -> "Saturday, October 10, 2026"
+  function formatDate(value: string) {
+    const [y, m, d] = value.split("-").map(Number);
+    if (!y || !m || !d) return value;
+    return new Date(y, m - 1, d).toLocaleDateString("en-US", {
+      weekday: "long",
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+  }
+
+  // "14:30" -> "2:30 PM"
+  function formatTime(value: string) {
+    const [h, min] = value.split(":").map(Number);
+    if (Number.isNaN(h) || Number.isNaN(min)) return value;
+    const suffix = h >= 12 ? "PM" : "AM";
+    return `${h % 12 || 12}:${String(min).padStart(2, "0")} ${suffix}`;
+  }
+
+  form?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const button = form.querySelector<HTMLButtonElement>('button[type="submit"]');
+    const originalLabel = button?.textContent ?? "Send request";
+    if (button) {
+      button.disabled = true;
+      button.textContent = "Sending...";
+    }
+
+    try {
+      const data: Record<string, FormDataEntryValue> = Object.fromEntries(new FormData(form).entries());
+      if (typeof data.requested_date === "string") data.requested_date = formatDate(data.requested_date);
+      if (typeof data.requested_time === "string") data.requested_time = formatTime(data.requested_time);
+      const response = await fetch(form.action, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify(data),
+      });
+      const result = await response.json();
+      if (!result.success) throw new Error(result.message);
+
+      form.reset();
+      showStatus("Thanks! Your request was sent. We'll get back to you shortly.", "text-moss-700");
+    } catch {
+      showStatus(
+        `Sorry, something went wrong sending your request. Please call us at ${form.dataset.phone}.`,
+        "text-rust-600"
+      );
+    } finally {
+      if (button) {
+        button.disabled = false;
+        button.textContent = originalLabel;
+      }
+    }
+  });
+</script>

@@ -1,0 +1,16 @@
+---
+// Heading plus paragraphs (Markdown: **bold**, *italics*, [links](url), lists).
+import Section from "./Section.astro";
+import SectionHeading from "./SectionHeading.astro";
+import { isDark, markdown, tone, type SectionSettings } from "./styles";
+
+type Props = { section: SectionSettings & { eyebrow?: string; heading?: string; body?: string } };
+const { section: s } = Astro.props;
+const dark = isDark(s);
+const t = tone(dark);
+---
+
+<Section settings={s} defaultWidth="narrow">
+  <SectionHeading eyebrow={s.eyebrow} heading={s.heading} dark={dark} />
+  {s.body && <div class={`${s.heading || s.eyebrow ? "mt-8 " : ""}space-y-5 ${t.body} rich-text`} set:html={markdown(s.body)} />}
+</Section>

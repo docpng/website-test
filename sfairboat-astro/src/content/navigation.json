@@ -1,0 +1,26 @@
+{
+  "menu": [
+    { "label": "Home", "link": "/", "submenu": "none" },
+    { "label": "Services", "link": "", "submenu": "services" },
+    { "label": "Reviews", "link": "/reviews", "submenu": "none" },
+    { "label": "FAQs", "link": "/faqs", "submenu": "none" },
+    { "label": "Gallery", "link": "/gallery", "submenu": "none" },
+    { "label": "Areas We Serve", "link": "/areas-we-serve", "submenu": "none" },
+    { "label": "Contact", "link": "/contact-us", "submenu": "none" }
+  ],
+  "showPhone": true,
+  "bookButtonLabel": "Book Now",
+  "bookButtonLink": "{booking}",
+  "footerAbout": "Veteran-owned, locally run. Private Everglades airboat tours, fishing, python hunts, and lobster bully netting out of Miami.",
+  "showSocialIcons": true,
+  "footerLinksHeading": "Quick Links",
+  "footerLinks": [
+    { "label": "Home", "link": "/" },
+    { "label": "Reviews", "link": "/reviews" },
+    { "label": "FAQs", "link": "/faqs" },
+    { "label": "Gallery", "link": "/gallery" },
+    { "label": "Areas We Serve", "link": "/areas-we-serve" },
+    { "label": "Contact Us", "link": "/contact-us" }
+  ],
+  "footerNote": "Veteran-owned small business"
+}

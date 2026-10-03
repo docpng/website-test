@@ -1,0 +1,54 @@
+---
+// Photo grid: the site gallery (Gallery in the editor) or a custom set.
+import Section from "./Section.astro";
+import SectionHeading from "./SectionHeading.astro";
+import gallery from "../../content/gallery.json";
+import { requireFields } from "../../data/validate";
+import { isDark, type SectionSettings } from "./styles";
+
+type Photo = { image: string; alt: string };
+type Props = {
+  section: SectionSettings & {
+    eyebrow?: string;
+    heading?: string;
+    source?: "site" | "custom";
+    photos?: Photo[];
+    columns?: 2 | 3 | 4;
+    limit?: number;
+  };
+};
+const { section: s } = Astro.props;
+const dark = isDark(s);
+const source = s.source === "custom" ? s.photos ?? [] : (gallery.photos as Photo[]);
+const photos = source
+  .filter((p) => p.image)
+  .slice(0, s.limit || undefined)
+  .map((p, i) => requireFields(p, ["image", "alt"], `gallery section (photo #${i + 1})`));
+const grid = {
+  2: "grid grid-cols-1 sm:grid-cols-2 gap-3",
+  3: "grid grid-cols-2 md:grid-cols-3 gap-3",
+  4: "grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3",
+}[s.columns ?? 4];
+---
+
+<Section settings={s}>
+  <SectionHeading eyebrow={s.eyebrow} heading={s.heading} dark={dark} headingClass="mb-10" />
+  <div class={grid}>
+    {
+      photos.map((p) => (
+        <figure class="aspect-square bg-moss-800 overflow-hidden relative">
+          <img
+            src={p.image}
+            alt={p.alt}
+            loading="lazy"
+            decoding="async"
+            class="w-full h-full object-cover"
+            onerror="this.style.display='none'; this.parentElement.classList.add('placeholder')"
+          />
+          <figcaption class="sr-only">{p.alt}</figcaption>
+        </figure>
+      ))
+    }
+  </div>
+
+</Section>

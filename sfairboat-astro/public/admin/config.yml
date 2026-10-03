@@ -23,9 +23,10 @@ site_url: https://www.sfairboatadventures.com
 display_url: https://www.sfairboatadventures.com
 logo_url: /favicon.svg
 
-# Uploaded photos are saved here and shrunk to web size automatically.
-media_folder: sfairboat-astro/public/images/gallery
-public_folder: /images/gallery
+# Photos and files uploaded in the editor are saved here and shrunk to web size
+# automatically. Gallery photos and videos have their own folders (see below).
+media_folder: sfairboat-astro/public/images/uploads
+public_folder: /images/uploads
 media_libraries:
   default:
     config:
@@ -39,6 +40,503 @@ media_libraries:
           height: 2000
 
 collections:
+  # ------------------------------------------------------------------ Pages
+  - name: pages
+    label: Pages
+    label_singular: Page
+    icon: web
+    description: >-
+      Build pages from sections. Add, remove and drag sections to reorder them.
+      In text you can type {phone}, {businessName}, {ownerName}, {years},
+      {hours} or {address}, and they fill in automatically.
+    folder: sfairboat-astro/src/content/pages
+    format: json
+    extension: json
+    identifier_field: title
+    slug: "{{title}}"
+    summary: "{{title}}"
+    sortable_fields: [order, title]
+    preview_path: "{{fields.slug}}"
+    fields:
+      - { name: title, label: Page name, widget: string, hint: "Used in the breadcrumb and page list, e.g. “Gallery”." }
+      - name: slug
+        label: Page address
+        widget: string
+        required: false
+        pattern: ["^([a-z0-9]+(-[a-z0-9]+)*)?$", "Use lowercase letters, numbers and dashes only, e.g. our-boats"]
+        hint: >-
+          The page lives at yoursite.com/THIS-VALUE. Leave empty only for the
+          homepage. To show it in the menu, add it under Menu & Footer.
+      - { name: order, label: Display order, widget: number, value_type: int, default: 10, hint: Only affects the order in this list. }
+      - name: seoTitle
+        label: Google title
+        widget: string
+        hint: Shown in Google results and the browser tab (about 50–60 characters). {businessName} works here.
+      - name: metaDescription
+        label: Google description
+        widget: text
+        hint: Shown in Google results (about 150–160 characters).
+      - name: ogImage
+        label: Sharing image
+        widget: image
+        required: false
+        hint: Shown when the page is shared on Facebook, texts, etc. Best at 1200 × 630.
+      - name: sections
+        label: Sections
+        label_singular: Section
+        widget: list
+        collapsed: true
+        hint: Click “Add Section” to choose a section type. Drag sections to change their order.
+        types: &section_types
+          # ---- Hero
+          - name: hero
+            label: Hero (big opening banner)
+            summary: "{{fields.heading}}"
+            fields:
+              - &f_eyebrow { name: eyebrow, label: Small text above the heading, widget: string, required: false }
+              - { name: heading, label: Heading, widget: string }
+              - { name: text, label: Text, widget: text, required: false }
+              - name: media
+                label: Background
+                widget: select
+                default: none
+                options:
+                  - { label: Video, value: video }
+                  - { label: Photo, value: image }
+                  - { label: Plain (dark with texture), value: none }
+              - &f_video
+                name: video
+                label: Background video (MP4)
+                widget: file
+                required: false
+                accept: video/mp4
+                media_folder: /sfairboat-astro/public/videos
+                public_folder: /videos
+                hint: Keep videos short and under about 10 MB so the page loads fast. 25 MB is the maximum.
+              - { name: poster, label: Still image shown while the video loads, widget: image, required: false }
+              - { name: image, label: Background photo, widget: image, required: false }
+              - name: overlay
+                label: Darkening over the background
+                widget: select
+                default: medium
+                options:
+                  - { label: Light, value: light }
+                  - { label: Medium, value: medium }
+                  - { label: Strong, value: strong }
+              - name: buttons
+                label: Buttons
+                label_singular: Button
+                widget: list
+                required: false
+                summary: "{{fields.label}}"
+                fields:
+                  - { name: label, label: Button text, widget: string }
+                  - &f_link
+                    name: link
+                    label: Link
+                    widget: string
+                    hint: >-
+                      A page like /gallery, a full web address, or {booking}
+                      (online booking), {phone} (tap to call), {maps}, {review}.
+                  - name: style
+                    label: Style
+                    widget: select
+                    default: primary
+                    options:
+                      - { label: Solid, value: primary }
+                      - { label: Outline, value: outline }
+              - name: stats
+                label: Highlights strip
+                label_singular: Highlight
+                widget: list
+                required: false
+                max: 4
+                summary: "{{fields.value}} {{fields.label}}"
+                fields:
+                  - { name: value, label: Big text, widget: string, hint: e.g. “10+” }
+                  - { name: label, label: Small text, widget: string, hint: e.g. “Years guiding the Glades” }
+              - &f_spacing
+                name: spacing
+                label: Space above and below
+                widget: select
+                required: false
+                hint: Leave empty to use the site default (Site Design).
+                options:
+                  - { label: None, value: none }
+                  - { label: Compact, value: compact }
+                  - { label: Normal, value: normal }
+                  - { label: Roomy, value: roomy }
+              - &f_width
+                name: width
+                label: Content width
+                widget: select
+                required: false
+                options:
+                  - { label: Narrow, value: narrow }
+                  - { label: Medium, value: medium }
+                  - { label: Wide, value: wide }
+                  - { label: Full width, value: full }
+              - &f_align
+                name: align
+                label: Alignment
+                widget: select
+                required: false
+                default: left
+                options:
+                  - { label: Left, value: left }
+                  - { label: Centered, value: center }
+              - &f_anchor
+                name: anchor
+                label: Anchor name
+                widget: string
+                required: false
+                pattern: ["^([a-z0-9-]+)?$", "Use lowercase letters, numbers and dashes"]
+                hint: Optional. Lets you link straight to this section, e.g. “pricing” → /page#pricing.
+
+          # ---- Page title
+          - name: pageHeader
+            label: Page title band
+            summary: "{{fields.title}}"
+            fields:
+              - *f_eyebrow
+              - { name: title, label: Title, widget: string }
+              - { name: intro, label: Intro text, widget: text, required: false }
+              - name: background
+                label: Background
+                widget: select
+                required: false
+                options:
+                  - { label: Dark, value: dark }
+                  - { label: Brand, value: brand }
+              - *f_spacing
+              - *f_width
+              - *f_align
+              - *f_anchor
+
+          # ---- Text
+          - name: text
+            label: Text
+            summary: "{{fields.heading}}"
+            fields:
+              - *f_eyebrow
+              - &f_heading { name: heading, label: Heading, widget: string, required: false }
+              - &f_body
+                name: body
+                label: Text
+                widget: markdown
+                required: false
+                buttons: [bold, italic, link, bulleted-list, numbered-list]
+                editor_components: []
+                modes: [rich_text]
+              - &f_background
+                name: background
+                label: Background
+                widget: select
+                required: false
+                options:
+                  - { label: Light, value: light }
+                  - { label: Sand, value: sand }
+                  - { label: Dark, value: dark }
+                  - { label: Brand, value: brand }
+              - *f_spacing
+              - *f_width
+              - *f_align
+              - *f_anchor
+
+          # ---- Image
+          - name: image
+            label: Image
+            summary: "{{fields.alt}}"
+            fields:
+              - *f_eyebrow
+              - *f_heading
+              - { name: image, label: Photo, widget: image }
+              - &f_alt { name: alt, label: Description, widget: string, hint: Describe the photo in a few words. Used by screen readers and Google. }
+              - { name: caption, label: Caption, widget: string, required: false }
+              - *f_background
+              - *f_spacing
+              - *f_width
+              - *f_align
+              - *f_anchor
+
+          # ---- Video
+          - name: video
+            label: Video
+            summary: "{{fields.heading}}"
+            fields:
+              - *f_eyebrow
+              - *f_heading
+              - name: source
+                label: Video source
+                widget: select
+                default: upload
+                options:
+                  - { label: Uploaded video file, value: upload }
+                  - { label: YouTube or Vimeo link, value: link }
+              - { name: file, label: Video file (MP4), widget: file, required: false, accept: video/mp4, media_folder: /sfairboat-astro/public/videos, public_folder: /videos, hint: Keep it under about 10 MB. 25 MB is the maximum. }
+              - { name: poster, label: Still image before it plays, widget: image, required: false }
+              - { name: url, label: YouTube or Vimeo link, widget: string, required: false, hint: "e.g. https://www.youtube.com/watch?v=… or https://vimeo.com/…" }
+              - name: playback
+                label: How an uploaded video plays
+                widget: select
+                default: loop
+                options:
+                  - { label: Silent loop that starts by itself, value: loop }
+                  - { label: Play button with sound, value: controls }
+              - { name: caption, label: Caption, widget: string, required: false }
+              - *f_background
+              - *f_spacing
+              - *f_width
+              - *f_align
+              - *f_anchor
+
+          # ---- Image + text
+          - name: imageText
+            label: Photo or video beside text
+            summary: "{{fields.heading}}"
+            fields:
+              - name: media
+                label: Media
+                widget: select
+                default: image
+                options:
+                  - { label: Photo, value: image }
+                  - { label: Uploaded video (silent loop), value: video }
+                  - { label: YouTube or Vimeo link, value: link }
+              - { name: image, label: Photo, widget: image, required: false }
+              - { name: alt, label: Photo description, widget: string, required: false }
+              - { name: video, label: Video file (MP4), widget: file, required: false, accept: video/mp4, media_folder: /sfairboat-astro/public/videos, public_folder: /videos }
+              - { name: url, label: YouTube or Vimeo link, widget: string, required: false }
+              - name: side
+                label: Media side
+                widget: select
+                default: left
+                options:
+                  - { label: Left, value: left }
+                  - { label: Right, value: right }
+              - *f_eyebrow
+              - *f_heading
+              - *f_body
+              - { name: buttonLabel, label: Button text, widget: string, required: false }
+              - { name: buttonLink, label: Button link, widget: string, required: false, hint: "A page like /gallery, a web address, or {booking}, {phone}." }
+              - *f_background
+              - *f_spacing
+              - *f_width
+              - *f_anchor
+
+          # ---- Features
+          - name: features
+            label: Feature list (“Why choose us”)
+            summary: "{{fields.heading}}"
+            fields:
+              - *f_eyebrow
+              - *f_heading
+              - { name: intro, label: Intro text, widget: text, required: false }
+              - name: layout
+                label: Layout
+                widget: select
+                default: side
+                options:
+                  - { label: "Intro on the left, points on the right", value: side }
+                  - { label: Intro on top, value: stacked }
+              - name: columns
+                label: Columns
+                widget: select
+                default: 2
+                options:
+                  - { label: "2", value: 2 }
+                  - { label: "3", value: 3 }
+                  - { label: "4", value: 4 }
+              - { name: numbered, label: "Show numbers (01, 02…)", widget: boolean, default: true }
+              - name: items
+                label: Points
+                label_singular: Point
+                widget: list
+                summary: "{{fields.title}}"
+                fields:
+                  - { name: title, label: Title, widget: string }
+                  - { name: body, label: Text, widget: text, required: false }
+              - *f_background
+              - *f_spacing
+              - *f_width
+              - *f_align
+              - *f_anchor
+
+          # ---- Services
+          - name: servicesGrid
+            label: Services (cards)
+            summary: "{{fields.heading}}"
+            fields:
+              - *f_eyebrow
+              - *f_heading
+              - &f_link_label { name: linkLabel, label: Link text (top right), widget: string, required: false }
+              - &f_link_url { name: link, label: Link, widget: string, required: false, hint: "A page like /faqs, or a web address." }
+              - *f_background
+              - *f_spacing
+              - *f_width
+              - *f_align
+              - *f_anchor
+
+          # ---- FAQ
+          - name: faq
+            label: FAQs
+            summary: "{{fields.heading}}"
+            fields:
+              - *f_eyebrow
+              - *f_heading
+              - name: show
+                label: Which questions
+                widget: select
+                default: first
+                options:
+                  - { label: The first few (set the number below), value: first }
+                  - { label: Only these categories, value: categories }
+                  - { label: "All, grouped by category", value: grouped }
+              - { name: count, label: How many, widget: number, value_type: int, required: false, hint: Leave empty to show all. }
+              - name: categories
+                label: Categories
+                widget: select
+                multiple: true
+                required: false
+                options: &faq_category_options
+                  - { label: Airboat tours, value: tours }
+                  - { label: Fishing, value: fishing }
+                  - { label: Python hunts, value: python }
+                  - { label: Lobster bully netting, value: lobster }
+                  - { label: Booking & logistics, value: logistics }
+                  - { label: General, value: general }
+              - *f_link_label
+              - *f_link_url
+              - name: background
+                label: Background
+                widget: select
+                required: false
+                options:
+                  - { label: Light, value: light }
+                  - { label: Sand, value: sand }
+              - *f_spacing
+              - *f_width
+              - *f_anchor
+
+          # ---- Areas
+          - name: areas
+            label: Service areas (cities)
+            summary: "{{fields.heading}}"
+            fields:
+              - *f_eyebrow
+              - *f_heading
+              - name: style
+                label: Style
+                widget: select
+                default: tiles
+                options:
+                  - { label: Small tiles, value: tiles }
+                  - { label: Large cards with details, value: cards }
+              - *f_background
+              - *f_spacing
+              - *f_width
+              - *f_align
+              - *f_anchor
+
+          # ---- Gallery
+          - name: gallery
+            label: Photo gallery
+            summary: "{{fields.heading}}"
+            fields:
+              - *f_eyebrow
+              - *f_heading
+              - name: source
+                label: Photos
+                widget: select
+                default: site
+                options:
+                  - { label: The site Gallery (edited under Gallery), value: site }
+                  - { label: Pick photos for this section, value: custom }
+              - name: photos
+                label: Photos for this section
+                label_singular: Photo
+                widget: list
+                required: false
+                summary: "{{fields.alt}}"
+                fields:
+                  - { name: image, label: Photo, widget: image }
+                  - *f_alt
+              - name: columns
+                label: Photos per row (desktop)
+                widget: select
+                default: 4
+                options:
+                  - { label: "2", value: 2 }
+                  - { label: "3", value: 3 }
+                  - { label: "4", value: 4 }
+              - { name: limit, label: Show at most, widget: number, value_type: int, required: false, hint: Leave empty to show all. }
+              - *f_background
+              - *f_spacing
+              - *f_width
+              - *f_anchor
+
+          # ---- Reviews
+          - name: reviews
+            label: Google reviews (live)
+            fields:
+              - *f_spacing
+              - *f_width
+              - *f_anchor
+
+          # ---- Contact
+          - name: contact
+            label: Contact details and quote form
+            fields:
+              - { name: formHeading, label: Form heading, widget: string, required: false, default: Request a quote }
+              - { name: formIntro, label: Form intro, widget: text, required: false }
+              - *f_spacing
+              - *f_width
+              - *f_anchor
+
+          # ---- Call to action
+          - name: cta
+            label: Call / Book banner
+            summary: "{{fields.heading}}"
+            fields:
+              - { name: heading, label: Heading, widget: string, required: false, hint: "Default: “Ready to get out on the water?”" }
+              - { name: subheading, label: Text, widget: string, required: false }
+
+          # ---- Map
+          - name: map
+            label: Map
+            summary: "{{fields.heading}}"
+            fields:
+              - *f_eyebrow
+              - *f_heading
+              - name: height
+                label: Height
+                widget: select
+                default: medium
+                options:
+                  - { label: Short, value: short }
+                  - { label: Medium, value: medium }
+                  - { label: Tall, value: tall }
+              - *f_background
+              - *f_spacing
+              - *f_width
+              - *f_anchor
+
+          # ---- Spacer
+          - name: spacer
+            label: Space / divider line
+            fields:
+              - name: size
+                label: Size
+                widget: select
+                default: medium
+                options:
+                  - { label: Small, value: small }
+                  - { label: Medium, value: medium }
+                  - { label: Large, value: large }
+              - { name: divider, label: Show a thin line, widget: boolean, default: false }
+              - *f_background
+              - *f_anchor
+
   # ---------------------------------------------------------------- Gallery
   - name: gallery
     label: Gallery
@@ -55,7 +553,11 @@ collections:
             widget: list
             summary: "{{fields.alt}}"
             fields:
-              - { name: image, label: Photo, widget: image }
+              - name: image
+                label: Photo
+                widget: image
+                media_folder: /sfairboat-astro/public/images/gallery
+                public_folder: /images/gallery
               - name: alt
                 label: Description
                 widget: string
@@ -90,7 +592,7 @@ collections:
                   - { label: Fishing, value: fishing }
                   - { label: Python hunts, value: python }
                   - { label: Lobster bully netting, value: lobster }
-                  - { label: Location & booking, value: logistics }
+                  - { label: Booking & logistics, value: logistics }
                   - { label: General, value: general }
 
   # --------------------------------------------------------------- Services
@@ -168,6 +670,14 @@ collections:
         multiple: true
         options: *faq_categories
       - { name: faqLimit, label: Number of FAQs shown, widget: number, value_type: int, default: 4 }
+      - name: sections
+        label: Extra sections
+        label_singular: Section
+        widget: list
+        collapsed: true
+        required: false
+        hint: Optional sections shown near the bottom of this page, above the closing banner.
+        types: *section_types
       - name: seoTitle
         label: Google title
         widget: string
@@ -217,6 +727,129 @@ collections:
       - { name: driveTime, label: Drive time, widget: string, hint: e.g. “About 25 minutes west.” }
       - { name: seoTitle, label: Google title, widget: string }
       - { name: metaDescription, label: Google description, widget: text }
+      - name: sections
+        label: Extra sections
+        label_singular: Section
+        widget: list
+        collapsed: true
+        required: false
+        hint: Optional sections shown near the bottom of this page, above the closing banner.
+        types: *section_types
+
+  # ------------------------------------------------------------ Site Design
+  - name: design
+    label: Site Design
+    icon: palette
+    files:
+      - name: theme
+        label: Fonts, Colors & Spacing
+        file: sfairboat-astro/src/content/theme.json
+        fields:
+          - name: headingFont
+            label: Heading font
+            widget: select
+            options: &font_options
+              - Fraunces
+              - Playfair Display
+              - Lora
+              - Merriweather
+              - Libre Baskerville
+              - DM Serif Display
+              - Oswald
+              - Montserrat
+              - Poppins
+              - Raleway
+              - Inter
+              - Open Sans
+              - Source Sans 3
+              - Lato
+              - Nunito
+              - Roboto
+              - Work Sans
+            hint: The original design uses Fraunces.
+          - name: bodyFont
+            label: Text font
+            widget: select
+            options: *font_options
+            hint: The original design uses Inter.
+          - name: darkColor
+            label: Main color
+            widget: color
+            hint: "Used for dark backgrounds, buttons and headings. Lighter and darker shades are worked out automatically. Original is #142319."
+          - name: accentColor
+            label: Accent color
+            widget: color
+            hint: "Used for highlights and the “Book” buttons. Original is #c2a35e."
+          - name: backgroundColor
+            label: Page background
+            widget: color
+            hint: "Original is #f6f2e8."
+          - name: sectionSpacing
+            label: Space between sections (site default)
+            widget: select
+            options:
+              - { label: Compact, value: compact }
+              - { label: Normal, value: normal }
+              - { label: Roomy, value: roomy }
+          - name: buttonCorners
+            label: Button corners
+            widget: select
+            options:
+              - { label: Square, value: square }
+              - { label: Rounded, value: rounded }
+              - { label: Pill, value: pill }
+
+  # ---------------------------------------------------------- Menu & footer
+  - name: navigation
+    label: Menu & Footer
+    icon: menu
+    files:
+      - name: navigation
+        label: Menu & Footer
+        file: sfairboat-astro/src/content/navigation.json
+        fields:
+          - name: menu
+            label: Menu items
+            label_singular: Menu item
+            widget: list
+            summary: "{{fields.label}}"
+            hint: Drag to reorder.
+            fields:
+              - { name: label, label: Text, widget: string }
+              - name: submenu
+                label: Dropdown
+                widget: select
+                default: none
+                options:
+                  - { label: No dropdown (plain link), value: none }
+                  - { label: All services (automatic), value: services }
+                  - { label: My own links, value: custom }
+              - { name: link, label: Link, widget: string, required: false, hint: "For a plain link: a page like /gallery, a web address, or {booking}." }
+              - name: children
+                label: Dropdown links
+                label_singular: Link
+                widget: list
+                required: false
+                summary: "{{fields.label}}"
+                hint: Only used when Dropdown is “My own links”.
+                fields:
+                  - { name: label, label: Text, widget: string }
+                  - { name: link, label: Link, widget: string }
+          - { name: showPhone, label: Show phone number in the header, widget: boolean, default: true }
+          - { name: bookButtonLabel, label: Header button text, widget: string, default: Book Now }
+          - { name: bookButtonLink, label: Header button link, widget: string, default: "{booking}", hint: "{booking} is your online booking page." }
+          - { name: footerAbout, label: Footer about text, widget: text, required: false }
+          - { name: showSocialIcons, label: Show social media icons in the footer, widget: boolean, default: true }
+          - { name: footerLinksHeading, label: Footer links heading, widget: string, default: Quick Links }
+          - name: footerLinks
+            label: Footer links
+            label_singular: Link
+            widget: list
+            summary: "{{fields.label}}"
+            fields:
+              - { name: label, label: Text, widget: string }
+              - { name: link, label: Link, widget: string }
+          - { name: footerNote, label: Small note at the bottom, widget: string, required: false }
 
   # ---------------------------------------------------------- Business info
   - name: settings

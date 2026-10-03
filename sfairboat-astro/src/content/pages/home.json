@@ -1,0 +1,103 @@
+{
+  "title": "Home",
+  "slug": "",
+  "order": 1,
+  "seoTitle": "Miami Airboat Tours & Everglades Adventures | {businessName}",
+  "metaDescription": "Veteran-owned, private Everglades airboat tours out of Miami. Guided fishing trips, fish gigging, python hunts, and lobster bully netting led by a true Gladesman.",
+  "sections": [
+    {
+      "type": "hero",
+      "eyebrow": "Private Tours · Tailored Adventures · Miami, FL",
+      "heading": "Private Everglades airboat tours, guided by a true Gladesman.",
+      "text": "Fast rides, slow drifts, nighttime fish gigging, Everglades fishing trips, python hunts, and lobster bully netting — all private, all tailored to your group.",
+      "media": "video",
+      "video": "/videos/hero.mp4",
+      "poster": "/videos/hero-poster.jpg",
+      "overlay": "medium",
+      "buttons": [
+        {
+          "label": "Book Your Trip",
+          "link": "{booking}",
+          "style": "primary"
+        },
+        {
+          "label": "Call {phone}",
+          "link": "{phone}",
+          "style": "outline"
+        }
+      ],
+      "stats": [
+        {
+          "value": "10+",
+          "label": "Years guiding the Glades"
+        },
+        {
+          "value": "100%",
+          "label": "Private trips, always"
+        },
+        {
+          "value": "24/7",
+          "label": "By appointment"
+        }
+      ]
+    },
+    {
+      "type": "servicesGrid",
+      "eyebrow": "What we do",
+      "heading": "Five ways to get out on the water",
+      "linkLabel": "See service areas",
+      "link": "/areas-we-serve"
+    },
+    {
+      "type": "features",
+      "eyebrow": "Why ride with us",
+      "heading": "A local operation that still runs like one.",
+      "intro": "{businessName} offers private, customized airboat tours and Everglades experiences throughout Miami and the surrounding areas. Owned and operated by {ownerName}, a true Gladesman with over {years} years of combined experience, our business is built on local knowledge, passion, and authenticity.",
+      "layout": "side",
+      "columns": 2,
+      "numbered": true,
+      "items": [
+        {
+          "title": "Veteran-owned, small business values",
+          "body": "As a veteran-owned small business, we bring discipline, dedication, and a personal touch to every airboat and fishing tour. We value integrity and take pride in delivering an experience that reflects our roots and commitment."
+        },
+        {
+          "title": "Private, tailored experiences",
+          "body": "We keep things personal. Our tours are private and crafted to fit your group, giving you the freedom to explore the Everglades on your own terms — not on someone else's schedule."
+        },
+        {
+          "title": "Custom tours, your way",
+          "body": "Every outing is shaped around what you want to do — whether it's fishing, sightseeing, or tracking the wild. We believe no two adventures should be the same."
+        },
+        {
+          "title": "Led by a true Gladesman",
+          "body": "You're not just getting a guide — you're riding with a real Gladesman. Born and raised in the culture of the Everglades, we bring generations of knowledge and an authentic edge to your tour."
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "eyebrow": "About",
+      "heading": "It's not just a tour — it's your adventure, your way.",
+      "body": "We specialize in thrilling airboat rides, peaceful Everglades fishing trips, nighttime fish gigging, python hunts, and lobster bully netting — all tailored specifically to your group's preferences. Every tour is private and built around your adventure, ensuring a personal experience guided by someone who lives and breathes the Everglades.\n\nAs a proud veteran-owned small business, we're committed to delivering safe, unforgettable experiences that connect you with Florida's wild side — whether you're a first-time visitor or a returning thrill-seeker."
+    },
+    {
+      "type": "faq",
+      "eyebrow": "Frequently asked",
+      "heading": "Common questions, answered",
+      "show": "first",
+      "count": 4,
+      "linkLabel": "See all FAQs",
+      "link": "/faqs"
+    },
+    {
+      "type": "areas",
+      "eyebrow": "Where we serve",
+      "heading": "Serving all of South Florida",
+      "style": "tiles"
+    },
+    {
+      "type": "cta"
+    }
+  ]
+}

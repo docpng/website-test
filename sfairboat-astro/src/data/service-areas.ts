@@ -1,3 +1,4 @@
+import type { Section } from "./sections";
 import { requireFields, loadFolder } from "./validate";
 
 // Content lives in src/content/service-areas/*.json (edited in the CMS at /admin).
@@ -13,6 +14,8 @@ export type ServiceArea = {
   intro: string;
   localAngle: string;
   driveTime: string;
+  // Optional extra sections shown before the closing banner
+  sections?: Section[];
 };
 
 export const serviceAreas: ServiceArea[] = loadFolder<ServiceArea>(

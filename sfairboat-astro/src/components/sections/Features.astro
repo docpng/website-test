@@ -1,0 +1,88 @@
+---
+// "Why choose us"-style grid of short points, optionally numbered.
+import Section from "./Section.astro";
+import { fill, isDark, tone, type SectionSettings } from "./styles";
+
+type Props = {
+  section: SectionSettings & {
+    eyebrow?: string;
+    heading?: string;
+    intro?: string;
+    layout?: "side" | "stacked";
+    columns?: 2 | 3 | 4;
+    numbered?: boolean;
+    items: { title: string; body?: string }[];
+  };
+};
+const { section: s } = Astro.props;
+const dark = isDark(s, { background: "sand" });
+const t = tone(dark);
+const numbered = s.numbered !== false;
+const side = (s.layout ?? "side") === "side";
+const gridCols = {
+  2: "grid grid-cols-1 sm:grid-cols-2 gap-6",
+  3: "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6",
+  4: "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6",
+}[s.columns ?? 2];
+const hasIntro = Boolean(s.eyebrow || s.heading || s.intro);
+---
+
+<Section settings={s} defaultBackground="sand">
+  {
+    side && hasIntro ? (
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-12">
+        <div class="lg:col-span-4">
+          {s.eyebrow && (
+            <div class={`text-xs tracking-[0.2em] uppercase ${t.eyebrow} font-medium mb-3`}>
+              {fill(s.eyebrow)}
+            </div>
+          )}
+          {s.heading && <h2 class={t.heading}>
+            {fill(s.heading)}
+          </h2>}
+          {s.intro && <p class={`mt-6 ${t.body}`}>
+            {fill(s.intro)}
+          </p>}
+        </div>
+        <div class={`lg:col-span-8 ${gridCols}`}>
+          {s.items.map((item, i) => (
+            <div class="relative">
+              {numbered && (
+                <div class="font-display text-sand-500 text-sm mb-2">
+                  {String(i + 1).padStart(2, "0")}
+                </div>
+              )}
+              <h3 class={`${t.heading} text-xl`}>{fill(item.title)}</h3>
+              {item.body && <p class={`mt-3 ${t.body} text-sm`}>{fill(item.body)}</p>}
+            </div>
+          ))}
+        </div>
+      </div>
+    ) : (
+      <>
+        {s.eyebrow && (
+          <div class={`text-xs tracking-[0.2em] uppercase ${t.eyebrow} font-medium mb-3`}>
+            {fill(s.eyebrow)}
+          </div>
+        )}
+        {s.heading && <h2 class={t.heading}>{fill(s.heading)}</h2>}
+        {s.intro && <p class={`mt-6 ${t.body}`}>
+            {fill(s.intro)}
+          </p>}
+        <div class={`${hasIntro ? "mt-10 " : ""}${gridCols}${s.align === "center" ? " text-left" : ""}`}>
+          {s.items.map((item, i) => (
+            <div class="relative">
+              {numbered && (
+                <div class="font-display text-sand-500 text-sm mb-2">
+                  {String(i + 1).padStart(2, "0")}
+                </div>
+              )}
+              <h3 class={`${t.heading} text-xl`}>{fill(item.title)}</h3>
+              {item.body && <p class={`mt-3 ${t.body} text-sm`}>{fill(item.body)}</p>}
+            </div>
+          ))}
+        </div>
+      </>
+    )
+  }
+</Section>

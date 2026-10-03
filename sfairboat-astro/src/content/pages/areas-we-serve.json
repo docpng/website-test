@@ -1,0 +1,22 @@
+{
+  "title": "Areas We Serve",
+  "slug": "areas-we-serve",
+  "order": 5,
+  "seoTitle": "Areas We Serve | {businessName}",
+  "metaDescription": "We serve guests from across Miami-Dade and Broward counties — Miami, Miami Beach, Fort Lauderdale, Hollywood, Hialeah, South Miami, and Pinecrest.",
+  "sections": [
+    {
+      "type": "pageHeader",
+      "eyebrow": "Service areas",
+      "title": "Serving all of South Florida",
+      "intro": "We pick up and host guests from across Miami-Dade and Broward counties. Our dock is in Miami, and most of our regulars make a half-day of it from anywhere in the metro."
+    },
+    {
+      "type": "areas",
+      "style": "cards"
+    },
+    {
+      "type": "cta"
+    }
+  ]
+}

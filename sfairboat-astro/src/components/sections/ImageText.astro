@@ -1,0 +1,58 @@
+---
+// Two columns: a photo or video on one side, text and a button on the other.
+import Section from "./Section.astro";
+import { embedUrl } from "./media";
+import { fill, isDark, markdown, resolveLink, tone, type SectionSettings } from "./styles";
+
+type Props = {
+  section: SectionSettings & {
+    media?: "image" | "video" | "link";
+    image?: string;
+    alt?: string;
+    video?: string;
+    url?: string;
+    side?: "left" | "right";
+    eyebrow?: string;
+    heading?: string;
+    body?: string;
+    buttonLabel?: string;
+    buttonLink?: string;
+  };
+};
+const { section: s } = Astro.props;
+const dark = isDark(s);
+const t = tone(dark);
+const media = s.media ?? "image";
+const embed = media === "link" ? embedUrl(s.url) : null;
+const href = resolveLink(s.buttonLink);
+// Links inherit their text color site-wide, so the label color is set on a span.
+const button = dark
+  ? { link: "inline-flex items-center justify-center bg-sand-400 px-7 py-3.5 font-medium hover:bg-sand-300", label: "text-moss-950" }
+  : { link: "inline-flex items-center justify-center bg-moss-900 px-7 py-3.5 font-medium hover:bg-moss-800", label: "text-bone" };
+---
+
+<Section settings={s}>
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
+    <div class={s.side === "right" ? "lg:order-last" : ""}>
+      {
+        media === "image" && s.image ? (
+          <img src={s.image} alt={fill(s.alt)} loading="lazy" decoding="async" class="w-full h-auto" />
+        ) : media === "video" && s.video ? (
+          <video class="w-full h-auto bg-moss-950" autoplay muted loop playsinline preload="metadata" aria-hidden="true">
+            <source src={s.video} type="video/mp4" />
+          </video>
+        ) : embed ? (
+          <div class="relative aspect-video bg-moss-950">
+            <iframe src={embed} title={fill(s.heading || "Video")} class="absolute inset-0 w-full h-full" loading="lazy" allow="autoplay; encrypted-media; picture-in-picture; web-share" allowfullscreen />
+          </div>
+        ) : null
+      }
+    </div>
+    <div>
+      {s.eyebrow && <div class={`text-xs tracking-[0.2em] uppercase ${t.eyebrow} font-medium mb-3`}>{fill(s.eyebrow)}</div>}
+      {s.heading && <h2 class={t.heading}>{fill(s.heading)}</h2>}
+      {s.body && <div class={`mt-6 space-y-5 ${t.body} rich-text`} set:html={markdown(s.body)} />}
+      {s.buttonLabel && href && <a href={href} class={`mt-8 ${button.link}`}><span class={button.label}>{fill(s.buttonLabel)}</span></a>}
+    </div>
+  </div>
+</Section>

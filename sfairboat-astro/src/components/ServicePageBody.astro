@@ -4,6 +4,7 @@ import { business } from "../data/business";
 import { getServiceFaqs } from "../data/faqs";
 import FAQList from "./FAQList.astro";
 import CTABand from "./CTABand.astro";
+import SectionList from "./sections/SectionList.astro";
 
 type Props = { service: Service };
 const { service } = Astro.props;
@@ -164,5 +165,8 @@ const tripDetails = [
     </div>
   </div>
 </section>
+
+{/* Extra sections added in the site editor */}
+<SectionList sections={service.sections} source={`src/content/services/${service.slug}.json`} />
 
 <CTABand heading={`Ready to book ${service.shortName.toLowerCase()}?`} />
