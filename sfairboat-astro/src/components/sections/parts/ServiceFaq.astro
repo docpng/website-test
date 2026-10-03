@@ -1,0 +1,24 @@
+---
+// Service page: questions chosen by the service's FAQ categories.
+import FAQList from "../../FAQList.astro";
+import { getServiceFaqs } from "../../../data/faqs";
+import type { SectionSettings } from "../styles";
+import type { SectionContext } from "../../../data/sections";
+
+type Props = { section: SectionSettings; context: SectionContext };
+const service = Astro.props.context.service!;
+
+// Same list the page's FAQ schema uses (see getServiceFaqs in data/faqs.ts)
+const relevantFaqs = getServiceFaqs(service.slug);
+---
+
+<!-- FAQ -->
+<section class="py-20 lg:py-24">
+  <div class="max-w-4xl mx-auto px-5 lg:px-8">
+    <div class="text-xs tracking-[0.2em] uppercase text-moss-600 font-medium mb-3">
+      FAQ
+    </div>
+    <h2 class="text-moss-950 mb-10">Questions about this trip</h2>
+    <FAQList items={relevantFaqs} />
+  </div>
+</section>

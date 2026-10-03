@@ -1,0 +1,37 @@
+---
+// Service page: "Who this trip is for" and "What's included".
+import type { SectionSettings } from "../styles";
+import type { SectionContext } from "../../../data/sections";
+
+type Props = { section: SectionSettings; context: SectionContext };
+const service = Astro.props.context.service!;
+---
+
+<!-- Who it's for + what's included -->
+<section class="bg-sand-50 py-20 lg:py-24">
+  <div class="max-w-7xl mx-auto px-5 lg:px-8 grid grid-cols-1 md:grid-cols-2 gap-10">
+    <div>
+      <div class="text-xs tracking-[0.2em] uppercase text-moss-600 font-medium mb-3">
+        Who it's for
+      </div>
+      <h2 class="text-moss-950">Who this trip is for</h2>
+      <p class="mt-5 text-moss-800">{service.whoItsFor}</p>
+    </div>
+    <div>
+      <div class="text-xs tracking-[0.2em] uppercase text-moss-600 font-medium mb-3">
+        What's included
+      </div>
+      <h2 class="text-moss-950">What's included</h2>
+      <ul class="mt-5 space-y-3">
+        {
+          service.whatsIncluded.map((item) => (
+            <li class="flex items-start gap-3 text-moss-900">
+              <span class="font-display text-sand-500 shrink-0">—</span>
+              <span>{item}</span>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </div>
+</section>

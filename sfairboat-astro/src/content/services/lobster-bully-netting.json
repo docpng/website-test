@@ -36,5 +36,31 @@
   "seoTitle": "Lobster Bully Netting Charters in Miami, FL | South Florida Airboat Adventures",
   "metaDescription": "Private nighttime lobster bully netting charters out of Miami for up to 4 guests, $800 per trip. Catch Florida spiny lobster from the boat with no diving.",
   "schemaCategory": "Nighttime Lobster Charter",
-  "schemaType": "Service"
+  "schemaType": "Service",
+  "layout": [
+    {
+      "type": "servicePart",
+      "part": "hero"
+    },
+    {
+      "type": "servicePart",
+      "part": "overview"
+    },
+    {
+      "type": "servicePart",
+      "part": "details"
+    },
+    {
+      "type": "servicePart",
+      "part": "faq"
+    },
+    {
+      "type": "servicePart",
+      "part": "others"
+    },
+    {
+      "type": "cta",
+      "heading": "Ready to book lobster bully netting?"
+    }
+  ]
 }

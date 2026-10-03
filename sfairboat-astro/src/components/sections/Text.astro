@@ -12,5 +12,5 @@ const t = tone(dark);
 
 <Section settings={s} defaultWidth="narrow">
   <SectionHeading eyebrow={s.eyebrow} heading={s.heading} dark={dark} />
-  {s.body && <div class={`${s.heading || s.eyebrow ? "mt-8 " : ""}space-y-5 ${t.body} rich-text`} set:html={markdown(s.body)} />}
+  {s.body && <div class={`${s.heading || s.eyebrow ? "mt-8 " : ""}space-y-5 ${t.body} rich-text`} set:html={markdown(s.body, `a Text section${s.heading ? ` ("${s.heading}")` : ""}`)} />}
 </Section>

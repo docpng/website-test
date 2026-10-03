@@ -14,8 +14,10 @@ export type ServiceArea = {
   intro: string;
   localAngle: string;
   driveTime: string;
-  // Optional extra sections shown before the closing banner
-  sections?: Section[];
+  // The page, top to bottom: built-in parts plus any sections added in the
+  // site editor. When empty, the default layout (data/layouts.ts) is used.
+  layout?: Section[];
+  heroImage?: string; // optional background photo behind the page title
 };
 
 export const serviceAreas: ServiceArea[] = loadFolder<ServiceArea>(

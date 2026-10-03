@@ -8,5 +8,28 @@
   "metaDescription": "Private Everglades airboat tours, fishing trips, and python hunts for Hialeah, FL. Local, veteran-owned, and 20 minutes away.",
   "intro": "Hialeah is practically next door. If you've lived here for years and still haven't done an Everglades trip, we're the easiest excuse to finally do it.",
   "localAngle": "Locals know we take care of locals. Call us, tell us what you want to see, and we'll put something together that fits your schedule.",
-  "driveTime": "About 20 minutes west."
+  "driveTime": "About 20 minutes west.",
+  "layout": [
+    {
+      "type": "areaPart",
+      "part": "hero"
+    },
+    {
+      "type": "areaPart",
+      "part": "pitch"
+    },
+    {
+      "type": "areaPart",
+      "part": "services"
+    },
+    {
+      "type": "areaPart",
+      "part": "logistics"
+    },
+    {
+      "type": "cta",
+      "heading": "Ready to book from Hialeah?",
+      "subheading": "Give us a call or reserve online. We'll put something together for your group."
+    }
+  ]
 }

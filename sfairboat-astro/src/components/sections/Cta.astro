@@ -3,8 +3,26 @@
 import CTABand from "../CTABand.astro";
 import { fill, type SectionSettings } from "./styles";
 
-type Props = { section: SectionSettings & { heading?: string; subheading?: string } };
+type Props = {
+  section: SectionSettings & {
+    heading?: string;
+    subheading?: string;
+    media?: "video" | "image" | "none" | "";
+    video?: string;
+    poster?: string;
+    image?: string;
+    overlay?: "light" | "medium" | "strong" | "";
+  };
+};
 const { section: s } = Astro.props;
 ---
 
-<CTABand heading={s.heading ? fill(s.heading) : undefined} subheading={s.subheading ? fill(s.subheading) : undefined} />
+<CTABand
+  heading={s.heading ? fill(s.heading) : undefined}
+  subheading={s.subheading ? fill(s.subheading) : undefined}
+  media={s.media}
+  video={s.video}
+  poster={s.poster}
+  image={s.image}
+  overlay={s.overlay}
+/>

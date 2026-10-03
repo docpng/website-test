@@ -17,10 +17,19 @@ import Contact from "./Contact.astro";
 import Cta from "./Cta.astro";
 import Map from "./Map.astro";
 import Spacer from "./Spacer.astro";
-import { validateSection, type Section } from "../../data/sections";
+import ServiceHero from "./parts/ServiceHero.astro";
+import ServiceOverview from "./parts/ServiceOverview.astro";
+import ServiceDetails from "./parts/ServiceDetails.astro";
+import ServiceFaq from "./parts/ServiceFaq.astro";
+import OtherServices from "./parts/OtherServices.astro";
+import AreaHero from "./parts/AreaHero.astro";
+import AreaPitch from "./parts/AreaPitch.astro";
+import AreaServices from "./parts/AreaServices.astro";
+import AreaLogistics from "./parts/AreaLogistics.astro";
+import { validateSection, type Section, type SectionContext } from "../../data/sections";
 
-type Props = { sections?: Section[]; source: string };
-const { sections = [], source } = Astro.props;
+type Props = { sections?: Section[]; source: string; context?: SectionContext };
+const { sections = [], source, context = {} } = Astro.props;
 
 const components: Record<string, any> = {
   hero: Hero,
@@ -41,10 +50,24 @@ const components: Record<string, any> = {
   spacer: Spacer,
 };
 
+// Built-in parts of service and city pages
+const parts: Record<string, any> = {
+  "servicePart:hero": ServiceHero,
+  "servicePart:overview": ServiceOverview,
+  "servicePart:details": ServiceDetails,
+  "servicePart:faq": ServiceFaq,
+  "servicePart:others": OtherServices,
+  "areaPart:hero": AreaHero,
+  "areaPart:pitch": AreaPitch,
+  "areaPart:services": AreaServices,
+  "areaPart:logistics": AreaLogistics,
+};
+
 const items = sections.map((section, i) => {
-  validateSection(section, `${source} (section #${i + 1})`);
-  return { Component: components[section.type], section };
+  validateSection(section, `${source} (section #${i + 1})`, context);
+  const Component = components[section.type] ?? parts[`${section.type}:${section.part}`];
+  return { Component, section };
 });
 ---
 
-{items.map(({ Component, section }) => <Component section={section} />)}
+{items.map(({ Component, section }) => <Component section={section} context={context} />)}

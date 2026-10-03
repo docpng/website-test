@@ -1,0 +1,33 @@
+---
+// Service page: cards linking to the other services.
+import { services } from "../../../data/services";
+import type { SectionSettings } from "../styles";
+import type { SectionContext } from "../../../data/sections";
+
+type Props = { section: SectionSettings; context: SectionContext };
+const service = Astro.props.context.service!;
+const otherServices = services.filter((s) => s.slug !== service.slug);
+---
+
+<!-- Other services -->
+<section class="bg-sand-50 py-20 lg:py-24">
+  <div class="max-w-7xl mx-auto px-5 lg:px-8">
+    <div class="text-xs tracking-[0.2em] uppercase text-moss-600 font-medium mb-3">
+      Also offered
+    </div>
+    <h2 class="text-moss-950 mb-10">Other ways to get on the water</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+      {
+        otherServices.map((s) => (
+          <a href={`/${s.slug}`} class="group bg-bone border border-moss-900/10 p-6 hover:border-moss-600 transition">
+            <h3 class="text-moss-950">{s.shortName}</h3>
+            <p class="mt-3 text-sm text-moss-800 line-clamp-3">{s.tagline}</p>
+            <div class="mt-5 text-sm font-semibold text-moss-900 group-hover:text-moss-600">
+              Learn more →
+            </div>
+          </a>
+        ))
+      }
+    </div>
+  </div>
+</section>

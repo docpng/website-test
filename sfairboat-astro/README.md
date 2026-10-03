@@ -41,6 +41,7 @@ sfairboat-astro/
     │   └── BaseLayout.astro  # head, meta, OG, schema wiring
     ├── components/        # Header, Footer, ServiceCard, FAQList, etc.
     │   └── sections/      # one component per section type (Hero, Text, Video, ...)
+    │       └── parts/     # built-in parts of service and city pages
     ├── pages/
     │   ├── [...page].astro   # every page in src/content/pages (incl. the homepage)
     │   ├── [service].astro   # one page per service (airboat-tours, python-hunts, ...)
@@ -161,7 +162,21 @@ deploys needed. Reviews still come from Google automatically.
   band, Text, Image, Video (upload or YouTube/Vimeo), Photo or video beside
   text, Feature list, Services, FAQs, Service areas, Photo gallery, Google
   reviews, Contact details + quote form, Call/Book banner, Map, and Space /
-  divider line. Service and city pages can also get extra sections.
+  divider line.
+- **Photos and videos anywhere:**
+  - Add an Image, Video or "Photo or video beside text" section between any
+    other sections.
+  - Inside any text, use **Insert → Photo / Video** in the text toolbar to
+    place one between paragraphs (small/medium/full width; centered, or left
+    or right with the text wrapping around it).
+  - The Page title band and Call/Book banner can have a background photo or
+    video; feature points can each have a photo; an FAQs section can show a
+    photo or video beside the questions; each service can have a card photo
+    and a title-band photo or video; each city page a title-band photo.
+- **Service and city pages** have a **Page layout** (in Services / Service
+  Areas): their built-in parts (title band, description, FAQs, etc.) are
+  "page part" sections you can drag, remove, or put photos, videos and other
+  sections between.
 - In any text you can type `{phone}`, `{businessName}`, `{ownerName}`, `{years}`,
   `{hours}` or `{address}`. In links, `{booking}`, `{phone}`, `{maps}` and
   `{review}` point to the booking page, tap-to-call, Google Maps and the Google

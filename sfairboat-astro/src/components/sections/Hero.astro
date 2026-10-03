@@ -1,6 +1,7 @@
 ---
 // Big opening section: background video/image, headline, buttons, stats.
 import { existsSync } from "node:fs";
+import BackgroundMedia from "./BackgroundMedia.astro";
 import { fill, resolveLink, spacingOf, type SectionSettings } from "./styles";
 
 type Props = {
@@ -26,12 +27,6 @@ const media = s.media ?? "none";
 const showVideo = media === "video" && fileExists(s.video);
 const showImage = media === "image" && fileExists(s.image);
 
-const overlays = {
-  light: "absolute inset-0 bg-moss-950/35",
-  medium: "absolute inset-0 bg-moss-950/55",
-  strong: "absolute inset-0 bg-moss-950/75",
-};
-const overlay = overlays[s.overlay ?? "medium"];
 
 const padding = {
   none: "py-10",
@@ -53,31 +48,7 @@ const stats = s.stats ?? [];
 <section id={s.anchor || undefined} class="relative overflow-hidden bg-moss-950 text-bone">
   {
     showVideo || showImage ? (
-      <>
-        {showVideo ? (
-          <>
-            {/* Background video: silent loop */}
-            <video
-              id="hero-video"
-              class="absolute inset-0 w-full h-full object-cover"
-              autoplay
-              muted
-              loop
-              playsinline
-              preload="auto"
-              poster={s.poster || undefined}
-              aria-hidden="true"
-            >
-              <source src={s.video} type="video/mp4" />
-            </video>
-          </>
-        ) : (
-          <img src={s.image} alt="" class="absolute inset-0 w-full h-full object-cover" aria-hidden="true" />
-        )}
-        {/* Darkens the background so the headline stays readable */}
-        <div class={overlay} aria-hidden="true"></div>
-        <div class="absolute inset-0 bg-gradient-to-r from-moss-950/80 via-moss-950/30 to-transparent" aria-hidden="true"></div>
-      </>
+      <BackgroundMedia media={s.media} video={s.video} poster={s.poster} image={s.image} overlay={s.overlay} id="hero-video" />
     ) : (
       <>
         {/* Subtle sawgrass texture using SVG */}
@@ -152,12 +123,3 @@ const stats = s.stats ?? [];
   </div>
 </section>
 
-<script>
-  // Show only the still image for visitors who prefer reduced motion.
-  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-    document.querySelectorAll<HTMLVideoElement>("video[autoplay]").forEach((video) => {
-      video.removeAttribute("autoplay");
-      video.pause();
-    });
-  }
-</script>

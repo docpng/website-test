@@ -120,3 +120,51 @@ a {
   font-family: var(--font-display);
   opacity: 0.5;
 }
+
+/* Photos and videos placed inside text in the site editor */
+.rich-text::after {
+  content: "";
+  display: table;
+  clear: both;
+}
+.rich-text .md-media {
+  margin-block: 1.75rem;
+}
+.rich-text .md-media img,
+.rich-text .md-media video {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.rich-text .md-embed {
+  display: block;
+  position: relative;
+  aspect-ratio: 16 / 9;
+}
+.rich-text .md-embed iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.rich-text figcaption {
+  margin-top: 0.5rem;
+  font-size: 0.875rem;
+  opacity: 0.75;
+}
+.rich-text .md-small { max-width: 18rem; }
+.rich-text .md-medium { max-width: 32rem; }
+.rich-text .md-full { max-width: none; }
+.rich-text .md-center { margin-inline: auto; }
+@media (min-width: 640px) {
+  .rich-text .md-left:not(.md-full) {
+    float: left;
+    width: 45%;
+    margin: 0.35rem 1.75rem 1rem 0;
+  }
+  .rich-text .md-right:not(.md-full) {
+    float: right;
+    width: 45%;
+    margin: 0.35rem 0 1rem 1.75rem;
+  }
+}
