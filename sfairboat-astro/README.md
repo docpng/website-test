@@ -195,6 +195,31 @@ deploys needed. Reviews still come from Google automatically.
 - The editor saves to the **`main`** branch, which must be the branch Cloudflare
   deploys to production.
 
+### Arrange mode: drag and drop on the real page (/admin/arrange)
+
+Open **/admin/arrange** (or click **Arrange pages** at the bottom-left of the
+editor) and sign in the same way. Pick any page from the **Page** menu: the
+homepage, Gallery, Reviews, FAQs, Areas, Contact, and every service and city
+page. The real page appears, and you can:
+
+- **Drag photos or videos from your computer onto the page.** Blue lines show
+  where they can go: between any two sections, or between paragraphs inside
+  text. Photos become WebP (at most 2000px); videos must be MP4, at most 25 MB
+  (under about 10 MB loads best).
+- **Move sections:** hover a section and drag **⠿ Move**, or use the ↑/↓ buttons.
+- **Move photos/videos:** drag one to a new spot. Dragging a photo section into
+  text puts it inside the text, and the reverse works too.
+- **Click a photo or video** to change its size, position (centered, or left/right
+  with text wrapping), caption, description, or how a video plays, or to remove it.
+- **Publish** saves everything in one go; the live site updates in about 1–2
+  minutes. **Discard changes** goes back to what's live.
+
+Arrange mode edits the same content as the site editor, so changes show up in
+both. Text, colors and section settings are edited in the site editor. If the
+page was changed elsewhere after you opened it, Publish stops and asks you to
+reload, so nothing gets overwritten. Right after publishing, wait for the site
+to update before arranging the same page again.
+
 ### One-time setup: GitHub login
 Editors sign in with a GitHub account that has write access to `docpng/website-test`.
 1. On GitHub: **Settings → Developer settings → OAuth Apps → New OAuth App**.
