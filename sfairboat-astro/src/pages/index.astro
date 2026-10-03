@@ -13,7 +13,7 @@ import { localBusinessSchema, faqPageSchema } from "../data/schema";
 const title =
   "Miami Airboat Tours & Everglades Adventures | South Florida Airboat Adventures";
 const description =
-  "Veteran-owned, private Everglades airboat tours out of Miami. Guided fishing trips, nighttime fish gigging, and python hunts led by a true Gladesman.";
+  "Veteran-owned, private Everglades airboat tours out of Miami. Guided fishing trips, fish gigging, python hunts, and lobster bully netting led by a true Gladesman.";
 
 const topFaqs = faqs.slice(0, 4);
 
@@ -52,13 +52,13 @@ const whyChooseUs = [
           <div class="text-xs tracking-[0.2em] uppercase text-moss-600 font-medium mb-3">
             What we do
           </div>
-          <h2 class="text-moss-950">Four ways to experience the Everglades</h2>
+          <h2 class="text-moss-950">Five ways to get out on the water</h2>
         </div>
         <a href="/areas-we-serve" class="hidden md:block text-sm font-medium text-moss-900 border-b border-moss-900 pb-0.5">
           See service areas
         </a>
       </div>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
         {services.map((s) => <ServiceCard service={s} />)}
       </div>
     </div>
@@ -112,7 +112,7 @@ const whyChooseUs = [
       <div class="mt-8 space-y-5 text-moss-800">
         <p>
           We specialize in thrilling airboat rides, peaceful Everglades fishing
-          trips, nighttime fish gigging, and even python hunts — all tailored
+          trips, nighttime fish gigging, python hunts, and lobster bully netting — all tailored
           specifically to your group's preferences. Every tour is private and
           built around your adventure, ensuring a personal experience guided by
           someone who lives and breathes the Everglades.

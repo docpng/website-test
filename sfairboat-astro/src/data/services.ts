@@ -2,7 +2,7 @@ export type Service = {
   slug: string;
   name: string;
   shortName: string;
-  icon: "airboat" | "fish" | "gig" | "python";
+  icon: "airboat" | "fish" | "gig" | "python" | "lobster";
   seoTitle: string;
   metaDescription: string;
   tagline: string;
@@ -13,6 +13,10 @@ export type Service = {
   whatsIncluded: string[];
   schemaCategory: string;
   schemaType: string;
+  // Optional trip details, shown on the service page when set
+  price?: number;      // flat price per trip, in USD
+  maxGuests?: number;
+  season?: string;
 };
 
 export const services: Service[] = [
@@ -155,6 +159,45 @@ export const services: Service[] = [
     ],
     schemaCategory: "Wildlife Management Experience",
     schemaType: "Service",
+  },
+  {
+    slug: "lobster-bully-netting",
+    name: "Lobster Bully Netting",
+    shortName: "Lobster Bully Netting",
+    icon: "lobster",
+    seoTitle:
+      "Lobster Bully Netting Charters in Miami, FL | South Florida Airboat Adventures",
+    metaDescription:
+      "Private nighttime lobster bully netting charters out of Miami for up to 4 guests, $800 per trip. Catch Florida spiny lobster from the boat with no diving.",
+    tagline: "Catch Florida spiny lobster after dark, right from the boat. No diving required.",
+    summary:
+      "Spend a night on the shallow flats hunting Florida spiny lobster with a bully net. We handle the boat, the lights, and the gear. You spot lobsters walking across the bottom and net them from the deck. Private trips for up to 4 guests, $800 per trip.",
+    longDescription: [
+      "During the day, spiny lobsters stay tucked under ledges and in holes, and the only way to reach them is to dive. Once it gets dark, they leave cover and crawl out across the shallow grass flats to feed. That's when bully netting works.",
+      "A bully net is a round net on the end of a long pole, set at an angle so the hoop lands flat on the bottom. We move slowly over the flats with bright underwater lights. When you spot a lobster, you bring the net down over it and pin it in place. Most people miss a few while they learn the timing, then get hooked fast.",
+      "Everything happens from the deck, so there's no swimming, no diving, and no need to get your feet wet. Every trip is private to your group of up to four guests and runs during Florida's lobster season. Your captain will measure each catch with you and make sure everything that goes in the cooler is legal.",
+    ],
+    highlights: [
+      "Private charter for up to 4 guests, $800 per trip",
+      "Catch lobster from the boat, with no diving or swimming",
+      "Nets, underwater lights, and a lobster gauge provided",
+      "Runs during Florida's lobster season",
+      "Veteran-owned and captain-guided",
+    ],
+    whoItsFor:
+      "Anyone who wants to catch their own lobster dinner without diving for it: families, groups of friends, and anglers looking for something new to do after dark. No experience needed. We'll show you how it's done.",
+    whatsIncluded: [
+      "Private boat and captain for up to 4 guests",
+      "Bully nets, underwater lights, and a lobster measuring gauge",
+      "Cooler with ice for your catch",
+      "Fishing licenses and lobster permits for every guest, covered by our charter license",
+      "Instruction on netting, measuring, and Florida's lobster rules",
+    ],
+    schemaCategory: "Nighttime Lobster Charter",
+    schemaType: "Service",
+    price: 800,
+    maxGuests: 4,
+    season: "The two-day sport season in late July, then Aug. 6 through March 31",
   },
 ];
 

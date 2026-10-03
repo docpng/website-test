@@ -1,7 +1,7 @@
 ---
 import type { Service } from "../data/services";
 import { business } from "../data/business";
-import { faqs } from "../data/faqs";
+import { getServiceFaqs } from "../data/faqs";
 import FAQList from "./FAQList.astro";
 import CTABand from "./CTABand.astro";
 
@@ -12,14 +12,15 @@ const otherServices = (await import("../data/services")).services.filter(
   (s) => s.slug !== service.slug
 );
 
-// Pick 3 relevant FAQs for this service
-const relevantFaqs = faqs.filter((f) => {
-  if (service.slug === "airboat-tours") return ["tours", "general", "logistics"].includes(f.category);
-  if (service.slug === "everglades-fishing-trips") return ["fishing", "general", "logistics"].includes(f.category);
-  if (service.slug === "fish-gigging") return ["fishing", "tours", "logistics"].includes(f.category);
-  if (service.slug === "python-hunts") return ["python", "general", "logistics"].includes(f.category);
-  return true;
-}).slice(0, 4);
+// Same list the page's FAQ schema uses (see getServiceFaqs in data/faqs.ts)
+const relevantFaqs = getServiceFaqs(service.slug);
+
+// Optional trip details (price, group size, season) shown under the tagline
+const tripDetails = [
+  service.price != null && { label: "Price", value: `$${service.price.toLocaleString("en-US")} per trip` },
+  service.maxGuests != null && { label: "Group size", value: `Up to ${service.maxGuests} guests` },
+  service.season && { label: "Season", value: service.season },
+].filter(Boolean) as { label: string; value: string }[];
 ---
 
 <!-- Hero -->
@@ -40,6 +41,18 @@ const relevantFaqs = faqs.filter((f) => {
     </div>
     <h1 class="text-bone max-w-4xl">{service.name}</h1>
     <p class="mt-6 text-lg text-sand-100 max-w-3xl">{service.tagline}</p>
+    {
+      tripDetails.length > 0 && (
+        <dl class="mt-8 flex flex-wrap gap-3">
+          {tripDetails.map((d) => (
+            <div class="border border-sand-200/25 px-4 py-2.5">
+              <dt class="text-[11px] tracking-[0.15em] uppercase text-sand-300">{d.label}</dt>
+              <dd class="text-sm text-bone font-medium mt-0.5">{d.value}</dd>
+            </div>
+          ))}
+        </dl>
+      )
+    }
     <div class="mt-10 flex flex-col sm:flex-row gap-4">
       <a
         href={business.bookingUrl}
@@ -136,7 +149,7 @@ const relevantFaqs = faqs.filter((f) => {
       Also offered
     </div>
     <h2 class="text-moss-950 mb-10">Other ways to get on the water</h2>
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
       {
         otherServices.map((s) => (
           <a href={`/${s.slug}`} class="group bg-bone border border-moss-900/10 p-6 hover:border-moss-600 transition">
