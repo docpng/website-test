@@ -1,0 +1,61 @@
+---
+// An uploaded video (silent loop or with play controls) or a YouTube/Vimeo video.
+import Section from "./Section.astro";
+import SectionHeading from "./SectionHeading.astro";
+import { embedUrl } from "./media";
+import { fill, isDark, tone, type SectionSettings } from "./styles";
+
+type Props = {
+  section: SectionSettings & {
+    eyebrow?: string;
+    heading?: string;
+    source?: "upload" | "link";
+    file?: string;
+    poster?: string;
+    url?: string;
+    playback?: "loop" | "controls";
+    caption?: string;
+    title?: string;
+  };
+};
+const { section: s } = Astro.props;
+const dark = isDark(s);
+const t = tone(dark);
+const embed = s.source === "link" ? embedUrl(s.url) : null;
+if (s.source === "link" && !embed) {
+  throw new Error(`Content error in a video section: "${s.url}" isn't a YouTube or Vimeo link.`);
+}
+const loop = (s.playback ?? "loop") === "loop";
+---
+
+<Section settings={s}>
+  <SectionHeading eyebrow={s.eyebrow} heading={s.heading} dark={dark} headingClass="mb-10" />
+  <figure>
+    {
+      embed ? (
+        <div class="relative aspect-video bg-moss-950">
+          <iframe
+            src={embed}
+            title={fill(s.title || s.heading || "Video")}
+            class="absolute inset-0 w-full h-full"
+            loading="lazy"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            referrerpolicy="strict-origin-when-cross-origin"
+            allowfullscreen
+          />
+        </div>
+      ) : s.file ? (
+        loop ? (
+          <video class="w-full h-auto bg-moss-950" autoplay muted loop playsinline preload="metadata" poster={s.poster || undefined} aria-hidden="true">
+            <source src={s.file} type="video/mp4" />
+          </video>
+        ) : (
+          <video class="w-full h-auto bg-moss-950" controls playsinline preload="metadata" poster={s.poster || undefined}>
+            <source src={s.file} type="video/mp4" />
+          </video>
+        )
+      ) : null
+    }
+    {s.caption && <figcaption class={`mt-3 text-sm ${t.muted}`}>{fill(s.caption)}</figcaption>}
+  </figure>
+</Section>

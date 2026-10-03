@@ -1,3 +1,4 @@
+import type { Section } from "./sections";
 import { requireFields, requireOneOf, loadFolder } from "./validate";
 import { faqCategories, type FAQCategory } from "./faq-categories";
 
@@ -25,6 +26,8 @@ export type Service = {
   // Which FAQ categories show on this service page, and how many
   faqCategories: FAQCategory[];
   faqLimit?: number;
+  // Optional extra sections shown before the closing banner
+  sections?: Section[];
 };
 
 export const serviceIcons = ["airboat", "fish", "gig", "python", "lobster"] as const;

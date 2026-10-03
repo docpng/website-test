@@ -1,0 +1,19 @@
+---
+// A single photo with an optional caption.
+import Section from "./Section.astro";
+import SectionHeading from "./SectionHeading.astro";
+import { fill, isDark, tone, type SectionSettings } from "./styles";
+
+type Props = { section: SectionSettings & { eyebrow?: string; heading?: string; image: string; alt: string; caption?: string } };
+const { section: s } = Astro.props;
+const dark = isDark(s);
+const t = tone(dark);
+---
+
+<Section settings={s}>
+  <SectionHeading eyebrow={s.eyebrow} heading={s.heading} dark={dark} headingClass="mb-10" />
+  <figure>
+    <img src={s.image} alt={fill(s.alt)} loading="lazy" decoding="async" class="w-full h-auto" />
+    {s.caption && <figcaption class={`mt-3 text-sm ${t.muted}`}>{fill(s.caption)}</figcaption>}
+  </figure>
+</Section>

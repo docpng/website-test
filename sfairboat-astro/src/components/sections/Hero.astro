@@ -1,0 +1,163 @@
+---
+// Big opening section: background video/image, headline, buttons, stats.
+import { existsSync } from "node:fs";
+import { fill, resolveLink, spacingOf, type SectionSettings } from "./styles";
+
+type Props = {
+  section: SectionSettings & {
+    eyebrow?: string;
+    heading: string;
+    text?: string;
+    media?: "video" | "image" | "none";
+    video?: string;
+    poster?: string;
+    image?: string;
+    overlay?: "light" | "medium" | "strong";
+    buttons?: { label: string; link: string; style?: "primary" | "outline" }[];
+    stats?: { value: string; label: string }[];
+  };
+};
+const { section: s } = Astro.props;
+
+// Only show media that actually exists, so a missing file never shows a broken player.
+const fileExists = (src?: string) =>
+  Boolean(src) && (/^https?:\/\//.test(src!) || existsSync(`public${src}`));
+const media = s.media ?? "none";
+const showVideo = media === "video" && fileExists(s.video);
+const showImage = media === "image" && fileExists(s.image);
+
+const overlays = {
+  light: "absolute inset-0 bg-moss-950/35",
+  medium: "absolute inset-0 bg-moss-950/55",
+  strong: "absolute inset-0 bg-moss-950/75",
+};
+const overlay = overlays[s.overlay ?? "medium"];
+
+const padding = {
+  none: "py-10",
+  compact: "pt-14 pb-16 lg:pt-16 lg:pb-20",
+  normal: "pt-20 pb-28 lg:pt-28 lg:pb-36",
+  roomy: "pt-28 pb-36 lg:pt-40 lg:pb-48",
+}[spacingOf(s)];
+const widths = { narrow: "max-w-4xl", medium: "max-w-5xl", wide: "max-w-7xl", full: "max-w-none" };
+const center = s.align === "center";
+
+const buttonClasses = {
+  primary: "inline-flex items-center bg-sand-400 text-moss-950 px-7 py-3.5 font-medium hover:bg-sand-300 transition",
+  outline: "inline-flex items-center text-bone border border-sand-200/30 px-7 py-3.5 font-medium hover:border-sand-200/60 transition",
+};
+const statColumns = { 1: "grid-cols-1", 2: "grid-cols-2", 3: "grid-cols-3", 4: "grid-cols-2 sm:grid-cols-4" } as Record<number, string>;
+const stats = s.stats ?? [];
+---
+
+<section id={s.anchor || undefined} class="relative overflow-hidden bg-moss-950 text-bone">
+  {
+    showVideo || showImage ? (
+      <>
+        {showVideo ? (
+          <>
+            {/* Background video: silent loop */}
+            <video
+              id="hero-video"
+              class="absolute inset-0 w-full h-full object-cover"
+              autoplay
+              muted
+              loop
+              playsinline
+              preload="auto"
+              poster={s.poster || undefined}
+              aria-hidden="true"
+            >
+              <source src={s.video} type="video/mp4" />
+            </video>
+          </>
+        ) : (
+          <img src={s.image} alt="" class="absolute inset-0 w-full h-full object-cover" aria-hidden="true" />
+        )}
+        {/* Darkens the background so the headline stays readable */}
+        <div class={overlay} aria-hidden="true"></div>
+        <div class="absolute inset-0 bg-gradient-to-r from-moss-950/80 via-moss-950/30 to-transparent" aria-hidden="true"></div>
+      </>
+    ) : (
+      <>
+        {/* Subtle sawgrass texture using SVG */}
+        <svg
+          class="absolute inset-0 w-full h-full opacity-10"
+          aria-hidden="true"
+          xmlns="http://www.w3.org/2000/svg"
+          preserveAspectRatio="xMidYMid slice"
+          viewBox="0 0 1200 600"
+        >
+          <defs>
+            <pattern id="grass" x="0" y="0" width="60" height="60" patternUnits="userSpaceOnUse">
+              <path d="M10 60 L10 30 M30 60 L30 20 M50 60 L50 35 M20 60 L20 25 M40 60 L40 15" stroke="#c2a35e" stroke-width="1" fill="none" />
+            </pattern>
+          </defs>
+          <rect width="100%" height="100%" fill="url(#grass)" />
+        </svg>
+      </>
+    )
+  }
+
+  <div class={`relative ${widths[s.width || "wide"]} mx-auto px-5 lg:px-8 ${padding}`}>
+    <div class={center ? "max-w-3xl mx-auto text-center" : "max-w-3xl"}>
+      {
+        s.eyebrow && (
+          <div class={center ? "flex items-center justify-center gap-3 mb-6" : "flex items-center gap-3 mb-6"}>
+            <span class="h-px w-10 bg-sand-400"></span>
+            <span class="text-xs tracking-[0.2em] uppercase text-sand-300 font-medium">
+              {fill(s.eyebrow)}
+            </span>
+          </div>
+        )
+      }
+      <h1 class="text-bone">
+        {fill(s.heading)}
+      </h1>
+      {
+        s.text && (
+          <p class={center ? "mt-6 text-lg text-sand-100 max-w-2xl mx-auto" : "mt-6 text-lg text-sand-100 max-w-2xl"}>
+            {fill(s.text)}
+          </p>
+        )
+      }
+      {
+        s.buttons && s.buttons.length > 0 && (
+          <div class={center ? "mt-10 flex flex-col sm:flex-row items-center justify-center gap-4" : "mt-10 flex flex-col sm:flex-row items-start sm:items-center gap-4"}>
+            {s.buttons.map((b) => (
+              <a href={resolveLink(b.link)} class={buttonClasses[b.style ?? "primary"]}>
+                {fill(b.label)}
+              </a>
+            ))}
+          </div>
+        )
+      }
+
+      {
+        stats.length > 0 && (
+          <>
+            {/* Trust strip */}
+            <div class={`mt-14 grid ${statColumns[Math.min(stats.length, 4)]} gap-6 max-w-2xl${center ? " mx-auto" : ""}`}>
+              {stats.map((st) => (
+                <div>
+                  <div class="font-display text-3xl text-sand-300">{fill(st.value)}</div>
+                  <div class="text-xs text-sand-200 mt-1">{fill(st.label)}</div>
+                </div>
+              ))}
+            </div>
+          </>
+        )
+      }
+    </div>
+  </div>
+</section>
+
+<script>
+  // Show only the still image for visitors who prefer reduced motion.
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    document.querySelectorAll<HTMLVideoElement>("video[autoplay]").forEach((video) => {
+      video.removeAttribute("autoplay");
+      video.pause();
+    });
+  }
+</script>

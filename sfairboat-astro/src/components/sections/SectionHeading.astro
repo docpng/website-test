@@ -1,0 +1,44 @@
+---
+// Optional eyebrow + heading (+ "see all" link) used at the top of sections.
+import { fill, resolveLink, tone } from "./styles";
+
+type Props = {
+  eyebrow?: string;
+  heading?: string;
+  linkLabel?: string;
+  link?: string;
+  dark?: boolean;
+  headingClass?: string;
+};
+const { eyebrow, heading, linkLabel, link, dark = false, headingClass = "" } = Astro.props;
+const t = tone(dark);
+const href = resolveLink(link);
+const hasLink = Boolean(linkLabel && href);
+---
+
+{
+  hasLink ? (
+    <div class="flex items-end justify-between gap-6 mb-10">
+      <div>
+        {eyebrow && (
+          <div class={`text-xs tracking-[0.2em] uppercase ${t.eyebrow} font-medium mb-3`}>
+            {fill(eyebrow)}
+          </div>
+        )}
+        {heading && <h2 class={t.heading}>{fill(heading)}</h2>}
+      </div>
+      <a href={href} class={`hidden md:block text-sm font-medium ${t.linkText} border-b ${t.linkBorder} pb-0.5`}>
+        {fill(linkLabel)}
+      </a>
+    </div>
+  ) : (
+    <>
+      {eyebrow && (
+        <div class={`text-xs tracking-[0.2em] uppercase ${t.eyebrow} font-medium mb-3`}>
+          {fill(eyebrow)}
+        </div>
+      )}
+      {heading && <h2 class={[t.heading, headingClass].filter(Boolean).join(" ")}>{fill(heading)}</h2>}
+    </>
+  )
+}

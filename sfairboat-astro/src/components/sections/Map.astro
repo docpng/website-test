@@ -1,0 +1,23 @@
+---
+// Google Map of the business address.
+import Section from "./Section.astro";
+import SectionHeading from "./SectionHeading.astro";
+import { business, addressLine } from "../../data/business";
+import { isDark, type SectionSettings } from "./styles";
+
+type Props = { section: SectionSettings & { eyebrow?: string; heading?: string; height?: "short" | "medium" | "tall" } };
+const { section: s } = Astro.props;
+const heights = { short: "h-64", medium: "h-96", tall: "h-[32rem]" };
+const src = `https://www.google.com/maps?q=${encodeURIComponent(`${business.name}, ${addressLine}`)}&output=embed`;
+---
+
+<Section settings={s}>
+  <SectionHeading eyebrow={s.eyebrow} heading={s.heading} dark={isDark(s)} headingClass="mb-10" />
+  <iframe
+    src={src}
+    title={`Map of ${business.name}`}
+    class={`w-full ${heights[s.height ?? "medium"]} border-0`}
+    loading="lazy"
+    referrerpolicy="no-referrer-when-downgrade"
+  />
+</Section>

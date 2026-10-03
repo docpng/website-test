@@ -1,0 +1,25 @@
+---
+// Outer wrapper shared by most sections: background, spacing, width,
+// alignment and an optional #anchor.
+import {
+  sectionClass,
+  containerClass,
+  type SectionSettings,
+  type Background,
+  type Width,
+} from "./styles";
+
+type Props = {
+  settings: SectionSettings;
+  defaultWidth?: Width;
+  defaultBackground?: Background;
+  innerClass?: string;
+};
+const { settings, defaultWidth = "wide", defaultBackground, innerClass = "" } = Astro.props;
+---
+
+<section id={settings.anchor || undefined} class={sectionClass(settings, { background: defaultBackground })}>
+  <div class={containerClass(settings, defaultWidth, innerClass)}>
+    <slot />
+  </div>
+</section>

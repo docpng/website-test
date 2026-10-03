@@ -87,3 +87,36 @@ a {
   height: 1px;
   background: color-mix(in oklab, var(--color-moss-900) 15%, transparent);
 }
+
+/* Links and lists inside text written in the site editor */
+.rich-text a {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.rich-text ul {
+  list-style: disc;
+  padding-left: 1.25rem;
+}
+.rich-text ol {
+  list-style: decimal;
+  padding-left: 1.25rem;
+}
+.rich-text li + li {
+  margin-top: 0.25rem;
+}
+
+/* Gallery tile shown when a photo can't load */
+.placeholder {
+  background-image: linear-gradient(135deg, var(--color-moss-800) 0%, var(--color-moss-600) 100%);
+}
+.placeholder::after {
+  content: "Photo";
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-sand-200);
+  font-family: var(--font-display);
+  opacity: 0.5;
+}

@@ -1,131 +1,107 @@
 ---
-import BaseLayout from "../layouts/BaseLayout.astro";
-import PageHeader from "../components/PageHeader.astro";
-import CTABand from "../components/CTABand.astro";
-import { business } from "../data/business";
-import { breadcrumbSchema } from "../data/schema";
+// Live Google reviews (loaded by worker/index.ts at /api/reviews).
+import Section from "./Section.astro";
+import { business } from "../../data/business";
+import type { SectionSettings } from "./styles";
 
-const title = `Reviews | ${business.name}`;
-const description =
-  "Read what guests say about our Everglades airboat tours, fishing trips, fish gigging, and python hunts out of Miami, straight from Google.";
-
-const schemas = [
-  breadcrumbSchema([
-    { name: "Home", url: business.siteUrl },
-    { name: "Reviews", url: `${business.siteUrl}/reviews` },
-  ]),
-];
+type Props = { section: SectionSettings };
+const { section: s } = Astro.props;
 
 const starPath =
   "M10 2l2.47 5 5.53.8-4 3.9.94 5.5L10 14.6l-4.94 2.6L6 11.7 2 7.8l5.53-.8L10 2z";
 ---
 
-<BaseLayout title={title} description={description} schema={schemas}>
-  <PageHeader
-    eyebrow="Reviews"
-    title="What our guests say"
-    intro="Reviews from guests who've been out on the water with us, pulled live from our Google listing."
-  />
-
-  <section class="py-20 lg:py-24">
-    <div class="max-w-7xl mx-auto px-5 lg:px-8">
-      <!-- Rating summary (filled in once reviews load) -->
-      <div id="reviews-summary" class="hidden flex-col sm:flex-row sm:items-center gap-6 mb-10">
-        <div class="flex items-center gap-5">
-          <div id="summary-rating" class="font-display text-5xl text-moss-900"></div>
-          <div>
-            <div id="summary-stars" class="flex items-center gap-1 text-sand-500"></div>
-            <div id="summary-count" class="text-sm text-moss-800 mt-1"></div>
-          </div>
-        </div>
-        <div class="sm:ml-auto flex flex-col sm:flex-row gap-3">
-          <a
-            id="all-reviews-link"
-            href={business.googleMapsUrl}
-            target="_blank"
-            rel="noopener"
-            class="inline-flex justify-center border border-moss-900 text-moss-900 px-5 py-2.5 text-sm hover:bg-sand-100"
-          >
-            Read all reviews on Google
-          </a>
-          <a
-            href={business.googleReviewUrl}
-            target="_blank"
-            rel="noopener"
-            class="inline-flex justify-center bg-moss-900 text-bone px-5 py-2.5 text-sm hover:bg-moss-800"
-          >
-            <span style="color: white;"> Leave us a review </span>
-          </a>
-        </div>
-      </div>
-
-      <!-- Review cards. Loading placeholders are replaced by the script below. -->
-      <div
-        id="reviews-grid"
-        class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5"
-        aria-busy="true"
-      >
-        {
-          [1, 2, 3].map(() => (
-            <div class="bg-bone border border-moss-900/10 p-7 animate-pulse" aria-hidden="true">
-              <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-full bg-sand-100" />
-                <div class="h-4 w-32 bg-sand-100" />
-              </div>
-              <div class="mt-5 space-y-2">
-                <div class="h-3 bg-sand-100" />
-                <div class="h-3 bg-sand-100" />
-                <div class="h-3 w-2/3 bg-sand-100" />
-              </div>
-            </div>
-          ))
-        }
-      </div>
-
-      <!-- Shown only if reviews can't be loaded -->
-      <div id="reviews-fallback" class="hidden border border-moss-900/10 bg-sand-50 p-8 text-center">
-        <h2 class="text-moss-950">See what guests are saying</h2>
-        <p class="mt-3 text-moss-800 mx-auto">
-          Our reviews live on Google. Take a look, and if you've been out with us, we'd love to hear from you too.
-        </p>
-        <div class="mt-6 flex flex-col sm:flex-row justify-center gap-3">
-          <a
-            href={business.googleMapsUrl}
-            target="_blank"
-            rel="noopener"
-            class="inline-flex justify-center border border-moss-900 text-moss-900 px-5 py-2.5 text-sm hover:bg-sand-100"
-          >
-            Read our reviews on Google
-          </a>
-          <a
-            href={business.googleReviewUrl}
-            target="_blank"
-            rel="noopener"
-            class="inline-flex justify-center bg-moss-900 text-bone px-5 py-2.5 text-sm hover:bg-moss-800"
-          >
-            Leave us a review
-          </a>
-        </div>
-      </div>
-
-      <!-- Google attribution (required by the Places API terms) -->
-      <div id="reviews-attribution" class="hidden mt-8 items-center gap-2 text-xs text-moss-600">
-        <span>Showing Google's most relevant reviews. Reviews and ratings from</span>
-        <img
-          src="/images/google-maps-logo.svg"
-          alt="Google Maps"
-          class="h-4 w-auto"
-          onerror="this.replaceWith(Object.assign(document.createElement('span'), { textContent: 'Google Maps', className: 'font-medium' }))"
-        />
+<Section settings={s}>
+  <!-- Rating summary (filled in once reviews load) -->
+  <div id="reviews-summary" class="hidden flex-col sm:flex-row sm:items-center gap-6 mb-10">
+    <div class="flex items-center gap-5">
+      <div id="summary-rating" class="font-display text-5xl text-moss-900"></div>
+      <div>
+        <div id="summary-stars" class="flex items-center gap-1 text-sand-500"></div>
+        <div id="summary-count" class="text-sm text-moss-800 mt-1"></div>
       </div>
     </div>
-  </section>
+    <div class="sm:ml-auto flex flex-col sm:flex-row gap-3">
+      <a
+        id="all-reviews-link"
+        href={business.googleMapsUrl}
+        target="_blank"
+        rel="noopener"
+        class="inline-flex justify-center border border-moss-900 text-moss-900 px-5 py-2.5 text-sm hover:bg-sand-100"
+      >
+        Read all reviews on Google
+      </a>
+      <a
+        href={business.googleReviewUrl}
+        target="_blank"
+        rel="noopener"
+        class="inline-flex justify-center bg-moss-900 text-bone px-5 py-2.5 text-sm hover:bg-moss-800"
+      >
+        <span style="color: white;"> Leave us a review </span>
+      </a>
+    </div>
+  </div>
 
-  <CTABand
-    heading="Ready to make your own memory?"
-    subheading="Book a private trip and come find out what everyone's talking about."
-  />
-</BaseLayout>
+  <!-- Review cards. Loading placeholders are replaced by the script below. -->
+  <div
+    id="reviews-grid"
+    class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5"
+    aria-busy="true"
+  >
+    {
+      [1, 2, 3].map(() => (
+        <div class="bg-bone border border-moss-900/10 p-7 animate-pulse" aria-hidden="true">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-full bg-sand-100" />
+            <div class="h-4 w-32 bg-sand-100" />
+          </div>
+          <div class="mt-5 space-y-2">
+            <div class="h-3 bg-sand-100" />
+            <div class="h-3 bg-sand-100" />
+            <div class="h-3 w-2/3 bg-sand-100" />
+          </div>
+        </div>
+      ))
+    }
+  </div>
+
+  <!-- Shown only if reviews can't be loaded -->
+  <div id="reviews-fallback" class="hidden border border-moss-900/10 bg-sand-50 p-8 text-center">
+    <h2 class="text-moss-950">See what guests are saying</h2>
+    <p class="mt-3 text-moss-800 mx-auto">
+      Our reviews live on Google. Take a look, and if you've been out with us, we'd love to hear from you too.
+    </p>
+    <div class="mt-6 flex flex-col sm:flex-row justify-center gap-3">
+      <a
+        href={business.googleMapsUrl}
+        target="_blank"
+        rel="noopener"
+        class="inline-flex justify-center border border-moss-900 text-moss-900 px-5 py-2.5 text-sm hover:bg-sand-100"
+      >
+        Read our reviews on Google
+      </a>
+      <a
+        href={business.googleReviewUrl}
+        target="_blank"
+        rel="noopener"
+        class="inline-flex justify-center bg-moss-900 text-bone px-5 py-2.5 text-sm hover:bg-moss-800"
+      >
+        Leave us a review
+      </a>
+    </div>
+  </div>
+
+  <!-- Google attribution (required by the Places API terms) -->
+  <div id="reviews-attribution" class="hidden mt-8 items-center gap-2 text-xs text-moss-600">
+    <span>Showing Google's most relevant reviews. Reviews and ratings from</span>
+    <img
+      src="/images/google-maps-logo.svg"
+      alt="Google Maps"
+      class="h-4 w-auto"
+      onerror="this.replaceWith(Object.assign(document.createElement('span'), { textContent: 'Google Maps', className: 'font-medium' }))"
+    />
+  </div>
+</Section>
 
 <script define:vars={{ starPath }}>
   const grid = document.getElementById("reviews-grid");

@@ -1,0 +1,49 @@
+---
+// Frequently asked questions, from the FAQs collection.
+import Section from "./Section.astro";
+import SectionHeading from "./SectionHeading.astro";
+import FAQList from "../FAQList.astro";
+import { faqItemsFor, type FaqSection } from "../../data/faq-sections";
+import { faqCategories, faqCategoryLabels } from "../../data/faq-categories";
+import { isDark, tone, type SectionSettings } from "./styles";
+
+type Props = { section: SectionSettings & FaqSection & { eyebrow?: string; heading?: string; linkLabel?: string; link?: string } };
+const { section: s } = Astro.props;
+const dark = isDark(s);
+const t = tone(dark);
+const items = faqItemsFor(s);
+const grouped = s.show === "grouped";
+const groups = (s.categories?.length ? s.categories : [...faqCategories])
+  .map((key) => ({ label: faqCategoryLabels[key], items: items.filter((f) => f.category === key) }))
+  .filter((g) => g.items.length > 0);
+const hasHeading = Boolean(s.eyebrow || s.heading);
+---
+
+{
+  grouped ? (
+    <Section settings={s} defaultWidth="narrow" innerClass="space-y-16">
+      {hasHeading && (
+        <div>
+          <SectionHeading eyebrow={s.eyebrow} heading={s.heading} linkLabel={s.linkLabel} link={s.link} dark={dark} />
+        </div>
+      )}
+      {groups.map((g) => (
+        <div>
+          <h2 class={`${t.heading} mb-8`}>{g.label}</h2>
+          <FAQList items={g.items} />
+        </div>
+      ))}
+    </Section>
+  ) : (
+    <Section settings={s} defaultWidth="medium" defaultBackground="sand">
+      {s.linkLabel && s.link ? (
+        <SectionHeading eyebrow={s.eyebrow} heading={s.heading} linkLabel={s.linkLabel} link={s.link} dark={dark} />
+      ) : hasHeading ? (
+        <div class="mb-10">
+          <SectionHeading eyebrow={s.eyebrow} heading={s.heading} dark={dark} />
+        </div>
+      ) : null}
+      <FAQList items={items} />
+    </Section>
+  )
+}

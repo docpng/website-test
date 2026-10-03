@@ -1,0 +1,10 @@
+---
+// "Ready to get out on the water?" banner with Call and Book buttons.
+import CTABand from "../CTABand.astro";
+import { fill, type SectionSettings } from "./styles";
+
+type Props = { section: SectionSettings & { heading?: string; subheading?: string } };
+const { section: s } = Astro.props;
+---
+
+<CTABand heading={s.heading ? fill(s.heading) : undefined} subheading={s.subheading ? fill(s.subheading) : undefined} />
