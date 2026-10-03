@@ -18,6 +18,15 @@
   // GOOGLE_PLACES_API_KEY is a SECRET. Add it in the dashboard under
   // Settings > Variables and Secrets (type: Secret). Never put it in this file.
 
+  // Settings for preview (non-production branch) builds, which run
+  // `npx wrangler preview`. Variables aren't inherited, so repeat them here.
+  // GOOGLE_PLACES_API_KEY must also be added as a Preview secret in the dashboard.
+  "previews": {
+    "vars": {
+      "GOOGLE_PLACE_ID": "ChIJa0mIKKGV2YgR-eK6OM7ljm4"
+    }
+  },
+
   "assets": {
     "directory": "./dist",
     "binding": "ASSETS",
