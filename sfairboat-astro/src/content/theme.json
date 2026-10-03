@@ -1,9 +1,9 @@
 {
   "headingFont": "Fraunces",
   "bodyFont": "Inter",
-  "darkColor": "#142319",
+  "darkColor": "#2dbe5d",
   "accentColor": "#c2a35e",
-  "backgroundColor": "#f6f2e8",
+  "backgroundColor": "#000000",
   "sectionSpacing": "normal",
   "buttonCorners": "square"
 }
