@@ -4,6 +4,7 @@
   "order": 1,
   "seoTitle": "Miami Airboat Tours & Everglades Adventures | {businessName}",
   "metaDescription": "Veteran-owned, private Everglades airboat tours out of Miami. Guided fishing trips, fish gigging, python hunts, and lobster bully netting led by a true Gladesman.",
+  "ogImage": "",
   "sections": [
     {
       "type": "hero",
@@ -13,6 +14,7 @@
       "media": "video",
       "video": "/videos/hero.mp4",
       "poster": "/videos/hero-poster.jpg",
+      "image": "",
       "overlay": "medium",
       "buttons": [
         {
@@ -39,20 +41,47 @@
           "value": "24/7",
           "label": "By appointment"
         }
-      ]
+      ],
+      "spacing": "",
+      "width": "",
+      "align": "left",
+      "anchor": ""
     },
     {
       "type": "servicesGrid",
       "eyebrow": "What we do",
       "heading": "Five ways to get out on the water",
+      "spacing": "",
+      "width": "",
+      "align": "left",
+      "anchor": "",
+      "background": "",
       "linkLabel": "See service areas",
       "link": "/areas-we-serve"
+    },
+    {
+      "type": "image",
+      "eyebrow": "",
+      "heading": "",
+      "image": "/images/uploads/5f26fe8e-ace1-46e5-a8ac-569d6aa10582.webp",
+      "spacing": "",
+      "width": "full",
+      "align": "left",
+      "anchor": "",
+      "background": "",
+      "alt": "Alligator with open mouth coming out of the water",
+      "caption": ""
     },
     {
       "type": "features",
       "eyebrow": "Why ride with us",
       "heading": "A local operation that still runs like one.",
+      "spacing": "",
+      "width": "",
+      "align": "left",
+      "anchor": "",
       "intro": "{businessName} offers private, customized airboat tours and Everglades experiences throughout Miami and the surrounding areas. Owned and operated by {ownerName}, a true Gladesman with over {years} years of combined experience, our business is built on local knowledge, passion, and authenticity.",
+      "background": "",
       "layout": "side",
       "columns": 2,
       "numbered": true,
@@ -79,25 +108,42 @@
       "type": "text",
       "eyebrow": "About",
       "heading": "It's not just a tour — it's your adventure, your way.",
+      "spacing": "",
+      "width": "",
+      "align": "left",
+      "anchor": "",
+      "background": "",
       "body": "We specialize in thrilling airboat rides, peaceful Everglades fishing trips, nighttime fish gigging, python hunts, and lobster bully netting — all tailored specifically to your group's preferences. Every tour is private and built around your adventure, ensuring a personal experience guided by someone who lives and breathes the Everglades.\n\nAs a proud veteran-owned small business, we're committed to delivering safe, unforgettable experiences that connect you with Florida's wild side — whether you're a first-time visitor or a returning thrill-seeker."
     },
     {
       "type": "faq",
       "eyebrow": "Frequently asked",
       "heading": "Common questions, answered",
+      "spacing": "",
+      "width": "",
+      "anchor": "",
+      "background": "",
+      "linkLabel": "See all FAQs",
+      "link": "/faqs",
       "show": "first",
       "count": 4,
-      "linkLabel": "See all FAQs",
-      "link": "/faqs"
+      "categories": []
     },
     {
       "type": "areas",
       "eyebrow": "Where we serve",
       "heading": "Serving all of South Florida",
+      "spacing": "",
+      "width": "",
+      "align": "left",
+      "anchor": "",
+      "background": "",
       "style": "tiles"
     },
     {
-      "type": "cta"
+      "type": "cta",
+      "heading": "",
+      "subheading": ""
     }
   ]
 }
