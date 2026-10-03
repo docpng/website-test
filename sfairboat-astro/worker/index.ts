@@ -163,6 +163,16 @@ function authResultPage(
   });
 }
 
+// Pass through the permissions the editor asks for (e.g. "repo,user"), but
+// only from this list.
+const ALLOWED_SCOPES = new Set(["repo", "public_repo", "user", "read:user", "user:email"]);
+function authScope(requested: string | null): string {
+  const scopes = (requested ?? "")
+    .split(/[\s,]+/)
+    .filter((scope) => ALLOWED_SCOPES.has(scope));
+  return scopes.length > 0 ? scopes.join(",") : "repo";
+}
+
 function handleAuth(request: Request, env: Env): Response {
   const url = new URL(request.url);
   if (!env.GITHUB_CLIENT_ID || !env.GITHUB_CLIENT_SECRET) {
@@ -175,7 +185,7 @@ function handleAuth(request: Request, env: Env): Response {
   const authorize = new URL("https://github.com/login/oauth/authorize");
   authorize.searchParams.set("client_id", env.GITHUB_CLIENT_ID);
   authorize.searchParams.set("redirect_uri", `${url.origin}/api/callback`);
-  authorize.searchParams.set("scope", url.searchParams.get("scope") === "public_repo" ? "public_repo" : "repo");
+  authorize.searchParams.set("scope", authScope(url.searchParams.get("scope")));
   authorize.searchParams.set("state", state);
 
   return new Response(null, {

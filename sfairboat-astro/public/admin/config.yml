@@ -7,7 +7,9 @@ backend:
   name: github
   repo: docpng/website-test
   branch: main
-  # GitHub login is handled by worker/index.ts (/api/auth and /api/callback)
+  # GitHub login is handled by worker/index.ts (/api/auth and /api/callback).
+  # base_url, site_url and display_url are set to the current domain in
+  # admin/index.html; the values here are fallbacks.
   base_url: https://www.sfairboatadventures.com
   auth_endpoint: api/auth
   commit_messages:

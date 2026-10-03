@@ -143,7 +143,8 @@ Once live:
 ## Editing content (site editor at /admin)
 
 Gallery photos, FAQs, services, service areas and business info are edited at
-**https://www.sfairboatadventures.com/admin** ([Sveltia CMS](https://sveltiacms.app)).
+**/admin** on the site, e.g. https://tekanelectronics.com/admin while on the
+test domain ([Sveltia CMS](https://sveltiacms.app)).
 Pressing **Save** commits the change to GitHub, and Cloudflare rebuilds and
 publishes the site automatically, usually within 1–2 minutes. No code or manual
 deploys needed. Reviews still come from Google automatically.
@@ -160,8 +161,8 @@ deploys needed. Reviews still come from Google automatically.
 ### One-time setup: GitHub login
 Editors sign in with a GitHub account that has write access to `docpng/website-test`.
 1. On GitHub: **Settings → Developer settings → OAuth Apps → New OAuth App**.
-   - Homepage URL: `https://www.sfairboatadventures.com`
-   - Authorization callback URL: `https://www.sfairboatadventures.com/api/callback`
+   - Homepage URL: `https://tekanelectronics.com` (the domain the site runs on)
+   - Authorization callback URL: `https://tekanelectronics.com/api/callback`
 2. Copy the **Client ID**, then click **Generate a new client secret** and copy it.
 3. In Cloudflare, open the Worker → **Settings → Variables and Secrets** and add
    two **Secrets**: `GITHUB_CLIENT_ID` and `GITHUB_CLIENT_SECRET`.
@@ -172,8 +173,12 @@ editor's login screen, using a GitHub
 [fine-grained personal access token](https://github.com/settings/personal-access-tokens/new)
 limited to this repository with **Contents: Read and write** permission.
 
-If the site's domain changes, update `base_url` in `public/admin/config.yml` and
-the callback URL in the GitHub OAuth App.
+The editor follows whatever domain it's opened on. GitHub only accepts the one
+domain in the OAuth App's callback URL, so when the site moves to
+`www.sfairboatadventures.com`, change the Homepage and callback URLs in the
+OAuth App to that domain (no code change needed). Open the editor on that exact
+domain: `https://tekanelectronics.com/admin`, not `www.tekanelectronics.com/admin`,
+unless the callback URL uses `www`.
 
 ## Design notes
 
