@@ -1,4 +1,4 @@
-import { business, addressLine } from "./business";
+import { business, addressLine, bookingPageUrl } from "./business";
 import { services, type Service } from "./services";
 import { serviceAreas } from "./service-areas";
 import { faqs, type FAQ } from "./faqs";
@@ -101,13 +101,13 @@ export const serviceSchema = (service: Service) => ({
         unitText: "guests",
       },
     }),
-    url: business.bookingUrl,
+    url: service.bookable ? bookingPageUrl : `${business.siteUrl}/contact-us`,
     businessFunction: "https://schema.org/Sell",
   },
   potentialAction: {
     "@type": "ReserveAction",
-    target: business.bookingUrl,
-    name: `Book ${service.shortName}`,
+    target: service.bookable ? bookingPageUrl : `${business.siteUrl}/contact-us`,
+    name: service.bookable ? `Book ${service.shortName}` : `Request ${service.shortName}`,
   },
 });
 
@@ -153,7 +153,7 @@ export const serviceAreaSchema = (slug: string) => {
     },
     offers: {
       "@type": "Offer",
-      url: business.bookingUrl,
+      url: bookingPageUrl,
       priceCurrency: "USD",
     },
   };

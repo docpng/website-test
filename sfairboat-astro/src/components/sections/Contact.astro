@@ -168,7 +168,7 @@ const { section: s } = Astro.props;
             href={business.bookingUrl}
             class="inline-flex items-center justify-center bg-sand-400 text-moss-950 px-7 py-3.5 font-medium hover:bg-sand-300"
           >
-            Or book online now
+            Or book an airboat tour online
           </a>
         </div>
         <p
@@ -192,6 +192,14 @@ const { section: s } = Astro.props;
     if (!statusEl) return;
     statusEl.textContent = message;
     statusEl.className = `sm:col-span-2 text-sm font-medium ${colorClass}`;
+  }
+
+  // Pre-select the service when arriving from a "Request this trip" button.
+  const requested = new URLSearchParams(window.location.search).get("service");
+  const serviceSelect = form?.querySelector<HTMLSelectElement>('select[name="service"]');
+  if (requested && serviceSelect) {
+    const match = [...serviceSelect.options].find((o) => o.value === requested || o.text === requested);
+    if (match) serviceSelect.value = match.value;
   }
 
   // Don't allow past dates. Set in the browser so "today" is always current

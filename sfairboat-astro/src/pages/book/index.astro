@@ -1,0 +1,412 @@
+---
+// Online booking for airboat tours (paid in full with Stripe). Times and
+// prices come from /api/booking/availability, set in the site editor under
+// "Booking Settings". Other trips are requested through the contact form.
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import PageHeader from "../../components/sections/PageHeader.astro";
+import { business } from "../../data/business";
+import { services } from "../../data/services";
+import { breadcrumbSchema } from "../../data/schema";
+
+const others = services.filter((s) => !s.bookable);
+const schemas = [
+  breadcrumbSchema([
+    { name: "Home", url: business.siteUrl },
+    { name: "Book an Airboat Tour", url: `${business.siteUrl}/book` },
+  ]),
+];
+const field = "w-full border border-moss-900/20 bg-bone px-4 py-3 focus:border-moss-700 focus:outline-none";
+const label = "block text-sm font-medium text-moss-900 mb-1.5";
+const stepTitle = "font-display text-xl text-moss-950";
+---
+
+<BaseLayout
+  title={`Book an Airboat Tour | ${business.name}`}
+  description="Book a private Everglades airboat tour online: daytime, sunrise, sunset or nighttime, for up to 7 guests. Pick your time and pay securely."
+  schema={schemas}
+>
+  <PageHeader
+    section={{
+      type: "pageHeader",
+      eyebrow: "Book online",
+      title: "Book a private airboat tour",
+      intro: "Pick a day, a tour and a start time, then pay securely to lock it in. Every tour is private to your group.",
+    }}
+  />
+
+  <section class="py-14 lg:py-20">
+    <div class="max-w-5xl mx-auto px-5 lg:px-8">
+      <div id="notice" class="hidden mb-8 border px-5 py-4 text-sm" role="status"></div>
+
+      <form id="booking" class="grid grid-cols-1 lg:grid-cols-12 gap-10" novalidate>
+        <div class="lg:col-span-7 space-y-10">
+          <!-- 1. Date -->
+          <div>
+            <h2 class={stepTitle}>1. Choose a date</h2>
+            <label class="block mt-4 max-w-xs">
+              <span class="sr-only">Date</span>
+              <input id="date" type="date" required class={field} />
+            </label>
+            <p id="date-message" class="mt-3 text-sm text-moss-700 hidden"></p>
+          </div>
+
+          <!-- 2. Tour -->
+          <div>
+            <h2 class={stepTitle}>2. Choose your tour</h2>
+            <div id="tours" class="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-3" role="radiogroup" aria-label="Tour type">
+              <p class="text-sm text-moss-700">Loading tours…</p>
+            </div>
+          </div>
+
+          <!-- 3. Length -->
+          <div id="length-step" class="hidden">
+            <h2 class={stepTitle}>3. How long?</h2>
+            <div id="lengths" class="mt-4 flex flex-wrap gap-3" role="radiogroup" aria-label="Tour length"></div>
+          </div>
+
+          <!-- 4. Time -->
+          <div id="time-step" class="hidden">
+            <h2 class={stepTitle}>4. Pick a start time</h2>
+            <p id="time-note" class="mt-2 text-sm text-moss-700"></p>
+            <div id="times" class="mt-4 grid grid-cols-3 sm:grid-cols-4 gap-2" role="radiogroup" aria-label="Start time"></div>
+          </div>
+
+          <!-- 5. Guests + details -->
+          <div id="details-step" class="hidden">
+            <h2 class={stepTitle}>5. Your group</h2>
+            <div class="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-5">
+              <label class="block">
+                <span class={label}>Number of guests</span>
+                <select id="guests" class={field}></select>
+              </label>
+              <div class="hidden sm:block"></div>
+              <label class="block">
+                <span class={label}>Name</span>
+                <input id="name" type="text" autocomplete="name" required class={field} />
+              </label>
+              <label class="block">
+                <span class={label}>Phone</span>
+                <input id="phone" type="tel" autocomplete="tel" required class={field} />
+              </label>
+              <label class="block sm:col-span-2">
+                <span class={label}>Email (for your receipt)</span>
+                <input id="email" type="email" autocomplete="email" required class={field} />
+              </label>
+              <label class="block sm:col-span-2">
+                <span class={label}>Anything we should know? (optional)</span>
+                <textarea id="notes" rows="3" class={`${field} resize-y`} placeholder="Celebrations, kids' ages, accessibility needs…"></textarea>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Summary -->
+        <aside class="lg:col-span-5">
+          <div class="lg:sticky lg:top-32 bg-sand-50 border border-moss-900/10 p-7">
+            <h2 class="font-display text-xl text-moss-950">Your tour</h2>
+            <dl id="summary" class="mt-5 space-y-3 text-sm text-moss-900">
+              <div class="flex justify-between gap-4"><dt class="text-moss-700">Date</dt><dd id="sum-date">—</dd></div>
+              <div class="flex justify-between gap-4"><dt class="text-moss-700">Tour</dt><dd id="sum-tour">—</dd></div>
+              <div class="flex justify-between gap-4"><dt class="text-moss-700">Time</dt><dd id="sum-time">—</dd></div>
+              <div class="flex justify-between gap-4"><dt class="text-moss-700">Guests</dt><dd id="sum-guests">—</dd></div>
+              <div class="flex justify-between gap-4"><dt class="text-moss-700">Tour price</dt><dd id="sum-base">—</dd></div>
+              <div id="sum-extra-row" class="hidden flex justify-between gap-4"><dt class="text-moss-700" id="sum-extra-label">Extra guests</dt><dd id="sum-extra">—</dd></div>
+              <div class="rule my-2"></div>
+              <div class="flex justify-between gap-4 text-base font-semibold"><dt>Total</dt><dd id="sum-total">—</dd></div>
+            </dl>
+            <button
+              id="pay"
+              type="submit"
+              disabled
+              class="mt-7 w-full inline-flex items-center justify-center bg-moss-900 px-7 py-3.5 font-medium hover:bg-moss-800 disabled:opacity-40 disabled:cursor-not-allowed"
+            >
+              <span id="pay-label" style="color: white;">Choose your tour</span>
+            </button>
+            <p id="pay-error" class="mt-3 text-sm text-rust-600 hidden" role="alert"></p>
+            <p id="policy" class="mt-5 text-xs text-moss-700 leading-relaxed"></p>
+            <p class="mt-3 text-xs text-moss-700">Secure payment by Stripe. Prices include up to 2 guests.</p>
+          </div>
+
+          <div class="mt-6 border border-moss-900/10 p-6 text-sm text-moss-800">
+            <h3 class="font-display text-lg text-moss-950">Looking for something else?</h3>
+            <p class="mt-2">
+              {others.map((s) => s.shortName).join(", ")} and larger groups are booked by request.
+            </p>
+            <div class="mt-4 flex flex-col gap-2">
+              <a href="/contact-us/#GetAQuote" class="font-semibold text-moss-900 border-b border-moss-900 self-start">Request a trip →</a>
+              <a href={business.phoneHref} class="font-semibold text-moss-900 border-b border-moss-900 self-start">Call {business.phoneDisplay}</a>
+            </div>
+          </div>
+        </aside>
+      </form>
+    </div>
+  </section>
+</BaseLayout>
+
+<script>
+  type Slot = { start: number; end: number; time: string; endTime: string; available: boolean; reason: string };
+  type Option = { minutes: number; price: number; slots: Slot[] };
+  type Tour = { id: string; label: string; description: string; timing: string; options: Option[] };
+  type Availability = {
+    date: string;
+    closed?: string;
+    enabled: boolean;
+    bookingReady?: boolean;
+    includedGuests: number;
+    extraGuestPrice: number;
+    maxGuests: number;
+    minNoticeHours: number;
+    firstDate: string;
+    maxDaysAhead: number;
+    policy: string;
+    tours: Tour[];
+  };
+
+  const $ = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
+  const dateInput = $<HTMLInputElement>("date");
+  const toursEl = $("tours");
+  const lengthsEl = $("lengths");
+  const timesEl = $("times");
+  const guestsEl = $<HTMLSelectElement>("guests");
+  const payBtn = $<HTMLButtonElement>("pay");
+  const payLabel = $("pay-label");
+  const payError = $("pay-error");
+
+  const state: { data?: Availability; tourId?: string; minutes?: number; start?: number } = {};
+  const money = (n: number) => `$${n.toLocaleString("en-US")}`;
+  const lengthLabel = (m: number) => (m % 60 === 0 ? `${m / 60} hour${m === 60 ? "" : "s"}` : `${m / 60} hours`);
+  const addDays = (d: string, n: number) => {
+    const [y, m, day] = d.split("-").map(Number);
+    return new Date(Date.UTC(y, m - 1, day + n)).toISOString().slice(0, 10);
+  };
+  const prettyDate = (d: string) =>
+    new Date(`${d}T12:00:00Z`).toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric", timeZone: "UTC" });
+
+  function notice(message: string, tone: "info" | "error" = "info") {
+    const el = $("notice");
+    el.textContent = message;
+    el.className = `mb-8 border px-5 py-4 text-sm ${tone === "error" ? "border-rust-600/40 text-rust-600" : "border-moss-900/20 text-moss-900 bg-sand-50"}`;
+  }
+
+  // Selectable "card" buttons
+  function choice(text: string, sub: string, selected: boolean, disabled = false) {
+    const b = document.createElement("button");
+    b.type = "button";
+    b.setAttribute("role", "radio");
+    b.setAttribute("aria-checked", String(selected));
+    b.disabled = disabled;
+    b.className = [
+      "text-left border px-4 py-3 transition",
+      selected ? "border-moss-900 bg-moss-900" : "border-moss-900/20 bg-bone hover:border-moss-600",
+      disabled ? "opacity-40 cursor-not-allowed hover:border-moss-900/20" : "",
+    ].join(" ");
+    const t = document.createElement("span");
+    t.className = "block font-medium";
+    t.style.color = selected ? "#fff" : "";
+    t.textContent = text;
+    b.append(t);
+    if (sub) {
+      const s = document.createElement("span");
+      s.className = "block text-xs mt-0.5";
+      s.style.color = selected ? "rgba(255,255,255,.8)" : "";
+      s.textContent = sub;
+      b.append(s);
+    }
+    return b;
+  }
+
+  const currentTour = () => state.data?.tours.find((t) => t.id === state.tourId);
+  const currentOption = () => currentTour()?.options.find((o) => o.minutes === state.minutes);
+  const currentSlot = () => currentOption()?.slots.find((s) => s.start === state.start);
+
+  function renderTours() {
+    const d = state.data!;
+    toursEl.replaceChildren();
+    $("date-message").classList.toggle("hidden", !d.closed);
+    $("date-message").textContent = d.closed ?? "";
+    if (d.closed) return;
+    for (const t of d.tours) {
+      const from = Math.min(...t.options.map((o) => o.price));
+      const open = t.options.some((o) => o.slots.some((s) => s.available));
+      const card = choice(t.label, `${t.description} From ${money(from)}.${open ? "" : " Full this day."}`, t.id === state.tourId, !open);
+      card.addEventListener("click", () => {
+        state.tourId = t.id;
+        state.minutes = t.options.find((o) => o.slots.some((s) => s.available))?.minutes;
+        state.start = undefined;
+        render();
+      });
+      toursEl.append(card);
+    }
+  }
+
+  function renderLengths() {
+    const tour = currentTour();
+    $("length-step").classList.toggle("hidden", !tour);
+    lengthsEl.replaceChildren();
+    if (!tour) return;
+    for (const o of tour.options) {
+      const open = o.slots.some((s) => s.available);
+      const b = choice(lengthLabel(o.minutes), money(o.price), o.minutes === state.minutes, !open);
+      b.addEventListener("click", () => {
+        state.minutes = o.minutes;
+        state.start = undefined;
+        render();
+      });
+      lengthsEl.append(b);
+    }
+  }
+
+  function renderTimes() {
+    const tour = currentTour();
+    const opt = currentOption();
+    $("time-step").classList.toggle("hidden", !opt);
+    timesEl.replaceChildren();
+    if (!tour || !opt) return;
+    const d = state.data!;
+    $("time-note").textContent =
+      tour.timing === "sunriseStart"
+        ? "Timed with sunrise on this date."
+        : tour.timing === "sunsetEnd"
+          ? "Timed so you're out on the water at sunset."
+          : `Times shown in Miami time. Booking online needs ${d.minNoticeHours} hours' notice.`;
+    for (const s of opt.slots) {
+      const b = choice(s.time, s.available ? `to ${s.endTime}` : s.reason === "too-soon" ? "Call us" : "Booked", s.start === state.start, !s.available);
+      b.addEventListener("click", () => {
+        state.start = s.start;
+        render();
+      });
+      timesEl.append(b);
+    }
+    if (opt.slots.length === 1 && opt.slots[0].available && state.start == null) {
+      state.start = opt.slots[0].start;
+      renderTimes();
+    }
+  }
+
+  function renderSummary() {
+    const d = state.data;
+    const tour = currentTour();
+    const opt = currentOption();
+    const slot = currentSlot();
+    const guests = Number(guestsEl.value || d?.includedGuests || 2);
+    $("details-step").classList.toggle("hidden", !slot);
+    $("sum-date").textContent = d?.date ? prettyDate(d.date) : "—";
+    $("sum-tour").textContent = tour && opt ? `${tour.label}, ${lengthLabel(opt.minutes)}` : "—";
+    $("sum-time").textContent = slot ? `${slot.time} – ${slot.endTime}` : "—";
+    $("sum-guests").textContent = slot ? String(guests) : "—";
+    $("sum-base").textContent = opt ? money(opt.price) : "—";
+    const extra = d ? Math.max(0, guests - d.includedGuests) : 0;
+    $("sum-extra-row").classList.toggle("hidden", !(opt && extra > 0));
+    $("sum-extra-row").classList.toggle("flex", Boolean(opt && extra > 0));
+    $("sum-extra-label").textContent = `${extra} extra guest${extra === 1 ? "" : "s"} × ${money(d?.extraGuestPrice ?? 0)}`;
+    $("sum-extra").textContent = d ? money(extra * d.extraGuestPrice) : "—";
+    const total = opt && d ? opt.price + extra * d.extraGuestPrice : 0;
+    $("sum-total").textContent = opt ? money(total) : "—";
+    $("policy").textContent = d?.policy ?? "";
+    const ready = Boolean(slot && d?.bookingReady !== false);
+    payBtn.disabled = !ready;
+    payLabel.textContent = !slot ? "Choose your tour" : d?.bookingReady === false ? "Online payment coming soon" : `Pay ${money(total)}`;
+  }
+
+  function render() {
+    renderTours();
+    renderLengths();
+    renderTimes();
+    renderSummary();
+  }
+
+  async function load(date: string) {
+    toursEl.innerHTML = '<p class="text-sm text-moss-700">Checking availability…</p>';
+    try {
+      const res = await fetch(`/api/booking/availability?date=${encodeURIComponent(date)}`);
+      if (!res.ok) throw new Error();
+      state.data = (await res.json()) as Availability;
+    } catch {
+      toursEl.innerHTML = "";
+      notice(`We couldn't load available times. Please try again or call us.`, "error");
+      return;
+    }
+    const d = state.data;
+    if (!dateInput.min) {
+      dateInput.min = d.firstDate;
+      dateInput.max = addDays(d.firstDate, d.maxDaysAhead);
+    }
+    guestsEl.replaceChildren(
+      ...Array.from({ length: d.maxGuests }, (_, i) => {
+        const o = document.createElement("option");
+        o.value = String(i + 1);
+        o.textContent = `${i + 1} guest${i ? "s" : ""}${i + 1 > d.includedGuests ? ` (+${money((i + 1 - d.includedGuests) * d.extraGuestPrice)})` : ""}`;
+        return o;
+      })
+    );
+    guestsEl.value = String(Math.min(d.includedGuests, d.maxGuests));
+    // Keep the selection if it's still bookable on the new date
+    if (!currentOption()?.slots.some((s) => s.available)) state.tourId = state.minutes = undefined;
+    if (!currentSlot()?.available) state.start = undefined;
+    render();
+  }
+
+  dateInput.addEventListener("change", () => dateInput.value && load(dateInput.value));
+  guestsEl.addEventListener("change", renderSummary);
+
+  $("booking").addEventListener("submit", async (event) => {
+    event.preventDefault();
+    payError.classList.add("hidden");
+    const name = $<HTMLInputElement>("name");
+    const email = $<HTMLInputElement>("email");
+    const phone = $<HTMLInputElement>("phone");
+    for (const input of [name, phone, email]) {
+      if (!input.checkValidity() || !input.value.trim()) {
+        input.reportValidity();
+        input.focus();
+        return;
+      }
+    }
+    payBtn.disabled = true;
+    payLabel.textContent = "Starting secure checkout…";
+    try {
+      const res = await fetch("/api/booking/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          date: state.data!.date,
+          tourId: state.tourId,
+          minutes: state.minutes,
+          start: state.start,
+          guests: Number(guestsEl.value),
+          name: name.value,
+          email: email.value,
+          phone: phone.value,
+          notes: $<HTMLTextAreaElement>("notes").value,
+        }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || !data.url) throw new Error(data.error || "We couldn't start the payment. Please try again or call us.");
+      window.location.href = data.url;
+    } catch (err) {
+      payError.textContent = (err as Error).message;
+      payError.classList.remove("hidden");
+      if ((err as Error).message.includes("just booked")) load(state.data!.date);
+      else renderSummary();
+    }
+  });
+
+  // Back from Stripe without paying: free the time right away.
+  const params = new URLSearchParams(window.location.search);
+  const release = params.get("release");
+  const key = params.get("key");
+  if (release && key) {
+    fetch("/api/booking/release", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id: release, key }) }).catch(() => {});
+    history.replaceState(null, "", window.location.pathname);
+    notice("Checkout was cancelled and you haven't been charged. Pick a time below to try again.");
+  }
+
+  // Start with the first day that can be booked online
+  (async () => {
+    const res = await fetch("/api/booking/availability?date=").catch(() => null);
+    const info = res?.ok ? await res.json() : null;
+    const first = info?.firstDate ? addDays(info.firstDate, 1) : new Date(Date.now() + 864e5).toISOString().slice(0, 10);
+    dateInput.value = first;
+    load(first);
+  })();
+</script>

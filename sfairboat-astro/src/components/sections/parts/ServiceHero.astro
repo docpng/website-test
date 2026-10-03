@@ -53,10 +53,10 @@ const tripDetails = [
     }
     <div class="mt-10 flex flex-col sm:flex-row gap-4">
       <a
-        href={business.bookingUrl}
+        href={service.bookable ? business.bookingUrl : `/contact-us/?service=${encodeURIComponent(service.shortName)}#GetAQuote`}
         class="inline-flex items-center bg-sand-400 text-moss-950 px-7 py-3.5 font-medium hover:bg-sand-300"
       >
-        Book {service.shortName}
+        {service.bookable ? `Book ${service.shortName}` : "Request this trip"}
       </a>
       <a
         href={business.phoneHref}

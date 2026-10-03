@@ -29,6 +29,8 @@ export type Service = {
   // The page, top to bottom: built-in parts plus any sections added in the
   // site editor. When empty, the default layout (data/layouts.ts) is used.
   layout?: Section[];
+  // Airboat tours can be booked and paid online at /book; others are requested.
+  bookable?: boolean;
   // Optional photos/videos
   cardImage?: string; // photo at the top of this service's card
   heroImage?: string; // background photo behind the page title

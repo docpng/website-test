@@ -690,6 +690,15 @@ collections:
         value_type: int
         default: 10
         hint: Lower numbers show first in menus and on the homepage.
+      - name: bookable
+        label: Book and pay online
+        widget: boolean
+        default: false
+        required: false
+        hint: >-
+          On: the page's button goes to the online booking page (/book). Off:
+          the button says “Request this trip” and opens the contact form.
+          Times and prices for online booking are set under Booking Settings.
       - name: icon
         label: Icon
         widget: select
@@ -925,6 +934,71 @@ collections:
               - { name: link, label: Link, widget: string }
           - { name: footerNote, label: Small note at the bottom, widget: string, required: false }
 
+  # -------------------------------------------------------- Booking settings
+  - name: booking
+    label: Booking Settings
+    icon: event_available
+    description: >-
+      Online booking for airboat tours (paid in full with Stripe). See and
+      cancel bookings at /admin/bookings. Refunds are done in Stripe.
+    files:
+      - name: booking
+        label: Airboat Tour Booking
+        file: sfairboat-astro/src/content/booking.json
+        fields:
+          - { name: enabled, label: Online booking is open, widget: boolean, default: true, hint: Turn off to pause online booking (the page asks guests to call). }
+          - name: tourTypes
+            label: Tour types
+            label_singular: Tour type
+            widget: list
+            summary: "{{fields.label}}"
+            fields:
+              - { name: label, label: Name, widget: string, hint: e.g. “Sunset tour” }
+              - name: id
+                label: Short code
+                widget: string
+                pattern: ["^[a-z0-9-]+$", "Lowercase letters, numbers and dashes"]
+                hint: Lowercase, no spaces (e.g. sunset). Don't change it once bookings exist.
+              - { name: description, label: Description, widget: string, required: false }
+              - name: timing
+                label: Start times
+                widget: select
+                options:
+                  - { label: "Every few minutes between two times", value: fixed }
+                  - { label: Start a set time before or after sunrise, value: sunriseStart }
+                  - { label: End a set time after (or before) sunset, value: sunsetEnd }
+              - { name: firstStart, label: First start time, widget: string, required: false, pattern: ["^([01]?\\d|2[0-3]):[0-5]\\d$|^$", "Use 24-hour time like 08:00 or 19:30"], hint: "24-hour time, e.g. 08:00 or 19:30. Only for “between two times”." }
+              - { name: lastStart, label: Last start time, widget: string, required: false, pattern: ["^([01]?\\d|2[0-3]):[0-5]\\d$|^$", "Use 24-hour time like 15:00 or 00:00"], hint: "e.g. 15:00. Use 00:00 for midnight (the same night)." }
+              - { name: every, label: Minutes between start times, widget: number, value_type: int, default: 30, required: false }
+              - { name: sunOffset, label: Minutes from sunrise/sunset, widget: number, value_type: int, default: 0, required: false, hint: "Sunrise: -30 starts 30 minutes before sunrise. Sunset: 30 ends 30 minutes after sunset." }
+              - name: prices
+                label: Lengths and prices
+                label_singular: Length
+                widget: list
+                summary: "{{fields.minutes}} min: ${{fields.price}}"
+                fields:
+                  - { name: minutes, label: Length (minutes), widget: number, value_type: int }
+                  - { name: price, label: "Price (USD, for the included guests)", widget: number, value_type: int }
+          - { name: includedGuests, label: Guests included in the price, widget: number, value_type: int, default: 2 }
+          - { name: extraGuestPrice, label: Price per extra guest (USD), widget: number, value_type: int, default: 60 }
+          - { name: maxGuests, label: Most guests per booking, widget: number, value_type: int, default: 7 }
+          - { name: boats, label: Tours that can run at the same time, widget: number, value_type: int, default: 1, hint: Number of boats/captains available at once. }
+          - { name: minNoticeHours, label: Minimum notice (hours), widget: number, value_type: int, default: 24 }
+          - { name: maxDaysAhead, label: How far ahead guests can book (days), widget: number, value_type: int, default: 365 }
+          - name: blockedDates
+            label: Days off (no online booking)
+            label_singular: Day off
+            widget: list
+            summary: "{{fields.date}} {{fields.note}}"
+            fields:
+              - { name: date, label: Date, widget: datetime, time_format: false, date_format: "YYYY-MM-DD", format: "YYYY-MM-DD" }
+              - { name: note, label: Note (only you see this), widget: string, required: false }
+          - name: policy
+            label: Payment and refund policy
+            widget: text
+            hint: Shown on the booking page and at checkout. {phone} fills in your phone number.
+          - { name: ownerEmail, label: Owner email (optional), widget: string, required: false, hint: "Not used yet; booking alerts go to the contact-form inbox and Stripe." }
+
   # ---------------------------------------------------------- Business info
   - name: settings
     label: Business Info
@@ -953,7 +1027,10 @@ collections:
               - { name: postalCode, label: ZIP code, widget: string }
               - { name: country, label: Country code, widget: string, default: US }
           - { name: hours, label: Hours, widget: string }
-          - { name: bookingUrl, label: Online booking link, widget: string }
+          - name: bookingUrl
+            label: Online booking link
+            widget: string
+            hint: "/book is the site's own airboat booking page (set it up under Booking Settings). Used by every “Book” button."
           - name: owner
             label: Owner
             widget: object
