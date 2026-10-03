@@ -10,7 +10,8 @@ sfairboat-astro/
 ├── package.json
 ├── tsconfig.json
 ├── wrangler.jsonc         # Cloudflare config (static site + /api/reviews)
-├── worker/index.ts        # live Google reviews + GitHub login for the site editor
+├── worker/index.ts        # live Google reviews, GitHub login, booking API
+├── worker/booking/        # airboat booking: times, prices, Stripe, database
 ├── public/
 │   ├── admin/             # site editor (Sveltia CMS) at /admin
 │   ├── robots.txt
@@ -215,6 +216,49 @@ domain in the OAuth App's callback URL, so when the site moves to
 OAuth App to that domain (no code change needed). Open the editor on that exact
 domain: `https://tekanelectronics.com/admin`, not `www.tekanelectronics.com/admin`,
 unless the callback URL uses `www`.
+
+## Online booking (airboat tours)
+
+Airboat tours are booked and paid in full at **/book** (Stripe Checkout). Other
+trips use **Request this trip** (the contact form) or a phone call; switch a
+service on or off with **Book and pay online** in the editor (Services).
+
+- **Prices, start times, boats, notice, days off and the refund policy** are in
+  the editor under **Booking Settings**. Daytime tours start every 30 minutes
+  8:00am–3:00pm, nighttime every 30 minutes 7:30pm–midnight, and sunrise/sunset
+  tours follow the real sun for each date.
+- **See and cancel bookings** at **/admin/bookings** (same GitHub sign-in as the
+  editor). Cancelling frees the time slot. **Refunds are done in Stripe**: open
+  the payment ("View payment in Stripe") and click Refund.
+- Guests get Stripe's emailed receipt. You get an email at the contact-form
+  inbox for each paid booking, and Stripe's own payment emails.
+- The same time can't be sold twice: a 30-minute hold is placed while the guest
+  pays, and it's released if they back out.
+
+### One-time setup
+1. **Stripe:** create an account at stripe.com (start in **test mode**).
+   - Developers → API keys: copy the **Secret key**.
+   - Developers → Webhooks → Add endpoint: `https://YOUR-DOMAIN/api/stripe/webhook`,
+     events `checkout.session.completed`, `checkout.session.expired`,
+     `checkout.session.async_payment_succeeded`, `checkout.session.async_payment_failed`.
+     Copy its **Signing secret** (`whsec_…`).
+   - Settings → Customer emails: turn on **Successful payments**.
+2. **Cloudflare:** Worker → Settings → Variables and Secrets → add **Secrets**
+   `STRIPE_SECRET_KEY` and `STRIPE_WEBHOOK_SECRET`.
+3. **Database:** the bookings database (`sfairboat-bookings`, D1) is created
+   automatically on the next deploy. If the deploy log says it couldn't create
+   it, create a D1 database with that name in the Cloudflare dashboard (Storage
+   & Databases → D1) and add its ID as `database_id` in `wrangler.jsonc`.
+4. Make a test booking with Stripe's test card `4242 4242 4242 4242`, check it
+   appears at /admin/bookings, then switch Stripe to **live** keys (update both
+   secrets and create the live webhook).
+5. Retire Acuity once you're happy.
+
+### Developing
+- `npm run test:booking` runs the booking unit tests (sun times, start times,
+  prices, date rules, webhook signatures).
+- Local testing: copy `.dev.vars.example` to `.dev.vars`, add Stripe **test**
+  keys, then `npm run build && npx wrangler dev`.
 
 ## Design notes
 
