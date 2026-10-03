@@ -14,7 +14,7 @@ export type Page = {
 };
 
 // Paths already used by other parts of the site.
-const reserved = new Set(["service-area", "admin", "api", "images", "videos", "_astro", "404"]);
+const reserved = new Set(["service-area", "admin", "api", "images", "videos", "_astro", "404", "book"]);
 
 export const pages: Page[] = loadFolder<Page>(
   import.meta.glob("../content/pages/*.json", { eager: true }),

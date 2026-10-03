@@ -63,6 +63,9 @@ const schemaArray = schema
       href={fontLinkHref}
       rel="stylesheet"
     />
+    {/* Extra head tags from a page (e.g. noindex) */}
+    <slot name="head" />
+
     {/* Site Design changes made in the site editor */}
     {themeCss && <style is:inline set:html={themeCss} />}
 

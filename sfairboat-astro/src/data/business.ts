@@ -32,4 +32,7 @@ export const business = {
   },
 };
 
+// Full address of the booking page (bookingUrl may be a path like "/book").
+export const bookingPageUrl = new URL(business.bookingUrl, business.siteUrl + "/").href;
+
 export const addressLine = `${business.address.street}, ${business.address.city}, ${business.address.region} ${business.address.postalCode}`;

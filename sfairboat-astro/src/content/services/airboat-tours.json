@@ -1,5 +1,6 @@
 {
   "order": 1,
+  "bookable": true,
   "slug": "airboat-tours",
   "name": "Private Airboat Tours",
   "shortName": "Airboat Tours",

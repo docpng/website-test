@@ -1,0 +1,132 @@
+---
+// Shown after a successful Stripe payment (/book/thanks/?session_id=...).
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import PageHeader from "../../components/sections/PageHeader.astro";
+import { business } from "../../data/business";
+---
+
+<BaseLayout title={`Booking confirmed | ${business.name}`} description="Your airboat tour booking.">
+  <meta slot="head" name="robots" content="noindex" />
+  <PageHeader section={{ type: "pageHeader", eyebrow: "Booking", title: "Thank you!", intro: "Checking your booking…" }} />
+
+  <section class="py-14 lg:py-20">
+    <div class="max-w-3xl mx-auto px-5 lg:px-8">
+      <div id="result" class="border border-moss-900/10 bg-sand-50 p-7 lg:p-9">
+        <p class="text-moss-800">One moment while we confirm your payment…</p>
+      </div>
+      <div class="mt-8 flex flex-col sm:flex-row gap-3">
+        <a href="/" class="inline-flex items-center justify-center bg-moss-900 px-6 py-3.5 font-medium hover:bg-moss-800">
+          <span style="color: white;">Back to home</span>
+        </a>
+        <a href={business.phoneHref} class="inline-flex items-center justify-center border border-moss-900 px-6 py-3.5 font-medium text-moss-900">
+          Call {business.phoneDisplay}
+        </a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<script define:vars={{ accessKey: business.formAccessKey, businessName: business.name }}>
+  const result = document.getElementById("result");
+  const intro = document.querySelector("section p.text-lg");
+  const sessionId = new URLSearchParams(location.search).get("session_id") || "";
+
+  function row(label, value) {
+    const div = document.createElement("div");
+    div.className = "flex justify-between gap-4 py-2 border-b border-moss-900/10";
+    const dt = document.createElement("dt");
+    dt.className = "text-moss-700";
+    dt.textContent = label;
+    const dd = document.createElement("dd");
+    dd.className = "text-moss-950 font-medium text-right";
+    dd.textContent = value;
+    div.append(dt, dd);
+    return div;
+  }
+
+  // Let the owner know about the new booking (once per booking, via the same
+  // Web3Forms inbox as the contact form). Stripe also emails the account owner.
+  function notifyOwner(b) {
+    const key = `owner-notified:${sessionId}`;
+    try {
+      if (localStorage.getItem(key)) return;
+      localStorage.setItem(key, "1");
+    } catch {}
+    if (!accessKey) return;
+    fetch("https://api.web3forms.com/submit", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Accept: "application/json" },
+      body: JSON.stringify({
+        access_key: accessKey,
+        subject: `New paid booking: ${b.tour}, ${b.date} at ${b.time}`,
+        from_name: `${businessName} Website`,
+        name: b.name,
+        email: b.email,
+        phone: b.phone,
+        tour: `${b.tour} (${b.minutes} minutes)`,
+        when: `${b.date}, ${b.time} – ${b.endTime}`,
+        guests: b.guests,
+        paid: `$${b.amount}`,
+        notes: b.notes || "—",
+      }),
+    }).catch(() => {});
+  }
+
+  async function check(attempt = 0) {
+    let data;
+    try {
+      const res = await fetch(`/api/booking/status?session_id=${encodeURIComponent(sessionId)}`);
+      data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+    } catch (err) {
+      result.innerHTML = "";
+      const p = document.createElement("p");
+      p.className = "text-moss-800";
+      p.textContent = "We couldn't find this booking. If you were charged, please call us and we'll sort it out right away.";
+      result.append(p);
+      if (intro) intro.textContent = "Something went wrong.";
+      return;
+    }
+    const b = data.booking;
+    if (b.status === "hold" && attempt < 8) return setTimeout(() => check(attempt + 1), 1500);
+
+    result.innerHTML = "";
+    const h = document.createElement("h2");
+    h.className = "font-display text-2xl text-moss-950";
+    const p = document.createElement("p");
+    p.className = "mt-3 text-moss-800";
+    if (b.status === "paid") {
+      h.textContent = "You're booked!";
+      p.textContent = `We've emailed your receipt to ${b.email}. We'll reach out before your trip with directions and what to bring.`;
+      if (intro) intro.textContent = "Your airboat tour is confirmed.";
+      notifyOwner(b);
+    } else if (b.status === "hold") {
+      h.textContent = "Payment processing";
+      p.textContent = "Your payment is still being confirmed. You'll get an email receipt from Stripe once it goes through.";
+      if (intro) intro.textContent = "Almost there.";
+    } else {
+      h.textContent = "This booking isn't active";
+      p.textContent = "It may have been cancelled or the checkout expired. Please book again or call us.";
+      if (intro) intro.textContent = "Let's get you booked.";
+    }
+    const dl = document.createElement("dl");
+    dl.className = "mt-6 text-sm";
+    dl.append(
+      row("Tour", `${b.tour}`),
+      row("Date", b.date),
+      row("Time", `${b.time} – ${b.endTime}`),
+      row("Guests", String(b.guests)),
+      row("Total paid", b.status === "paid" ? `$${b.amount.toLocaleString("en-US")}` : "—"),
+      row("Name", b.name)
+    );
+    const policy = document.createElement("p");
+    policy.className = "mt-6 text-xs text-moss-700";
+    policy.textContent = data.policy || "";
+    result.append(h, p, dl, policy);
+  }
+
+  if (sessionId) check();
+  else {
+    result.innerHTML = '<p class="text-moss-800">No booking to show. <a class="font-semibold border-b border-moss-900" href="/book/">Book a tour</a>.</p>';
+  }
+</script>

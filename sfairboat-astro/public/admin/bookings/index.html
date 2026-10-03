@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Bookings | South Florida Airboat Adventures</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <style>
+      :root { --ink: #142319; --muted: #50645a; --line: #dfe4df; --bg: #f7f6f2; --accent: #c2a35e; --warn: #a84a1f; --ok: #2f6b45; }
+      * { box-sizing: border-box; }
+      body { margin: 0; font: 15px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; color: var(--ink); background: var(--bg); }
+      header { background: var(--ink); color: #fff; padding: 14px 20px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+      header h1 { font-size: 18px; margin: 0; flex: 1; }
+      header a { color: #e6d8b5; font-size: 14px; }
+      main { max-width: 980px; margin: 0 auto; padding: 20px 16px 60px; }
+      button, .btn { font: inherit; border: 1px solid var(--ink); background: #fff; color: var(--ink); padding: 8px 14px; cursor: pointer; text-decoration: none; display: inline-block; }
+      button.primary { background: var(--ink); color: #fff; }
+      button.danger { border-color: var(--warn); color: var(--warn); }
+      button:disabled { opacity: .5; cursor: default; }
+      .card { background: #fff; border: 1px solid var(--line); padding: 16px 18px; margin: 10px 0; }
+      .toolbar { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-bottom: 14px; }
+      .toolbar label { display: flex; gap: 6px; align-items: center; font-size: 14px; color: var(--muted); }
+      .seg button { border-right-width: 0; }
+      .seg button:last-child { border-right-width: 1px; }
+      .seg button[aria-pressed="true"] { background: var(--ink); color: #fff; }
+      h2.day { font-size: 16px; margin: 26px 0 6px; color: var(--muted); font-weight: 600; }
+      .row { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+      .when { font-weight: 700; font-size: 17px; }
+      .meta { color: var(--muted); font-size: 14px; }
+      .badge { font-size: 12px; padding: 2px 8px; border: 1px solid; border-radius: 99px; white-space: nowrap; }
+      .paid { color: var(--ok); }
+      .cancelled, .expired { color: var(--muted); }
+      .hold { color: #8a6d1f; }
+      .warn { color: var(--warn); font-weight: 600; font-size: 14px; }
+      .actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+      .muted { color: var(--muted); }
+      input[type="password"], input[type="text"] { font: inherit; padding: 8px 10px; border: 1px solid var(--line); width: 100%; max-width: 420px; }
+      #signin { max-width: 520px; }
+      #signin p { color: var(--muted); }
+      details summary { cursor: pointer; color: var(--muted); font-size: 14px; margin-top: 16px; }
+      .error { color: var(--warn); }
+      .empty { text-align: center; color: var(--muted); padding: 40px 0; }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Bookings</h1>
+      <a href="/admin/">Site editor</a>
+      <a href="/book/" target="_blank" rel="noopener">Booking page</a>
+      <a href="https://dashboard.stripe.com/payments" target="_blank" rel="noopener">Stripe</a>
+      <button id="signout" hidden>Sign out</button>
+    </header>
+    <main>
+      <section id="signin" class="card" hidden>
+        <h2 style="margin-top: 0">Sign in</h2>
+        <p>Sign in with the GitHub account you use for the site editor.</p>
+        <button id="github" class="primary">Sign in with GitHub</button>
+        <details>
+          <summary>Sign in with an access token instead</summary>
+          <p>Paste a GitHub personal access token with access to the site's repository.</p>
+          <input id="token" type="password" autocomplete="off" placeholder="github_pat_…" />
+          <p><button id="use-token">Sign in</button></p>
+        </details>
+        <p id="signin-error" class="error"></p>
+      </section>
+
+      <section id="app" hidden>
+        <div class="toolbar">
+          <div class="seg" role="group" aria-label="Which bookings">
+            <button data-range="upcoming" aria-pressed="true">Upcoming</button><button data-range="past" aria-pressed="false">Past</button>
+          </div>
+          <label><input id="holds" type="checkbox" /> Show unfinished checkouts</label>
+          <button id="refresh">Refresh</button>
+          <span id="count" class="muted"></span>
+        </div>
+        <p class="muted" style="margin-top: 0">
+          Cancelling frees the time slot. Refunds are done in Stripe: open the payment and choose “Refund”.
+        </p>
+        <div id="list"></div>
+      </section>
+    </main>
+
+    <script>
+      const tokenKey = "bookings-admin-token";
+      let token = sessionStorage.getItem(tokenKey) || "";
+      let range = "upcoming";
+      const $ = (id) => document.getElementById(id);
+      const money = (n) => "$" + Number(n).toLocaleString("en-US");
+
+      function show(signedIn) {
+        $("signin").hidden = signedIn;
+        $("app").hidden = !signedIn;
+        $("signout").hidden = !signedIn;
+      }
+
+      async function api(path, options = {}) {
+        const res = await fetch(path, {
+          ...options,
+          headers: { ...(options.headers || {}), Authorization: "Bearer " + token, "Content-Type": "application/json" },
+        });
+        const data = await res.json().catch(() => ({}));
+        if (res.status === 401 || res.status === 403) {
+          sessionStorage.removeItem(tokenKey);
+          token = "";
+          show(false);
+          $("signin-error").textContent = data.error || "Please sign in again.";
+          throw new Error("auth");
+        }
+        if (!res.ok) throw new Error(data.error || "Something went wrong.");
+        return data;
+      }
+
+      function el(tag, className, text) {
+        const n = document.createElement(tag);
+        if (className) n.className = className;
+        if (text != null) n.textContent = text;
+        return n;
+      }
+
+      function card(b) {
+        const c = el("div", "card");
+        const top = el("div", "row");
+        const left = el("div");
+        left.append(el("div", "when", `${b.time} – ${b.endTime}`), el("div", "meta", `${b.tour} · ${b.minutes} min · ${b.guests} guest${b.guests === 1 ? "" : "s"}`));
+        const right = el("div");
+        right.style.textAlign = "right";
+        right.append(el("div", "when", money(b.amount)), el("span", "badge " + b.status, b.status === "hold" ? "unpaid checkout" : b.status));
+        top.append(left, right);
+        c.append(top);
+        if (b.overbooked) c.append(el("p", "warn", "⚠ Overlaps another paid booking: more bookings than boats at this time. Please check."));
+        const who = el("p");
+        who.style.margin = "12px 0 0";
+        who.append(el("strong", "", b.name), document.createTextNode(" · "));
+        const tel = el("a", "", b.phone);
+        tel.href = "tel:" + b.phone.replace(/[^\d+]/g, "");
+        const mail = el("a", "", b.email);
+        mail.href = "mailto:" + b.email;
+        who.append(tel, document.createTextNode(" · "), mail);
+        c.append(who);
+        if (b.notes) c.append(el("p", "meta", "Notes: " + b.notes));
+        const actions = el("div", "actions");
+        if (b.paymentIntent) {
+          const a = el("a", "btn", "View payment in Stripe");
+          a.href = "https://dashboard.stripe.com/payments/" + encodeURIComponent(b.paymentIntent);
+          a.target = "_blank";
+          a.rel = "noopener";
+          actions.append(a);
+        }
+        if (b.status === "paid") {
+          const cancel = el("button", "danger", "Cancel booking");
+          cancel.addEventListener("click", async () => {
+            if (!confirm(`Cancel ${b.name}'s ${b.tour} on ${b.date} at ${b.time}?\n\nThis frees the time slot. It does NOT refund the payment; do that in Stripe.`)) return;
+            cancel.disabled = true;
+            try {
+              await api("/api/admin/bookings/cancel", { method: "POST", body: JSON.stringify({ id: b.id }) });
+              load();
+            } catch (e) {
+              if (e.message !== "auth") alert(e.message);
+              cancel.disabled = false;
+            }
+          });
+          actions.append(cancel);
+        }
+        if (actions.children.length) c.append(actions);
+        return c;
+      }
+
+      async function load() {
+        const list = $("list");
+        list.innerHTML = '<p class="muted">Loading…</p>';
+        try {
+          const data = await api(`/api/admin/bookings?range=${range}&holds=${$("holds").checked ? 1 : 0}`);
+          let rows = data.bookings;
+          if (range === "past") rows = rows.slice().reverse();
+          list.innerHTML = "";
+          const paid = rows.filter((b) => b.status === "paid").length;
+          $("count").textContent = `${paid} paid booking${paid === 1 ? "" : "s"}`;
+          if (!rows.length) return list.append(el("p", "empty", range === "upcoming" ? "No upcoming bookings yet." : "No past bookings."));
+          let day = "";
+          for (const b of rows) {
+            if (b.date !== day) {
+              day = b.date;
+              list.append(el("h2", "day", day));
+            }
+            list.append(card(b));
+          }
+        } catch (e) {
+          if (e.message !== "auth") list.innerHTML = '<p class="error"></p>', (list.firstChild.textContent = e.message);
+        }
+      }
+
+      function signIn(t) {
+        token = t;
+        sessionStorage.setItem(tokenKey, t);
+        $("signin-error").textContent = "";
+        show(true);
+        load();
+      }
+
+      // GitHub sign-in popup (same handshake as the site editor; see worker/index.ts)
+      $("github").addEventListener("click", () => {
+        const popup = window.open("/api/auth?provider=github&scope=repo", "github-signin", "width=600,height=700");
+        if (!popup) return ($("signin-error").textContent = "Please allow pop-ups for this site and try again.");
+        const onMessage = ({ origin, data, source }) => {
+          if (source !== popup || origin !== location.origin || typeof data !== "string") return;
+          if (data === "authorizing:github") return popup.postMessage(data, origin);
+          const m = data.match(/^authorization:github:(success|error):(.+)$/);
+          if (!m) return;
+          window.removeEventListener("message", onMessage);
+          popup.close();
+          let result = {};
+          try { result = JSON.parse(m[2]); } catch {}
+          if (m[1] === "success" && result.token) signIn(result.token);
+          else $("signin-error").textContent = result.error || "Sign-in failed.";
+        };
+        window.addEventListener("message", onMessage);
+      });
+      $("use-token").addEventListener("click", () => {
+        const t = $("token").value.trim();
+        if (t) signIn(t);
+      });
+      $("signout").addEventListener("click", () => {
+        sessionStorage.removeItem(tokenKey);
+        token = "";
+        show(false);
+      });
+      document.querySelectorAll("[data-range]").forEach((b) =>
+        b.addEventListener("click", () => {
+          range = b.dataset.range;
+          document.querySelectorAll("[data-range]").forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
+          load();
+        })
+      );
+      $("holds").addEventListener("change", load);
+      $("refresh").addEventListener("click", load);
+
+      if (token) { show(true); load(); } else show(false);
+    </script>
+  </body>
+</html>

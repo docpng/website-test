@@ -2,14 +2,15 @@
   "name": "sfairboat-astro",
   "type": "module",
   "version": "1.0.0",
-  "description": "South Florida Airboat Adventures — Astro site",
+  "description": "South Florida Airboat Adventures \u2014 Astro site",
   "scripts": {
     "dev": "astro dev",
     "start": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "deploy": "npm run build && wrangler deploy"
+    "deploy": "npm run build && wrangler deploy",
+    "test:booking": "node --experimental-strip-types --no-warnings --test worker/tests/*.test.ts"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.2.1",

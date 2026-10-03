@@ -13,14 +13,33 @@
  *   the editor to GitHub; /api/callback swaps GitHub's code for an access
  *   token and hands it back to the editor window.
  *
+ * /api/booking/*, /api/stripe/webhook, /api/admin/bookings*
+ *   Online booking for airboat tours, paid with Stripe (see worker/booking/).
+ *
  * Secrets / variables:
  *   GOOGLE_PLACES_API_KEY  secret, set in the Cloudflare dashboard (never commit it)
  *   GOOGLE_PLACE_ID        plain variable, set in wrangler.jsonc
  *   GITHUB_CLIENT_ID       secret, from the GitHub OAuth App (see README)
  *   GITHUB_CLIENT_SECRET   secret, from the GitHub OAuth App (never commit it)
+ *   STRIPE_SECRET_KEY      secret, from the Stripe dashboard (Developers > API keys)
+ *   STRIPE_WEBHOOK_SECRET  secret, from the Stripe webhook endpoint (whsec_...)
+ *   DB                     D1 database binding for bookings (wrangler.jsonc)
  */
 
-type Env = {
+import bookingSettings from "../src/content/booking.json";
+import businessContent from "../src/content/business.json";
+import { handleBooking, type BookingEnv } from "./booking/api.ts";
+import { checkSettings, type BookingSettings } from "./booking/settings.ts";
+
+// Dock location for sunrise/sunset times (same as src/data/business.ts).
+const DOCK = { lat: 25.76, lng: -80.49 };
+const bookingContext = {
+  settings: checkSettings(bookingSettings as BookingSettings),
+  geo: DOCK,
+  business: { name: businessContent.name, phone: businessContent.phone },
+};
+
+type Env = BookingEnv & {
   ASSETS: { fetch: (request: Request) => Promise<Response> };
   GOOGLE_PLACES_API_KEY?: string;
   GOOGLE_PLACE_ID?: string;
@@ -254,6 +273,9 @@ export default {
     if (pathname === "/api/callback" && request.method === "GET") {
       return handleCallback(request, env);
     }
+
+    const booking = await handleBooking(request, env, bookingContext);
+    if (booking) return booking;
 
     if (pathname.startsWith("/api/")) {
       return json({ error: "Not found" }, 404);
