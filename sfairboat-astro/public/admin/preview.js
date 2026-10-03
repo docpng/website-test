@@ -19,6 +19,60 @@
     typeof text === "string" ? text.replace(/\{(businessName|phone|ownerName|years|hours|address)\}/g, (m, k) => values[k] ?? m) : text;
   const fillAll = (o) =>
     Array.isArray(o) ? o.map(fillAll) : o && typeof o === "object" ? Object.fromEntries(Object.entries(o).map(([k, v]) => [k, fillAll(v)])) : fill(o);
+  // Photos/videos placed inside text: same output as src/components/sections/inline-media.ts
+  const escHtml = (v) => String(v ?? "").replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  const embedUrl = (url) => {
+    try {
+      const u = new URL(url);
+      const host = u.hostname.replace(/^www\.|^m\./, "");
+      const yt = host === "youtu.be" ? u.pathname.slice(1) : /youtube(-nocookie)?\.com$/.test(host) ? u.searchParams.get("v") || (u.pathname.match(/^\/(?:embed|shorts|live)\/([^/?]+)/) || [])[1] : null;
+      if (yt) return `https://www.youtube-nocookie.com/embed/${yt}?rel=0`;
+      const vimeo = /vimeo\.com$/.test(host) && (u.pathname.match(/(\d+)/) || [])[1];
+      if (vimeo) return `https://player.vimeo.com/video/${vimeo}`;
+    } catch {}
+    return null;
+  };
+  function expandInlineMedia(md, asset) {
+    return String(md || "").replace(/^\[\[(photo|video)((?:\s+[a-z]+="[^"]*")*)\s*\]\]$/gm, (m, kind, raw) => {
+      const a = {};
+      for (const x of raw.matchAll(/([a-z]+)="([^"]*)"/g)) a[x[1]] = x[2].replace(/&quot;/g, '"');
+      const size = ["small", "medium", "full"].includes(a.size) ? a.size : "medium";
+      const align = ["left", "center", "right"].includes(a.align) ? a.align : "center";
+      let media = "";
+      if (kind === "photo") media = a.src ? `<img src="${escHtml(asset(a.src))}" alt="${escHtml(a.alt)}">` : "";
+      else if (a.url) {
+        const e = embedUrl(a.url);
+        media = e ? `<span class="md-embed"><iframe src="${escHtml(e)}" title="Video" allowfullscreen></iframe></span>` : "";
+      } else if (a.src) media = `<video src="${escHtml(asset(a.src))}" ${a.playback === "controls" ? "controls" : "autoplay muted loop"} playsinline></video>`;
+      if (!media) return "";
+      return `\n\n<figure class="md-media md-${size} md-${align}">${media}${a.caption ? `<figcaption>${escHtml(a.caption)}</figcaption>` : ""}</figure>\n\n`;
+    });
+  }
+  // Rich text: the Markdown the text toolbar produces (paragraphs, bold,
+  // italics, links, lists) plus inline photos/videos.
+  const inlineMd = (t) =>
+    escHtml(t)
+      .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
+      .replace(/(^|[^*])\*(?!\s)(.+?)\*/g, "$1<em>$2</em>")
+      .replace(/(^|\W)_(?!\s)(.+?)_(?=\W|$)/g, "$1<em>$2</em>")
+      .replace(/\[([^\]]+)\]\(([^)\s]+)\)/g, (m, text, url) => (/^(https?:|\/|#|mailto:|tel:)/.test(url.replace(/&amp;/g, "&")) ? `<a href="${url}">${text}</a>` : text));
+  function mdToHtml(md) {
+    return md
+      .split(/\n{2,}/)
+      .map((block) => block.trim())
+      .filter(Boolean)
+      .map((block) => {
+        if (block.startsWith("<figure")) return block;
+        const lines = block.split("\n");
+        if (lines.every((l) => /^\s*[-*+]\s+/.test(l))) return `<ul>${lines.map((l) => `<li>${inlineMd(l.replace(/^\s*[-*+]\s+/, ""))}</li>`).join("")}</ul>`;
+        if (lines.every((l) => /^\s*\d+[.)]\s+/.test(l))) return `<ol>${lines.map((l) => `<li>${inlineMd(l.replace(/^\s*\d+[.)]\s+/, ""))}</li>`).join("")}</ol>`;
+        return `<p>${lines.map(inlineMd).join("<br>")}</p>`;
+      })
+      .join("");
+  }
+  const richText = (md, asset, className) =>
+    h("div", { className, dangerouslySetInnerHTML: { __html: mdToHtml(expandInlineMedia(md, asset)) } });
+
   const widths = { narrow: "max-w-4xl", medium: "max-w-5xl", wide: "max-w-7xl", full: "max-w-none" };
   const spacing = { none: "", compact: "py-12 lg:py-14", normal: "py-20 lg:py-24", roomy: "py-28 lg:py-36" };
   const backgrounds = { light: "", sand: "bg-sand-50", dark: "bg-moss-900 text-bone", brand: "bg-moss-800 text-bone" };
@@ -51,7 +105,6 @@
 
   function render(s, widgets, asset) {
     const dark = isDark(s.background);
-    const body = widgets && widgets.get ? widgets.get("body") : null;
     switch (s.type) {
       case "hero": {
         const bgImage = s.media === "image" && s.image ? asset(s.image) : s.media === "video" && s.poster ? asset(s.poster) : null;
@@ -101,7 +154,7 @@
           )
         );
       case "text":
-        return wrap(s, [...heading(s, dark), body && h("div", { key: "b", className: cx("mt-8 space-y-5 rich-text", dark ? "text-sand-100" : "text-moss-800") }, body)], { width: "narrow" });
+        return wrap(s, [...heading(s, dark), s.body && h("div", { key: "b" }, richText(s.body, asset, cx("mt-8 space-y-5 rich-text", dark ? "text-sand-100" : "text-moss-800")))], { width: "narrow" });
       case "image":
         return wrap(s, [
           ...heading(s, dark, "mb-10"),
@@ -135,7 +188,7 @@
               "div",
               null,
               ...heading(s, dark),
-              body && h("div", { className: cx("mt-6 space-y-5 rich-text", dark ? "text-sand-100" : "text-moss-800") }, body),
+              s.body && richText(s.body, asset, cx("mt-6 space-y-5 rich-text", dark ? "text-sand-100" : "text-moss-800")),
               s.buttonLabel && h("span", { className: "mt-8 inline-flex items-center justify-center bg-moss-900 text-bone px-7 py-3.5 font-medium" }, s.buttonLabel)
             )
           )

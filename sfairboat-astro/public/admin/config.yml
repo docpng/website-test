@@ -226,7 +226,8 @@ collections:
                 widget: markdown
                 required: false
                 buttons: [bold, italic, link, bulleted-list, numbered-list]
-                editor_components: []
+                editor_components: [photo, video]
+                hint: Use the + button (or “Photo” / “Video”) in the toolbar to place a photo or video inside the text.
                 modes: [rich_text]
               - &f_background
                 name: background

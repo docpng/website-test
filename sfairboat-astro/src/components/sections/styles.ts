@@ -111,7 +111,9 @@ export function resolveLink(link: string | undefined | null): string {
 
 
 // Markdown (bold, italics, links, lists) for longer text fields.
+// Photos and videos placed inside the text are expanded first.
 import { marked } from "marked";
-export function markdown(text: string | undefined | null): string {
-  return marked.parse(fill(text), { async: false, gfm: true, breaks: false }) as string;
+import { expandInlineMedia } from "./inline-media";
+export function markdown(text: string | undefined | null, source?: string): string {
+  return marked.parse(expandInlineMedia(fill(text), source), { async: false, gfm: true, breaks: false }) as string;
 }
