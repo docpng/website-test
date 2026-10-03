@@ -1,6 +1,8 @@
 ---
 import { business, addressLine } from "../data/business";
 import { services } from "../data/services";
+import { Image } from "astro:assets";
+import logo from "../assets/logo.png";
 
 const quickLinks = [
   { label: "Home", href: "/" },
@@ -17,9 +19,15 @@ const quickLinks = [
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
       <!-- Brand -->
       <div class="lg:col-span-1">
-        <div class="font-display text-xl font-semibold text-bone">
-          {business.name}
-        </div>
+        <a href="/" class="inline-block" aria-label={`${business.name} home`}>
+          <Image
+            src={logo}
+            alt={business.name}
+            height={128}
+            densities={[1, 2]}
+            class="h-32 w-auto"
+          />
+        </a>
         <p class="mt-4 text-sm text-sand-200 leading-relaxed max-w-xs">
           Veteran-owned, locally run. Private Everglades airboat tours, fishing,
           and python hunts out of Miami.

@@ -1,6 +1,8 @@
 ---
 import { business } from "../data/business";
 import { services } from "../data/services";
+import { Image } from "astro:assets";
+import logo from "../assets/logo.png";
 
 const navItems = [
   { label: "Home", href: "/" },
@@ -22,40 +24,18 @@ const navItems = [
 
 <header class="border-b border-moss-900/10 bg-bone sticky top-0 z-40 backdrop-blur">
   <div class="max-w-7xl mx-auto px-5 lg:px-8">
-    <div class="flex items-center justify-between h-20">
+    <div class="flex items-center justify-between h-20 lg:h-24">
       <!-- Logo -->
-      <a href="/" class="flex items-center gap-3 shrink-0">
-        <svg
-          viewBox="0 0 48 48"
-          class="w-10 h-10 text-moss-800"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-          aria-hidden="true"
-        >
-          <path
-            d="M8 32c6-4 12-4 16-4s10 0 16 4"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"></path>
-          <path
-            d="M14 28l6-10h12l-4 10"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linejoin="round"
-            fill="currentColor"
-            fill-opacity="0.1"></path>
-          <circle cx="24" cy="22" r="1.5" fill="currentColor"></circle>
-          <path d="M8 36h32" stroke="currentColor" stroke-width="2" stroke-linecap="round" opacity="0.5"></path>
-          <path d="M12 40h24" stroke="currentColor" stroke-width="2" stroke-linecap="round" opacity="0.3"></path>
-        </svg>
-        <div class="hidden sm:block">
-          <div class="font-display text-lg font-semibold leading-tight text-moss-900">
-            South Florida
-          </div>
-          <div class="font-display text-sm leading-tight text-moss-600 tracking-wide">
-            Airboat Adventures
-          </div>
-        </div>
+      <a href="/" class="flex items-center shrink-0" aria-label={`${business.name} home`}>
+        <Image
+          src={logo}
+          alt={business.name}
+          height={72}
+          densities={[1, 2, 3]}
+          loading="eager"
+          fetchpriority="high"
+          class="h-16 lg:h-[72px] w-auto"
+        />
       </a>
 
       <!-- Desktop nav -->
@@ -115,7 +95,7 @@ const navItems = [
           href={business.bookingUrl}
           class="inline-flex items-center bg-moss-900 text-bone px-5 py-2.5 text-sm font-medium hover:bg-moss-800 transition"
         >
-         <span style="color: white;"> Book Now </span>
+          Book Now
         </a>
       </div>
 
