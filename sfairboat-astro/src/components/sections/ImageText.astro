@@ -25,9 +25,10 @@ const t = tone(dark);
 const media = s.media ?? "image";
 const embed = media === "link" ? embedUrl(s.url) : null;
 const href = resolveLink(s.buttonLink);
+// Links inherit their text color site-wide, so the label color is set on a span.
 const button = dark
-  ? "inline-flex items-center justify-center bg-sand-400 text-moss-950 px-7 py-3.5 font-medium hover:bg-sand-300"
-  : "inline-flex items-center justify-center bg-moss-900 text-bone px-7 py-3.5 font-medium hover:bg-moss-800";
+  ? { link: "inline-flex items-center justify-center bg-sand-400 px-7 py-3.5 font-medium hover:bg-sand-300", label: "text-moss-950" }
+  : { link: "inline-flex items-center justify-center bg-moss-900 px-7 py-3.5 font-medium hover:bg-moss-800", label: "text-bone" };
 ---
 
 <Section settings={s}>
@@ -51,7 +52,7 @@ const button = dark
       {s.eyebrow && <div class={`text-xs tracking-[0.2em] uppercase ${t.eyebrow} font-medium mb-3`}>{fill(s.eyebrow)}</div>}
       {s.heading && <h2 class={t.heading}>{fill(s.heading)}</h2>}
       {s.body && <div class={`mt-6 space-y-5 ${t.body} rich-text`} set:html={markdown(s.body)} />}
-      {s.buttonLabel && href && <a href={href} class={`mt-8 ${button}`}>{fill(s.buttonLabel)}</a>}
+      {s.buttonLabel && href && <a href={href} class={`mt-8 ${button.link}`}><span class={button.label}>{fill(s.buttonLabel)}</span></a>}
     </div>
   </div>
 </Section>
