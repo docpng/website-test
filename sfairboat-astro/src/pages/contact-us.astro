@@ -2,6 +2,7 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 import PageHeader from "../components/PageHeader.astro";
 import { business, addressLine } from "../data/business";
+import { services } from "../data/services";
 import { breadcrumbSchema } from "../data/schema";
 
 const title = `Contact Us | ${business.name}`;
@@ -138,10 +139,7 @@ const schemas = [
                 name="service"
                 class="w-full border border-moss-900/20 bg-bone px-4 py-3 focus:border-moss-700 focus:outline-none"
               >
-                <option>Airboat Tours</option>
-                <option>Everglades Fishing Trips</option>
-                <option>Fish Gigging</option>
-                <option>Python Hunts</option>
+                {services.map((s) => <option>{s.shortName}</option>)}
                 <option>Not sure — looking for recommendations</option>
               </select>
             </label>

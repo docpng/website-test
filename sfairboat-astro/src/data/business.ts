@@ -1,7 +1,7 @@
 export const business = {
   name: "South Florida Airboat Adventures",
   shortName: "SFAA",
-  tagline: "Private Everglades airboat tours, fishing trips, and python hunts out of Miami.",
+  tagline: "Private Everglades airboat tours, fishing trips, python hunts, and lobster bully netting out of Miami.",
   phone: "786-816-9850",
   phoneHref: "tel:+17868169850",
   phoneDisplay: "786-816-9850",
@@ -20,6 +20,8 @@ export const business = {
   },
   hours: "24/7 by appointment",
   bookingUrl: "https://southfloridaairboatadventures.as.me/schedule/fa86adc3",
+  // Contact form → Gmail. Get a free key at https://web3forms.com (enter the Gmail address).
+  // The key is safe to be public; it only tells Web3Forms which inbox to send to.
   formAccessKey: "cde7c622-a0d1-429e-8c7f-adc3e36f3079",
   googleMapsUrl:
     "https://www.google.com/maps/place/South+Florida+Airboat+Adventures/data=!4m2!3m1!1s0x0:0x6e8ee5ce38bae2f9?sa=X&ved=1t:2428&ictx=111",

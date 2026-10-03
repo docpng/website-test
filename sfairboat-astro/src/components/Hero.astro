@@ -1,30 +1,60 @@
 ---
+import { existsSync } from "node:fs";
 import { business } from "../data/business";
+
+// Show the background video once public/videos/hero.mp4 exists.
+const hasVideo = existsSync("public/videos/hero.mp4");
 ---
 
 <section class="relative overflow-hidden bg-moss-950 text-bone">
-  <!-- Subtle sawgrass texture using SVG -->
-  <svg
-    class="absolute inset-0 w-full h-full opacity-10"
-    aria-hidden="true"
-    xmlns="http://www.w3.org/2000/svg"
-    preserveAspectRatio="xMidYMid slice"
-    viewBox="0 0 1200 600"
-  >
-    <defs>
-      <pattern id="grass" x="0" y="0" width="60" height="60" patternUnits="userSpaceOnUse">
-        <path d="M10 60 L10 30 M30 60 L30 20 M50 60 L50 35 M20 60 L20 25 M40 60 L40 15" stroke="#c2a35e" stroke-width="1" fill="none" />
-      </pattern>
-    </defs>
-    <rect width="100%" height="100%" fill="url(#grass)" />
-  </svg>
+  {
+    hasVideo ? (
+      <>
+        {/* Background video: silent airboat tour loop */}
+        <video
+          id="hero-video"
+          class="absolute inset-0 w-full h-full object-cover"
+          autoplay
+          muted
+          loop
+          playsinline
+          preload="auto"
+          poster="/videos/hero-poster.jpg"
+          aria-hidden="true"
+        >
+          <source src="/videos/hero.mp4" type="video/mp4" />
+        </video>
+        {/* Darkens the video so the headline stays readable */}
+        <div class="absolute inset-0 bg-moss-950/55" aria-hidden="true"></div>
+        <div class="absolute inset-0 bg-gradient-to-r from-moss-950/80 via-moss-950/30 to-transparent" aria-hidden="true"></div>
+      </>
+    ) : (
+      <>
+        {/* Subtle sawgrass texture using SVG */}
+        <svg
+          class="absolute inset-0 w-full h-full opacity-10"
+          aria-hidden="true"
+          xmlns="http://www.w3.org/2000/svg"
+          preserveAspectRatio="xMidYMid slice"
+          viewBox="0 0 1200 600"
+        >
+          <defs>
+            <pattern id="grass" x="0" y="0" width="60" height="60" patternUnits="userSpaceOnUse">
+              <path d="M10 60 L10 30 M30 60 L30 20 M50 60 L50 35 M20 60 L20 25 M40 60 L40 15" stroke="#c2a35e" stroke-width="1" fill="none" />
+            </pattern>
+          </defs>
+          <rect width="100%" height="100%" fill="url(#grass)" />
+        </svg>
+      </>
+    )
+  }
 
   <div class="relative max-w-7xl mx-auto px-5 lg:px-8 pt-20 pb-28 lg:pt-28 lg:pb-36">
     <div class="max-w-3xl">
       <div class="flex items-center gap-3 mb-6">
         <span class="h-px w-10 bg-sand-400"></span>
         <span class="text-xs tracking-[0.2em] uppercase text-sand-300 font-medium">
-          Private tours - tailored adventures | Miami, Fl
+          Private Tours · Tailored Adventures · Miami, FL
         </span>
       </div>
       <h1 class="text-bone">
@@ -32,7 +62,7 @@ import { business } from "../data/business";
       </h1>
       <p class="mt-6 text-lg text-sand-100 max-w-2xl">
         Fast rides, slow drifts, nighttime fish gigging, Everglades fishing
-        trips, and python hunts — all private, all tailored to your group.
+        trips, python hunts, and lobster bully netting — all private, all tailored to your group.
       </p>
       <div class="mt-10 flex flex-col sm:flex-row items-start sm:items-center gap-4">
         <a
@@ -67,3 +97,12 @@ import { business } from "../data/business";
     </div>
   </div>
 </section>
+
+<script>
+  // Show only the still image for visitors who prefer reduced motion.
+  const video = document.getElementById("hero-video") as HTMLVideoElement | null;
+  if (video && window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    video.removeAttribute("autoplay");
+    video.pause();
+  }
+</script>

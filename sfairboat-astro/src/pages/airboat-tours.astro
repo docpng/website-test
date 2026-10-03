@@ -2,18 +2,15 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 import ServicePageBody from "../components/ServicePageBody.astro";
 import { getService } from "../data/services";
+import { getServiceFaqs } from "../data/faqs";
 import {
   serviceSchema,
   breadcrumbSchema,
   faqPageSchema,
 } from "../data/schema";
 import { business } from "../data/business";
-import { faqs } from "../data/faqs";
 
 const service = getService("airboat-tours")!;
-const relevant = faqs.filter((f) =>
-  ["tours", "general", "logistics"].includes(f.category)
-);
 
 const schemas = [
   serviceSchema(service),
@@ -21,7 +18,7 @@ const schemas = [
     { name: "Home", url: business.siteUrl },
     { name: service.shortName, url: `${business.siteUrl}/${service.slug}` },
   ]),
-  faqPageSchema(relevant),
+  faqPageSchema(getServiceFaqs(service.slug)),
 ];
 ---
 

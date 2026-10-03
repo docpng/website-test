@@ -93,6 +93,14 @@ export const serviceSchema = (service: Service) => ({
     "@type": "Offer",
     availability: "https://schema.org/InStock",
     priceCurrency: "USD",
+    ...(service.price != null && { price: service.price }),
+    ...(service.maxGuests != null && {
+      eligibleQuantity: {
+        "@type": "QuantitativeValue",
+        maxValue: service.maxGuests,
+        unitText: "guests",
+      },
+    }),
     url: business.bookingUrl,
     businessFunction: "https://schema.org/Sell",
   },

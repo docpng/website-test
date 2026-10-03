@@ -1,7 +1,7 @@
 export type FAQ = {
   question: string;
   answer: string;
-  category: "tours" | "fishing" | "python" | "logistics" | "general";
+  category: "tours" | "fishing" | "python" | "lobster" | "logistics" | "general";
 };
 
 export const faqs: FAQ[] = [
@@ -50,7 +50,7 @@ export const faqs: FAQ[] = [
   {
     question: "Do you run tours at night?",
     answer:
-      "Yes. We offer nighttime airboat tours and fish gigging trips, both of which show you a side of the Everglades most visitors never see.",
+      "Yes. We offer nighttime airboat tours, fish gigging trips, and lobster bully netting charters, all of which show you a side of South Florida most visitors never see.",
     category: "tours",
   },
   {
@@ -77,4 +77,56 @@ export const faqs: FAQ[] = [
       "We strongly recommend booking in advance to guarantee your spot, especially during peak season. Call us to check same-day availability.",
     category: "logistics",
   },
+  {
+    question: "When can I go lobster bully netting?",
+    answer:
+      "Only during Florida's spiny lobster season: the two-day sport season on the last Wednesday and Thursday in July, and the regular season from Aug. 6 through March 31. Lobster harvest is closed the rest of the year.",
+    category: "lobster",
+  },
+  {
+    question: "How many lobsters can I keep?",
+    answer:
+      "During the regular season, the limit is 6 lobsters per person per day. Every lobster must have a body shell (carapace) longer than 3 inches, measured in the water, and egg-bearing females must be released. Limits can differ during the two-day sport season depending on where we fish. Your captain will go over the rules and help you measure every catch.",
+    category: "lobster",
+  },
+  {
+    question: "Do I need a fishing license or lobster permit?",
+    answer:
+      "No. Guests on our lobster charter are covered by the boat's charter license, so you don't need to buy your own license or lobster permit.",
+    category: "lobster",
+  },
+  {
+    question: "How many people can come, and what does it cost?",
+    answer:
+      "Up to 4 guests per trip. The price is $800 per trip and covers the whole boat for your group.",
+    category: "lobster",
+  },
+  {
+    question: "Do I have to get in the water?",
+    answer:
+      "No. Bully netting is done entirely from the boat. You'll stand near the front and net lobsters off the bottom while the captain moves slowly across the flats.",
+    category: "lobster",
+  },
+  {
+    question: "What should I bring for lobster bully netting?",
+    answer:
+      "A light jacket or rain layer, since it gets cool on the water at night, plus a towel, shoes with good grip, and any snacks or drinks you'd like. Please leave glass bottles at home.",
+    category: "lobster",
+  },
 ];
+
+// Which FAQs appear on each service page. The page and its FAQ schema both use
+// this, so what Google reads always matches what visitors see.
+const serviceFaqConfig: Record<string, { categories: FAQ["category"][]; limit: number }> = {
+  "airboat-tours": { categories: ["tours", "general", "logistics"], limit: 4 },
+  "everglades-fishing-trips": { categories: ["fishing", "general", "logistics"], limit: 4 },
+  "fish-gigging": { categories: ["fishing", "tours", "logistics"], limit: 4 },
+  "python-hunts": { categories: ["python", "general", "logistics"], limit: 4 },
+  "lobster-bully-netting": { categories: ["lobster"], limit: 6 },
+};
+
+export const getServiceFaqs = (slug: string): FAQ[] => {
+  const config = serviceFaqConfig[slug];
+  if (!config) return faqs.slice(0, 4);
+  return faqs.filter((f) => config.categories.includes(f.category)).slice(0, config.limit);
+};
