@@ -1,0 +1,38 @@
+{
+  "order": 2,
+  "slug": "everglades-fishing-trips",
+  "name": "Everglades Fishing Trips",
+  "shortName": "Fishing Trips",
+  "icon": "fish",
+  "seoTitle": "Everglades Fishing Trips from Miami | South Florida Airboat Adventures",
+  "metaDescription": "Guided Everglades fishing trips for beginners and seasoned anglers. All gear and tackle included. Private trips led by a lifelong Gladesman.",
+  "tagline": "Guided freshwater fishing in the heart of the Everglades.",
+  "summary": "Our Everglades fishing trips suit beginners and seasoned anglers alike. We provide our expert knowledge, tackle, and guidance to ensure a fun, exciting, and productive day on the water. With us, you'll catch some of South Florida's prized fish.",
+  "longDescription": [
+    "The Everglades is one of the most productive freshwater fisheries in the country, and we know where the fish are holding on any given day. Our guided trips cover the backwaters most tour operators never see — the kind of water where a local guide makes the difference between a quiet day and a cooler full of fish.",
+    "Beginner? We'll teach you from the ground up. Experienced angler? We'll put you on fish and get out of your way. Either way, you're coming home with stories.",
+    "All trips are private to your group. We handle the gear, bait, licenses guidance, and the boat — you bring sunscreen, a hat, and a willingness to be out on the water."
+  ],
+  "highlights": [
+    "Private trips tailored to your experience level",
+    "Rods, reels, tackle, and bait all provided",
+    "Target species include largemouth bass, bluegill, snakehead, and more",
+    "Half-day and full-day options",
+    "Great for first-time anglers and seasoned fishermen"
+  ],
+  "whoItsFor": "Anglers of every level — first-timers, families introducing kids to fishing, and experienced fishermen who want local knowledge of Everglades waters.",
+  "whatsIncluded": [
+    "All rods, reels, tackle, and bait",
+    "Private boat and captain",
+    "Expert guidance on technique and reading the water",
+    "Advice on licenses and regulations"
+  ],
+  "schemaCategory": "Guided Fishing Trip",
+  "schemaType": "Service",
+  "faqCategories": [
+    "fishing",
+    "general",
+    "logistics"
+  ],
+  "faqLimit": 4
+}

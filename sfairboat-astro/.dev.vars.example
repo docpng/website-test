@@ -1,3 +1,6 @@
 # For local testing with `npx wrangler dev` only.
 # Copy this file to .dev.vars and paste your key. .dev.vars is git-ignored.
 GOOGLE_PLACES_API_KEY=paste-your-key-here
+# Site editor (/admin) GitHub login. Optional for local testing.
+GITHUB_CLIENT_ID=paste-your-client-id-here
+GITHUB_CLIENT_SECRET=paste-your-client-secret-here

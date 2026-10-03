@@ -1,0 +1,26 @@
+{
+  "name": "South Florida Airboat Adventures",
+  "shortName": "SFAA",
+  "tagline": "Private Everglades airboat tours, fishing trips, python hunts, and lobster bully netting out of Miami.",
+  "phone": "786-816-9850",
+  "email": "",
+  "address": {
+    "street": "5334 FL-90",
+    "city": "Miami",
+    "region": "FL",
+    "postalCode": "33185",
+    "country": "US"
+  },
+  "hours": "24/7 by appointment",
+  "bookingUrl": "https://southfloridaairboatadventures.as.me/schedule/fa86adc3",
+  "owner": {
+    "name": "Eian Mislow",
+    "title": "Owner & Lead Guide"
+  },
+  "foundedYears": 10,
+  "isVeteranOwned": true,
+  "social": {
+    "facebook": "https://facebook.com/people/South-Florida-Airboat-Adventures/61569997021652/",
+    "instagram": "https://www.instagram.com/southfloridaairboatadventures"
+  }
+}

@@ -1,0 +1,263 @@
+# Sveltia CMS settings for the site editor at /admin.
+# Every Save commits to GitHub; Cloudflare then rebuilds and publishes the
+# site automatically (about 1–2 minutes).
+# Docs: https://sveltiacms.app/en/docs
+
+backend:
+  name: github
+  repo: docpng/website-test
+  branch: main
+  # GitHub login is handled by worker/index.ts (/api/auth and /api/callback).
+  # base_url, site_url and display_url are set to the current domain in
+  # admin/index.html; the values here are fallbacks.
+  base_url: https://www.sfairboatadventures.com
+  auth_endpoint: api/auth
+  commit_messages:
+    create: "Add {{collection}} “{{slug}}” (via site editor)"
+    update: "Update {{collection}} “{{slug}}” (via site editor)"
+    delete: "Delete {{collection}} “{{slug}}” (via site editor)"
+    uploadMedia: "Upload “{{path}}” (via site editor)"
+    deleteMedia: "Delete “{{path}}” (via site editor)"
+
+site_url: https://www.sfairboatadventures.com
+display_url: https://www.sfairboatadventures.com
+logo_url: /favicon.svg
+
+# Uploaded photos are saved here and shrunk to web size automatically.
+media_folder: sfairboat-astro/public/images/gallery
+public_folder: /images/gallery
+media_libraries:
+  default:
+    config:
+      max_file_size: 26214400 # 25 MB, Cloudflare's per-file limit
+      slugify_filename: true
+      transformations:
+        raster_image:
+          format: webp
+          quality: 82
+          width: 2000
+          height: 2000
+
+collections:
+  # ---------------------------------------------------------------- Gallery
+  - name: gallery
+    label: Gallery
+    icon: photo_library
+    files:
+      - name: gallery
+        label: Gallery Photos
+        file: sfairboat-astro/src/content/gallery.json
+        fields:
+          - name: photos
+            label: Photos
+            label_singular: Photo
+            hint: Drag photos to change their order on the Gallery page.
+            widget: list
+            summary: "{{fields.alt}}"
+            fields:
+              - { name: image, label: Photo, widget: image }
+              - name: alt
+                label: Description
+                widget: string
+                hint: Describe the photo in a few words, e.g. “Alligator resting in the sawgrass”. Used by screen readers and Google.
+
+  # ------------------------------------------------------------------- FAQs
+  - name: faqs
+    label: FAQs
+    icon: quiz
+    files:
+      - name: faqs
+        label: Frequently Asked Questions
+        file: sfairboat-astro/src/content/faqs.json
+        fields:
+          - name: items
+            label: Questions
+            label_singular: Question
+            hint: >-
+              All questions show on the FAQs page. The first 4 also appear on
+              the homepage, and each service page shows the questions from the
+              categories chosen on that service.
+            widget: list
+            summary: "{{fields.question}}"
+            fields:
+              - { name: question, label: Question, widget: string }
+              - { name: answer, label: Answer, widget: text }
+              - name: category
+                label: Category
+                widget: select
+                options: &faq_categories
+                  - { label: Airboat tours, value: tours }
+                  - { label: Fishing, value: fishing }
+                  - { label: Python hunts, value: python }
+                  - { label: Lobster bully netting, value: lobster }
+                  - { label: Location & booking, value: logistics }
+                  - { label: General, value: general }
+
+  # --------------------------------------------------------------- Services
+  - name: services
+    label: Services
+    label_singular: Service
+    icon: kayaking
+    folder: sfairboat-astro/src/content/services
+    format: json
+    extension: json
+    identifier_field: slug
+    slug: "{{slug}}"
+    summary: "{{name}}"
+    sortable_fields: [order, name]
+    fields:
+      - name: name
+        label: Name
+        widget: string
+        hint: Full name, e.g. “Private Airboat Tours”.
+      - name: shortName
+        label: Short name
+        widget: string
+        hint: Used in menus, e.g. “Airboat Tours”.
+      - name: slug
+        label: Page address
+        widget: string
+        pattern: ["^[a-z0-9]+(-[a-z0-9]+)*$", "Use lowercase letters, numbers and dashes only, e.g. airboat-tours"]
+        hint: >-
+          The page lives at sfairboatadventures.com/THIS-VALUE. Avoid changing it
+          after the page is live, because old links and Google results would break.
+      - name: order
+        label: Display order
+        widget: number
+        value_type: int
+        default: 10
+        hint: Lower numbers show first in menus and on the homepage.
+      - name: icon
+        label: Icon
+        widget: select
+        options:
+          - { label: Airboat, value: airboat }
+          - { label: Fish, value: fish }
+          - { label: Gig (spear), value: gig }
+          - { label: Python, value: python }
+          - { label: Lobster, value: lobster }
+      - { name: tagline, label: Tagline, widget: string, hint: One short sentence shown under the page title. }
+      - { name: summary, label: Summary, widget: text, hint: A short paragraph shown on the homepage service card. }
+      - name: longDescription
+        label: Description paragraphs
+        label_singular: Paragraph
+        widget: list
+        field: { name: paragraph, label: Paragraph, widget: text }
+      - name: highlights
+        label: Highlights
+        label_singular: Highlight
+        widget: list
+        field: { name: highlight, label: Highlight, widget: string }
+      - { name: whoItsFor, label: Who it's for, widget: text }
+      - name: whatsIncluded
+        label: What's included
+        label_singular: Item
+        widget: list
+        field: { name: item, label: Item, widget: string }
+      - name: price
+        label: Price per trip (USD)
+        widget: number
+        value_type: int
+        required: false
+        hint: Leave empty to hide the price.
+      - { name: maxGuests, label: Max guests, widget: number, value_type: int, required: false, hint: Leave empty to hide. }
+      - { name: season, label: Season, widget: string, required: false, hint: e.g. “August 6 – March 31”. Leave empty to hide. }
+      - name: faqCategories
+        label: FAQ categories shown on this page
+        widget: select
+        multiple: true
+        options: *faq_categories
+      - { name: faqLimit, label: Number of FAQs shown, widget: number, value_type: int, default: 4 }
+      - name: seoTitle
+        label: Google title
+        widget: string
+        hint: The title shown in Google results and the browser tab (about 50–60 characters).
+      - name: metaDescription
+        label: Google description
+        widget: text
+        hint: The description shown in Google results (about 150–160 characters).
+      - name: schemaCategory
+        label: Search category
+        widget: string
+        default: Guided Tour
+        hint: Category for Google's structured data, e.g. “Guided Tour” or “Fishing Charter”.
+      - name: schemaType
+        label: Search type
+        widget: select
+        default: TouristTrip
+        options: [TouristTrip, Service]
+        hint: Leave as TouristTrip unless you know you need something else.
+
+  # ---------------------------------------------------------- Service areas
+  - name: service_areas
+    label: Service Areas
+    label_singular: Service Area
+    icon: location_city
+    folder: sfairboat-astro/src/content/service-areas
+    format: json
+    extension: json
+    identifier_field: slug
+    slug: "{{slug}}"
+    summary: "{{city}}, {{stateAbbr}}"
+    sortable_fields: [order, city]
+    fields:
+      - { name: city, label: City, widget: string }
+      - { name: state, label: State, widget: string, default: Florida }
+      - { name: stateAbbr, label: State abbreviation, widget: string, default: FL }
+      - name: slug
+        label: Page address
+        widget: string
+        pattern: ["^[a-z0-9]+(-[a-z0-9]+)*$", "Use lowercase letters, numbers and dashes only"]
+        hint: >-
+          The page lives at sfairboatadventures.com/service-area/THIS-VALUE,
+          e.g. fishing-tours-coral-gables-fl. Avoid changing it after the page is live.
+      - { name: order, label: Display order, widget: number, value_type: int, default: 10 }
+      - { name: intro, label: Intro, widget: text }
+      - { name: localAngle, label: Local details, widget: text }
+      - { name: driveTime, label: Drive time, widget: string, hint: e.g. “About 25 minutes west.” }
+      - { name: seoTitle, label: Google title, widget: string }
+      - { name: metaDescription, label: Google description, widget: text }
+
+  # ---------------------------------------------------------- Business info
+  - name: settings
+    label: Business Info
+    icon: storefront
+    files:
+      - name: business
+        label: Business Info
+        file: sfairboat-astro/src/content/business.json
+        fields:
+          - { name: name, label: Business name, widget: string }
+          - { name: shortName, label: Short name, widget: string }
+          - { name: tagline, label: Tagline, widget: string }
+          - name: phone
+            label: Phone
+            widget: string
+            pattern: ["^[0-9 ()+.-]{10,}$", "Enter a phone number, e.g. 786-816-9850"]
+            hint: Shown on the site and used for the tap-to-call links.
+          - { name: email, label: Email, widget: string, required: false, hint: Leave empty to keep it off the site. }
+          - name: address
+            label: Address
+            widget: object
+            fields:
+              - { name: street, label: Street, widget: string }
+              - { name: city, label: City, widget: string }
+              - { name: region, label: State, widget: string }
+              - { name: postalCode, label: ZIP code, widget: string }
+              - { name: country, label: Country code, widget: string, default: US }
+          - { name: hours, label: Hours, widget: string }
+          - { name: bookingUrl, label: Online booking link, widget: string }
+          - name: owner
+            label: Owner
+            widget: object
+            fields:
+              - { name: name, label: Name, widget: string }
+              - { name: title, label: Title, widget: string }
+          - { name: foundedYears, label: Years in business, widget: number, value_type: int }
+          - { name: isVeteranOwned, label: Veteran-owned, widget: boolean }
+          - name: social
+            label: Social links
+            widget: object
+            fields:
+              - { name: facebook, label: Facebook, widget: string, required: false }
+              - { name: instagram, label: Instagram, widget: string, required: false }

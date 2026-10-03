@@ -1,7 +1,7 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import ServicePageBody from "../components/ServicePageBody.astro";
-import { getService } from "../data/services";
+import { services, type Service } from "../data/services";
 import { getServiceFaqs } from "../data/faqs";
 import {
   serviceSchema,
@@ -10,7 +10,15 @@ import {
 } from "../data/schema";
 import { business } from "../data/business";
 
-const service = getService("lobster-bully-netting")!;
+// One page per service in src/content/services (e.g. /airboat-tours).
+export function getStaticPaths() {
+  return services.map((service) => ({
+    params: { service: service.slug },
+    props: { service },
+  }));
+}
+
+const { service } = Astro.props as { service: Service };
 
 const schemas = [
   serviceSchema(service),

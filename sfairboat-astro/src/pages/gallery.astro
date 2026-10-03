@@ -4,22 +4,17 @@ import PageHeader from "../components/PageHeader.astro";
 import CTABand from "../components/CTABand.astro";
 import { business } from "../data/business";
 import { breadcrumbSchema } from "../data/schema";
+import { requireFields } from "../data/validate";
+import gallery from "../content/gallery.json";
 
 const title = `Gallery | ${business.name}`;
 const description =
   "Photos from our Everglades airboat tours, fishing trips, fish gigging, and python hunts out of Miami, Florida.";
 
-// Placeholder images — replace src with real photos uploaded to /public/images/gallery/
-const photos = [
-  { src: "/images/gallery/placeholder-1.jpg", alt: "Alligator resting in Everglades sawgrass" },
-  { src: "/images/gallery/placeholder-2.jpg", alt: "Airboat crossing open water at sunset" },
-  { src: "/images/gallery/placeholder-3.jpg", alt: "Angler holding a largemouth bass caught in the Everglades" },
-  { src: "/images/gallery/placeholder-4.jpg", alt: "Great blue heron in Everglades marshland" },
-  { src: "/images/gallery/placeholder-5.jpg", alt: "Night fish gigging on the water" },
-  { src: "/images/gallery/placeholder-6.jpg", alt: "Guide handling a captured Burmese python" },
-  { src: "/images/gallery/placeholder-7.jpg", alt: "Open Everglades water with cypress silhouettes" },
-  { src: "/images/gallery/placeholder-8.jpg", alt: "Airboat dock at dawn" },
-];
+// Photos live in src/content/gallery.json (edited in the CMS at /admin).
+const photos = gallery.photos
+  .filter((p) => p.image)
+  .map((p, i) => requireFields(p, ["image", "alt"], `src/content/gallery.json (photo #${i + 1})`));
 
 const schemas = [
   breadcrumbSchema([
@@ -43,7 +38,7 @@ const schemas = [
           photos.map((p) => (
             <figure class="aspect-square bg-moss-800 overflow-hidden relative">
               <img
-                src={p.src}
+                src={p.image}
                 alt={p.alt}
                 loading="lazy"
                 decoding="async"
@@ -74,9 +69,6 @@ const schemas = [
         }
       </style>
 
-      <p class="mt-10 text-sm text-moss-600 italic">
-        Replace the placeholder images in <code class="not-italic">/public/images/gallery/</code> with real photos from your trips.
-      </p>
     </div>
   </section>
 
