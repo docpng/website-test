@@ -1,0 +1,38 @@
+{
+  "order": 3,
+  "slug": "fish-gigging",
+  "name": "Nighttime Fish Gigging",
+  "shortName": "Fish Gigging",
+  "icon": "gig",
+  "seoTitle": "Nighttime Fish Gigging in the Everglades | South Florida Airboat Adventures",
+  "metaDescription": "Guided nighttime fish gigging trips in the South Florida wetlands. A traditional Florida fishing method, all gear and lighting provided.",
+  "tagline": "A traditional Florida fishing method, led by a local who still practices it.",
+  "summary": "Join us for nighttime fish gigging adventures in the wetlands. We provide all necessary gear, guidance, and support so you can safely experience this traditional Florida fishing method. With our team, you'll enjoy learning and participating in this unique activity.",
+  "longDescription": [
+    "Fish gigging is one of the oldest fishing traditions in Florida — hunting fish by lamplight from the deck of a slow-moving boat. It's hands-on, it's unlike anything else, and it's a side of Florida most visitors never see.",
+    "We go out after dark with proper lighting and gear, and we show you how to spot, approach, and gig fish the way it's been done here for generations. First-timers are welcome; we'll walk you through every step.",
+    "This isn't a ride-along — you're participating. By the end of the night, you'll have hands-on experience with a practice that's been part of Florida's culture for longer than Florida has been a state."
+  ],
+  "highlights": [
+    "After-dark trips with proper lighting and gear",
+    "Hands-on — you're participating, not watching",
+    "Full instruction from a lifelong practitioner",
+    "A side of Florida most visitors never see",
+    "Private to your group"
+  ],
+  "whoItsFor": "Curious adventurers, outdoor enthusiasts, and anyone looking for an experience that's genuinely rooted in Florida culture.",
+  "whatsIncluded": [
+    "All gigs and gear",
+    "Powerful boat-mounted lighting",
+    "Instruction and safety briefing",
+    "Private boat and guide for your group"
+  ],
+  "schemaCategory": "Nighttime Fishing Experience",
+  "schemaType": "Service",
+  "faqCategories": [
+    "fishing",
+    "tours",
+    "logistics"
+  ],
+  "faqLimit": 4
+}

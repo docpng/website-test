@@ -10,16 +10,23 @@ sfairboat-astro/
 ├── package.json
 ├── tsconfig.json
 ├── wrangler.jsonc         # Cloudflare config (static site + /api/reviews)
-├── worker/index.ts        # fetches live Google reviews for the Reviews page
+├── worker/index.ts        # live Google reviews + GitHub login for the site editor
 ├── public/
+│   ├── admin/             # site editor (Sveltia CMS) at /admin
 │   ├── robots.txt
 │   ├── favicon.svg
 │   ├── og-default.jpg     # replace with a real 1200x630 image
 │   └── images/gallery/    # drop your photos here
 └── src/
-    ├── data/              # single source of truth for all content
-    │   ├── business.ts    # NAP, phone, hours, booking URL, owner
-    │   ├── services.ts    # 4 service definitions
+    ├── content/           # editable content (JSON), managed in the site editor
+    │   ├── business.json  # name, phone, hours, booking URL, owner, social links
+    │   ├── services/      # one file per service
+    │   ├── service-areas/ # one file per city
+    │   ├── faqs.json
+    │   └── gallery.json
+    ├── data/              # loads + checks the content, plus technical settings
+    │   ├── business.ts    # form key, site URL, Google links, coordinates
+    │   ├── services.ts
     │   ├── service-areas.ts
     │   ├── faqs.ts
     │   └── schema.ts      # JSON-LD generators
@@ -28,10 +35,7 @@ sfairboat-astro/
     ├── components/        # Header, Footer, Hero, ServiceCard, FAQList, etc.
     ├── pages/
     │   ├── index.astro
-    │   ├── airboat-tours.astro
-    │   ├── everglades-fishing-trips.astro
-    │   ├── fish-gigging.astro
-    │   ├── python-hunts.astro
+    │   ├── [service].astro   # one page per service (airboat-tours, python-hunts, ...)
     │   ├── reviews.astro
     │   ├── faqs.astro
     │   ├── gallery.astro
@@ -42,7 +46,7 @@ sfairboat-astro/
         └── global.css     # Tailwind + custom design tokens
 ```
 
-**16 pages total.** All generated as static HTML at build time — no server required.
+All pages are generated as static HTML at build time — no server required.
 
 ## Setup
 
@@ -94,8 +98,8 @@ Notes:
 ### 3. OG image (`public/og-default.jpg`)
 - There's a `.README.txt` where this should go. Drop in a real 1200×630 JPEG — ideally a strong airboat shot.
 
-### 4. Gallery images (`public/images/gallery/`)
-- Add real photos as `placeholder-1.jpg` through `placeholder-8.jpg`, or edit `src/pages/gallery.astro` to use whatever filenames you prefer.
+### 4. Gallery images
+- Replace the placeholder photos in the site editor (**Gallery** at `/admin`).
 
 ### 5. Contact form endpoint (`src/pages/contact-us.astro`)
 - The form currently points at `https://formspree.io/f/YOUR_FORM_ID`. Options:
@@ -136,9 +140,40 @@ Once live:
 3. Run the FAQ page through [schema.org's validator](https://validator.schema.org/) for a more detailed syntax check
 4. Submit the sitemap in Google Search Console: `Settings → Sitemaps → Add new sitemap → sitemap-index.xml`
 
-## Content editing after launch
+## Editing content (site editor at /admin)
 
-All copy, services, FAQs, and service areas live in `src/data/*.ts`. Reviews come from Google automatically. Edit those files, run `npm run build`, and redeploy. No CMS yet — if the owner wants to self-edit without touching code, a small headless CMS like [Decap CMS](https://decapcms.org) or [TinaCMS](https://tina.io) can be bolted on later.
+Gallery photos, FAQs, services, service areas and business info are edited at
+**https://www.sfairboatadventures.com/admin** ([Sveltia CMS](https://sveltiacms.app)).
+Pressing **Save** commits the change to GitHub, and Cloudflare rebuilds and
+publishes the site automatically, usually within 1–2 minutes. No code or manual
+deploys needed. Reviews still come from Google automatically.
+
+- Adding a **service** creates its page (at `/the-page-address`) and adds it to
+  the menus and homepage. Adding a **service area** creates its city page.
+- Uploaded photos are converted to WebP and resized to at most 2000px automatically.
+- If something is entered incorrectly (e.g. a required field left empty), the
+  Cloudflare build fails with a message naming the file, and the live site
+  stays as it was. Fix it in the editor and save again.
+- The editor saves to the **`main`** branch, which must be the branch Cloudflare
+  deploys to production.
+
+### One-time setup: GitHub login
+Editors sign in with a GitHub account that has write access to `docpng/website-test`.
+1. On GitHub: **Settings → Developer settings → OAuth Apps → New OAuth App**.
+   - Homepage URL: `https://www.sfairboatadventures.com`
+   - Authorization callback URL: `https://www.sfairboatadventures.com/api/callback`
+2. Copy the **Client ID**, then click **Generate a new client secret** and copy it.
+3. In Cloudflare, open the Worker → **Settings → Variables and Secrets** and add
+   two **Secrets**: `GITHUB_CLIENT_ID` and `GITHUB_CLIENT_SECRET`.
+4. To let someone else edit, add them as a collaborator on the GitHub repository.
+
+Until step 3 is done, you can still sign in with **"Sign in with token"** on the
+editor's login screen, using a GitHub
+[fine-grained personal access token](https://github.com/settings/personal-access-tokens/new)
+limited to this repository with **Contents: Read and write** permission.
+
+If the site's domain changes, update `base_url` in `public/admin/config.yml` and
+the callback URL in the GitHub OAuth App.
 
 ## Design notes
 

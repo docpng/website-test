@@ -8,15 +8,24 @@
  *   Fetches the rating, review count, and up to 5 reviews for the business
  *   from the Google Places API (New) and returns a trimmed JSON response.
  *
+ * GET /api/auth, GET /api/callback
+ *   GitHub login for the site editor at /admin (Sveltia CMS). /api/auth sends
+ *   the editor to GitHub; /api/callback swaps GitHub's code for an access
+ *   token and hands it back to the editor window.
+ *
  * Secrets / variables:
  *   GOOGLE_PLACES_API_KEY  secret, set in the Cloudflare dashboard (never commit it)
  *   GOOGLE_PLACE_ID        plain variable, set in wrangler.jsonc
+ *   GITHUB_CLIENT_ID       secret, from the GitHub OAuth App (see README)
+ *   GITHUB_CLIENT_SECRET   secret, from the GitHub OAuth App (never commit it)
  */
 
 type Env = {
   ASSETS: { fetch: (request: Request) => Promise<Response> };
   GOOGLE_PLACES_API_KEY?: string;
   GOOGLE_PLACE_ID?: string;
+  GITHUB_CLIENT_ID?: string;
+  GITHUB_CLIENT_SECRET?: string;
 };
 
 type GoogleReview = {
@@ -102,6 +111,123 @@ async function handleReviews(env: Env): Promise<Response> {
   });
 }
 
+// ---------------------------------------------------------------------------
+// Site editor (Sveltia CMS) GitHub login
+
+const STATE_COOKIE = "cms_oauth_state";
+
+function getCookie(request: Request, name: string): string | null {
+  const header = request.headers.get("Cookie") ?? "";
+  for (const part of header.split(";")) {
+    const [key, ...rest] = part.trim().split("=");
+    if (key === name) return rest.join("=");
+  }
+  return null;
+}
+
+// The popup page that passes the result back to the editor window. It only
+// talks to a window on this same site, using the handshake Sveltia/Decap CMS
+// expect: "authorizing:github", then "authorization:github:<status>:<json>".
+function authResultPage(
+  origin: string,
+  status: "success" | "error",
+  content: Record<string, string>
+): Response {
+  // Escape "<" so the JSON can't close the <script> tag.
+  const message = JSON.stringify(
+    `authorization:github:${status}:${JSON.stringify(content)}`
+  ).replace(/</g, "\\u003c");
+  const target = JSON.stringify(origin).replace(/</g, "\\u003c");
+  const html = `<!doctype html><html><head><meta charset="utf-8"><title>Signing in…</title></head><body>
+<p>${status === "success" ? "Signed in. You can close this window." : "Sign-in failed. Close this window and try again."}</p>
+<script>
+(() => {
+  const origin = ${target};
+  const message = ${message};
+  window.addEventListener("message", (e) => {
+    if (e.source === window.opener && e.origin === origin && e.data === "authorizing:github") {
+      window.opener.postMessage(message, origin);
+    }
+  });
+  if (window.opener) window.opener.postMessage("authorizing:github", origin);
+})();
+</script></body></html>`;
+  return new Response(html, {
+    status: status === "success" ? 200 : 400,
+    headers: {
+      "Content-Type": "text/html; charset=utf-8",
+      "Cache-Control": "no-store",
+      // Clear the one-time state cookie.
+      "Set-Cookie": `${STATE_COOKIE}=; Path=/api; Max-Age=0; HttpOnly; Secure; SameSite=Lax`,
+    },
+  });
+}
+
+function handleAuth(request: Request, env: Env): Response {
+  const url = new URL(request.url);
+  if (!env.GITHUB_CLIENT_ID || !env.GITHUB_CLIENT_SECRET) {
+    return authResultPage(url.origin, "error", {
+      error: "GitHub login isn't set up yet. Add GITHUB_CLIENT_ID and GITHUB_CLIENT_SECRET in Cloudflare.",
+    });
+  }
+
+  const state = crypto.randomUUID();
+  const authorize = new URL("https://github.com/login/oauth/authorize");
+  authorize.searchParams.set("client_id", env.GITHUB_CLIENT_ID);
+  authorize.searchParams.set("redirect_uri", `${url.origin}/api/callback`);
+  authorize.searchParams.set("scope", url.searchParams.get("scope") === "public_repo" ? "public_repo" : "repo");
+  authorize.searchParams.set("state", state);
+
+  return new Response(null, {
+    status: 302,
+    headers: {
+      Location: authorize.toString(),
+      "Cache-Control": "no-store",
+      "Set-Cookie": `${STATE_COOKIE}=${state}; Path=/api; Max-Age=600; HttpOnly; Secure; SameSite=Lax`,
+    },
+  });
+}
+
+async function handleCallback(request: Request, env: Env): Promise<Response> {
+  const url = new URL(request.url);
+  const code = url.searchParams.get("code");
+  const state = url.searchParams.get("state");
+  const expectedState = getCookie(request, STATE_COOKIE);
+
+  if (!code || !state || !expectedState || state !== expectedState) {
+    return authResultPage(url.origin, "error", { error: "Sign-in expired or was tampered with. Please try again." });
+  }
+  if (!env.GITHUB_CLIENT_ID || !env.GITHUB_CLIENT_SECRET) {
+    return authResultPage(url.origin, "error", { error: "GitHub login isn't set up yet." });
+  }
+
+  try {
+    const response = await fetch("https://github.com/login/oauth/access_token", {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        "User-Agent": "sfairboat-cms-auth",
+      },
+      body: JSON.stringify({
+        client_id: env.GITHUB_CLIENT_ID,
+        client_secret: env.GITHUB_CLIENT_SECRET,
+        code,
+        redirect_uri: `${url.origin}/api/callback`,
+      }),
+    });
+    const data = (await response.json()) as { access_token?: string; error_description?: string };
+    if (!data.access_token) {
+      console.error("GitHub token exchange failed", response.status, data.error_description);
+      return authResultPage(url.origin, "error", { error: data.error_description ?? "GitHub didn't return a token." });
+    }
+    return authResultPage(url.origin, "success", { token: data.access_token, provider: "github" });
+  } catch (err) {
+    console.error("GitHub token request failed", err);
+    return authResultPage(url.origin, "error", { error: "Couldn't reach GitHub. Please try again." });
+  }
+}
+
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const { pathname } = new URL(request.url);
@@ -109,6 +235,14 @@ export default {
     if (pathname === "/api/reviews") {
       if (request.method !== "GET") return json({ error: "Method not allowed" }, 405);
       return handleReviews(env);
+    }
+
+    if (pathname === "/api/auth" && request.method === "GET") {
+      return handleAuth(request, env);
+    }
+
+    if (pathname === "/api/callback" && request.method === "GET") {
+      return handleCallback(request, env);
     }
 
     if (pathname.startsWith("/api/")) {

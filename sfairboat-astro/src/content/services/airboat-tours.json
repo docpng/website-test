@@ -1,0 +1,38 @@
+{
+  "order": 1,
+  "slug": "airboat-tours",
+  "name": "Private Airboat Tours",
+  "shortName": "Airboat Tours",
+  "icon": "airboat",
+  "seoTitle": "Private Airboat Tours in Miami, FL | South Florida Airboat Adventures",
+  "metaDescription": "Private, guided airboat tours through the Florida Everglades out of Miami. Veteran-owned, small groups, and a real Gladesman at the helm.",
+  "tagline": "Fast, private, Gladesman-led rides through the real Everglades.",
+  "summary": "Our airboat tours provide a fast-paced, up-close Everglades adventure. We guide you safely through winding waterways, pointing out wildlife and landmarks. With us, you'll experience Florida's natural beauty fully, making unforgettable memories on every thrilling journey.",
+  "longDescription": [
+    "No two airboat rides with us look the same. Every tour is private to your group, so you set the pace — whether that's a high-speed cruise across open sawgrass or a slow drift to watch an alligator sun itself on the bank.",
+    "You're not riding with a hired driver reading off a script. You're riding with a Gladesman — someone who grew up on these waterways and still runs them most days of the week. That means real knowledge about the ecosystem, local history, and the wildlife that calls the River of Grass home.",
+    "Tours depart from our location on FL-90 in Miami, with easy access from anywhere in Miami-Dade and Broward counties. We run day and night rides year-round, by appointment."
+  ],
+  "highlights": [
+    "Private, group-only tours — never shared with strangers",
+    "Veteran-owned and operated",
+    "Expert local guide with 10+ years on the water",
+    "Alligators, wading birds, turtles, and native plant life",
+    "Day and night tours available"
+  ],
+  "whoItsFor": "Families, couples, first-time visitors to Florida, photographers, and anyone who wants an authentic Everglades experience — not a theme-park version of one.",
+  "whatsIncluded": [
+    "Private airboat and captain for your group",
+    "Hearing protection",
+    "Narration and wildlife spotting from a lifelong Gladesman",
+    "Flexible route tailored to what your group wants to see"
+  ],
+  "schemaCategory": "Guided Tour",
+  "schemaType": "TouristTrip",
+  "faqCategories": [
+    "tours",
+    "general",
+    "logistics"
+  ],
+  "faqLimit": 4
+}

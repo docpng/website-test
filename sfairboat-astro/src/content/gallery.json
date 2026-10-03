@@ -1,0 +1,36 @@
+{
+  "photos": [
+    {
+      "image": "/images/gallery/placeholder-1.jpg",
+      "alt": "Alligator resting in Everglades sawgrass"
+    },
+    {
+      "image": "/images/gallery/placeholder-2.jpg",
+      "alt": "Airboat crossing open water at sunset"
+    },
+    {
+      "image": "/images/gallery/placeholder-3.jpg",
+      "alt": "Angler holding a largemouth bass caught in the Everglades"
+    },
+    {
+      "image": "/images/gallery/placeholder-4.jpg",
+      "alt": "Great blue heron in Everglades marshland"
+    },
+    {
+      "image": "/images/gallery/placeholder-5.jpg",
+      "alt": "Night fish gigging on the water"
+    },
+    {
+      "image": "/images/gallery/placeholder-6.jpg",
+      "alt": "Guide handling a captured Burmese python"
+    },
+    {
+      "image": "/images/gallery/placeholder-7.jpg",
+      "alt": "Open Everglades water with cypress silhouettes"
+    },
+    {
+      "image": "/images/gallery/placeholder-8.jpg",
+      "alt": "Airboat dock at dawn"
+    }
+  ]
+}
