@@ -8,5 +8,28 @@
   "metaDescription": "Private Everglades airboat tours, fishing trips, and python hunts for Pinecrest, FL. Veteran-owned, local, and nearby.",
   "intro": "Pinecrest guests are some of our regulars. A short drive west and you've traded the suburbs for a stretch of water that doesn't look like anywhere else in the state.",
   "localAngle": "We've guided families, groups of friends, and plenty of birthday parties from Pinecrest. Private trips mean we can shape the day around what your group actually wants.",
-  "driveTime": "About 25 minutes west."
+  "driveTime": "About 25 minutes west.",
+  "layout": [
+    {
+      "type": "areaPart",
+      "part": "hero"
+    },
+    {
+      "type": "areaPart",
+      "part": "pitch"
+    },
+    {
+      "type": "areaPart",
+      "part": "services"
+    },
+    {
+      "type": "areaPart",
+      "part": "logistics"
+    },
+    {
+      "type": "cta",
+      "heading": "Ready to book from Pinecrest?",
+      "subheading": "Give us a call or reserve online. We'll put something together for your group."
+    }
+  ]
 }

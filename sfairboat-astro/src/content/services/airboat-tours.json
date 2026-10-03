@@ -34,5 +34,31 @@
     "general",
     "logistics"
   ],
-  "faqLimit": 4
+  "faqLimit": 4,
+  "layout": [
+    {
+      "type": "servicePart",
+      "part": "hero"
+    },
+    {
+      "type": "servicePart",
+      "part": "overview"
+    },
+    {
+      "type": "servicePart",
+      "part": "details"
+    },
+    {
+      "type": "servicePart",
+      "part": "faq"
+    },
+    {
+      "type": "servicePart",
+      "part": "others"
+    },
+    {
+      "type": "cta",
+      "heading": "Ready to book airboat tours?"
+    }
+  ]
 }

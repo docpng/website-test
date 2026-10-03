@@ -26,8 +26,9 @@ export type Service = {
   // Which FAQ categories show on this service page, and how many
   faqCategories: FAQCategory[];
   faqLimit?: number;
-  // Optional extra sections shown before the closing banner
-  sections?: Section[];
+  // The page, top to bottom: built-in parts plus any sections added in the
+  // site editor. When empty, the default layout (data/layouts.ts) is used.
+  layout?: Section[];
 };
 
 export const serviceIcons = ["airboat", "fish", "gig", "python", "lobster"] as const;

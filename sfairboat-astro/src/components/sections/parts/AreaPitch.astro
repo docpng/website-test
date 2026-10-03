@@ -1,0 +1,25 @@
+---
+// City page: "Why <city> guests book with us".
+import type { SectionSettings } from "../styles";
+import type { SectionContext } from "../../../data/sections";
+
+type Props = { section: SectionSettings; context: SectionContext };
+const area = Astro.props.context.area!;
+---
+
+<!-- Pitch -->
+<section class="py-20 lg:py-24">
+  <div class="max-w-4xl mx-auto px-5 lg:px-8">
+    <div class="text-xs tracking-[0.2em] uppercase text-moss-600 font-medium mb-3">
+      Local to {area.city}
+    </div>
+    <h2 class="text-moss-950">Why {area.city} guests book with us</h2>
+    <p class="mt-6 text-moss-800">{area.localAngle}</p>
+    <p class="mt-5 text-moss-800">
+      Every trip we run is private, led by a lifelong Gladesman, and shaped
+      around what your group wants to do. We've hosted families, groups of
+      friends, out-of-town visitors, and plenty of {area.city} locals who
+      wanted to finally see this side of South Florida.
+    </p>
+  </div>
+</section>

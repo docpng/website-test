@@ -6,7 +6,7 @@ import SectionList from "../components/sections/SectionList.astro";
 import { fill } from "../components/sections/styles";
 import { pages, type Page } from "../data/pages";
 import { business } from "../data/business";
-import { faqItemsFor, type FaqSection } from "../data/faq-sections";
+import { shownFaqs } from "../data/faq-sections";
 import { localBusinessSchema, faqPageSchema, breadcrumbSchema } from "../data/schema";
 
 export function getStaticPaths() {
@@ -20,10 +20,8 @@ const { page } = Astro.props as { page: Page };
 const isHome = page.slug === "";
 
 // FAQ markup for Google lists exactly the questions shown on the page.
-const shownFaqs = page.sections
-  .filter((s) => s.type === "faq")
-  .flatMap((s) => faqItemsFor(s as FaqSection));
-const faqSchema = shownFaqs.length > 0 ? [faqPageSchema(shownFaqs)] : [];
+const faqsOnPage = shownFaqs(page.sections);
+const faqSchema = faqsOnPage.length > 0 ? [faqPageSchema(faqsOnPage)] : [];
 
 const schemas = isHome
   ? [localBusinessSchema(), ...faqSchema]
