@@ -3,7 +3,7 @@
   "bodyFont": "Inter",
   "darkColor": "#2dbe5d",
   "accentColor": "#c2a35e",
-  "backgroundColor": "#000000",
+  "backgroundColor": "#ffffff",
   "sectionSpacing": "normal",
   "buttonCorners": "square"
 }
