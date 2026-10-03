@@ -2,6 +2,7 @@
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import SectionList from "../../components/sections/SectionList.astro";
 import { areaLayout } from "../../data/layouts";
+import { fileOf } from "../../data/validate";
 import { shownFaqs } from "../../data/faq-sections";
 import { serviceAreas } from "../../data/service-areas";
 import { business } from "../../data/business";
@@ -41,5 +42,8 @@ const schemas = [
     sections={areaLayout(area)}
     source={`src/content/service-areas/${area.slug}.json`}
     context={{ area }}
+    file={fileOf(area)}
+    field="layout"
+    isDefault={!area.layout?.length}
   />
 </BaseLayout>

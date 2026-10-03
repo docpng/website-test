@@ -4,6 +4,7 @@
 import type { Service } from "../data/services";
 import SectionList from "./sections/SectionList.astro";
 import { serviceLayout } from "../data/layouts";
+import { fileOf } from "../data/validate";
 
 type Props = { service: Service };
 const { service } = Astro.props;
@@ -13,4 +14,7 @@ const { service } = Astro.props;
   sections={serviceLayout(service)}
   source={`src/content/services/${service.slug}.json`}
   context={{ service }}
+  file={fileOf(service)}
+  field="layout"
+  isDefault={!service.layout?.length}
 />

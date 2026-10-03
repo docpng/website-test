@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Arrange | South Florida Airboat Adventures</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="stylesheet" href="./arrange.css" />
+  </head>
+  <body>
+    <header class="bar">
+      <strong class="brand">Arrange</strong>
+      <label class="page-pick">
+        <span>Page</span>
+        <select id="page"></select>
+      </label>
+      <span id="status" class="status" role="status" aria-live="polite"></span>
+      <span class="spacer"></span>
+      <a href="/admin/" class="link">Site editor</a>
+      <button id="discard" type="button" disabled>Discard changes</button>
+      <button id="publish" type="button" class="primary" disabled>Publish</button>
+      <button id="signout" type="button" class="link-btn" hidden>Sign out</button>
+    </header>
+
+    <section id="signin" class="signin" hidden>
+      <h1>Arrange your pages</h1>
+      <p>Drag photos and videos from your computer onto any page, move them around, and reorder sections. Sign in with the GitHub account you use for the site editor.</p>
+      <button id="github" type="button" class="primary">Sign in with GitHub</button>
+      <details>
+        <summary>Sign in with an access token instead</summary>
+        <p>Paste a GitHub personal access token with write access to the site's repository.</p>
+        <input id="token" type="password" autocomplete="off" placeholder="github_pat_…" />
+        <p><button id="use-token" type="button">Sign in</button></p>
+      </details>
+      <p id="signin-error" class="error"></p>
+    </section>
+
+    <div id="workspace" class="workspace" hidden>
+      <div class="frame-wrap">
+        <iframe id="frame" title="Page being arranged"></iframe>
+      </div>
+      <aside id="panel" class="panel">
+        <div id="help">
+          <h2>How it works</h2>
+          <ul>
+            <li><b>Add a photo or video:</b> drag it from your computer onto the page. Blue lines show where it can go, between sections or between paragraphs of text.</li>
+            <li><b>Move things:</b> hover a section and drag <b>⠿ Move</b>, or drag a photo/video to a new spot.</li>
+            <li><b>Change a photo or video:</b> click it to set its size, position, caption and description.</li>
+            <li><b>Publish</b> saves everything. The live site updates in about 1–2 minutes.</li>
+          </ul>
+          <p class="muted">Text, colors and other settings are edited in the <a href="/admin/">site editor</a>.</p>
+        </div>
+        <form id="media-form" hidden>
+          <h2 id="media-title">Photo</h2>
+          <div id="media-preview" class="media-preview"></div>
+          <label id="alt-row">Description <span class="muted">(for screen readers and Google)</span>
+            <input id="m-alt" type="text" />
+          </label>
+          <label>Caption <span class="muted">(optional)</span>
+            <input id="m-caption" type="text" />
+          </label>
+          <label id="size-row">Size
+            <select id="m-size"></select>
+          </label>
+          <label id="align-row">Position
+            <select id="m-align">
+              <option value="center">Centered</option>
+              <option value="left">Left, text wraps around it</option>
+              <option value="right">Right, text wraps around it</option>
+            </select>
+          </label>
+          <label id="playback-row">Video plays
+            <select id="m-playback">
+              <option value="loop">Silent loop that starts by itself</option>
+              <option value="controls">Play button with sound</option>
+            </select>
+          </label>
+          <div class="form-actions">
+            <button type="submit" class="primary">Done</button>
+            <button type="button" id="m-delete" class="danger">Remove</button>
+          </div>
+        </form>
+      </aside>
+    </div>
+
+    <dialog id="drop-dialog">
+      <form method="dialog" id="drop-form">
+        <h2 id="drop-title">Add photo</h2>
+        <div id="drop-preview" class="media-preview"></div>
+        <label id="drop-alt-row">Describe this photo <span class="muted">(required)</span>
+          <input id="d-alt" type="text" />
+        </label>
+        <label>Caption <span class="muted">(optional)</span>
+          <input id="d-caption" type="text" />
+        </label>
+        <p id="drop-note" class="muted"></p>
+        <p id="drop-error" class="error"></p>
+        <div class="form-actions">
+          <button value="ok" class="primary">Add to page</button>
+          <button value="cancel" formnovalidate>Cancel</button>
+        </div>
+      </form>
+    </dialog>
+
+    <script src="./arrange.js"></script>
+  </body>
+</html>
