@@ -1,11 +1,16 @@
 ---
 // Service page: title band with trip details and booking buttons.
 import { business } from "../../../data/business";
+import BackgroundMedia from "../BackgroundMedia.astro";
 import type { SectionSettings } from "../styles";
 import type { SectionContext } from "../../../data/sections";
 
 type Props = { section: SectionSettings; context: SectionContext };
 const service = Astro.props.context.service!;
+
+// Optional background photo or video behind the title
+const { heroImage, heroVideo, heroPoster } = service;
+const heroMedia = heroVideo ? "video" : heroImage ? "image" : undefined;
 
 // Optional trip details (price, group size, season) shown under the tagline
 const tripDetails = [
@@ -16,8 +21,9 @@ const tripDetails = [
 ---
 
 <!-- Hero -->
-<section class="bg-moss-900 text-bone">
-  <div class="max-w-7xl mx-auto px-5 lg:px-8 py-16 lg:py-24">
+<section class={heroMedia ? "relative overflow-hidden bg-moss-900 text-bone" : "bg-moss-900 text-bone"}>
+  {heroMedia && <BackgroundMedia media={heroMedia} video={heroVideo} poster={heroPoster} image={heroImage} />}
+  <div class={heroMedia ? "relative max-w-7xl mx-auto px-5 lg:px-8 py-16 lg:py-24" : "max-w-7xl mx-auto px-5 lg:px-8 py-16 lg:py-24"}>
     <nav class="text-xs text-sand-200 mb-6" aria-label="Breadcrumb">
       <ol class="flex items-center gap-2">
         <li><a href="/" class="hover:text-bone">Home</a></li>

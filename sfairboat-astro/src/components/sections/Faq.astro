@@ -5,9 +5,23 @@ import SectionHeading from "./SectionHeading.astro";
 import FAQList from "../FAQList.astro";
 import { faqItemsFor, type FaqSection } from "../../data/faq-sections";
 import { faqCategories, faqCategoryLabels } from "../../data/faq-categories";
-import { isDark, tone, type SectionSettings } from "./styles";
+import { fill, isDark, resolveLink, tone, type SectionSettings } from "./styles";
 
-type Props = { section: SectionSettings & FaqSection & { eyebrow?: string; heading?: string; linkLabel?: string; link?: string } };
+type Props = {
+  section: SectionSettings &
+    FaqSection & {
+      eyebrow?: string;
+      heading?: string;
+      linkLabel?: string;
+      link?: string;
+      // Optional photo or video beside the questions
+      media?: "image" | "video" | "";
+      image?: string;
+      alt?: string;
+      video?: string;
+      side?: "left" | "right";
+    };
+};
 const { section: s } = Astro.props;
 const dark = isDark(s);
 const t = tone(dark);
@@ -17,10 +31,53 @@ const groups = (s.categories?.length ? s.categories : [...faqCategories])
   .map((key) => ({ label: faqCategoryLabels[key], items: items.filter((f) => f.category === key) }))
   .filter((g) => g.items.length > 0);
 const hasHeading = Boolean(s.eyebrow || s.heading);
+const showImage = s.media === "image" && Boolean(s.image);
+const showVideo = s.media === "video" && Boolean(s.video);
+const hasMedia = showImage || showVideo;
 ---
 
 {
-  grouped ? (
+  hasMedia ? (
+    <Section settings={s} defaultWidth="wide" defaultBackground={grouped ? undefined : "sand"}>
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-start">
+        <div class={s.side === "right" ? "lg:col-span-5 lg:order-last lg:sticky lg:top-32" : "lg:col-span-5 lg:sticky lg:top-32"}>
+          {showImage ? (
+            <img src={s.image} alt={fill(s.alt)} loading="lazy" decoding="async" class="w-full h-auto" />
+          ) : (
+            <video class="w-full h-auto bg-moss-950" autoplay muted loop playsinline preload="metadata" aria-hidden="true">
+              <source src={s.video} type="video/mp4" />
+            </video>
+          )}
+        </div>
+        <div class={grouped ? "lg:col-span-7 space-y-16" : "lg:col-span-7"}>
+          {hasHeading && (
+            <div class={grouped ? "" : "mb-10"}>
+              <SectionHeading eyebrow={s.eyebrow} heading={s.heading} dark={dark} />
+            </div>
+          )}
+          {grouped ? (
+            groups.map((g) => (
+              <div>
+                <h2 class={`${t.heading} mb-8`}>{g.label}</h2>
+                <FAQList items={g.items} />
+              </div>
+            ))
+          ) : (
+            <FAQList items={items} />
+          )}
+          {s.linkLabel && s.link && (
+            <a href={resolveLink(s.link)} class={`mt-8 inline-block text-sm font-medium ${t.linkText} border-b ${t.linkBorder} pb-0.5`}>
+              {fill(s.linkLabel)}
+            </a>
+          )}
+        </div>
+      </div>
+    </Section>
+  ) : null
+}
+
+{
+  hasMedia ? null : grouped ? (
     <Section settings={s} defaultWidth="narrow" innerClass="space-y-16">
       {hasHeading && (
         <div>

@@ -29,6 +29,11 @@ export type Service = {
   // The page, top to bottom: built-in parts plus any sections added in the
   // site editor. When empty, the default layout (data/layouts.ts) is used.
   layout?: Section[];
+  // Optional photos/videos
+  cardImage?: string; // photo at the top of this service's card
+  heroImage?: string; // background photo behind the page title
+  heroVideo?: string; // background video behind the page title (used instead of the photo)
+  heroPoster?: string;
 };
 
 export const serviceIcons = ["airboat", "fish", "gig", "python", "lobster"] as const;

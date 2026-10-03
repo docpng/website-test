@@ -96,14 +96,15 @@ collections:
               - &f_eyebrow { name: eyebrow, label: Small text above the heading, widget: string, required: false }
               - { name: heading, label: Heading, widget: string }
               - { name: text, label: Text, widget: text, required: false }
-              - name: media
+              - &f_bg_media
+                name: media
                 label: Background
                 widget: select
                 default: none
                 options:
                   - { label: Video, value: video }
                   - { label: Photo, value: image }
-                  - { label: Plain (dark with texture), value: none }
+                  - { label: Plain, value: none }
               - &f_video
                 name: video
                 label: Background video (MP4)
@@ -113,9 +114,10 @@ collections:
                 media_folder: /sfairboat-astro/public/videos
                 public_folder: /videos
                 hint: Keep videos short and under about 10 MB so the page loads fast. 25 MB is the maximum.
-              - { name: poster, label: Still image shown while the video loads, widget: image, required: false }
-              - { name: image, label: Background photo, widget: image, required: false }
-              - name: overlay
+              - &f_bg_poster { name: poster, label: Still image shown while the video loads, widget: image, required: false }
+              - &f_bg_image { name: image, label: Background photo, widget: image, required: false }
+              - &f_overlay
+                name: overlay
                 label: Darkening over the background
                 widget: select
                 default: medium
@@ -202,12 +204,17 @@ collections:
               - { name: title, label: Title, widget: string }
               - { name: intro, label: Intro text, widget: text, required: false }
               - name: background
-                label: Background
+                label: Background color
                 widget: select
                 required: false
                 options:
                   - { label: Dark, value: dark }
                   - { label: Brand, value: brand }
+              - *f_bg_media
+              - *f_video
+              - *f_bg_poster
+              - *f_bg_image
+              - *f_overlay
               - *f_spacing
               - *f_width
               - *f_align
@@ -357,6 +364,8 @@ collections:
                 fields:
                   - { name: title, label: Title, widget: string }
                   - { name: body, label: Text, widget: text, required: false }
+                  - { name: image, label: Photo (optional), widget: image, required: false }
+                  - { name: alt, label: Photo description, widget: string, required: false }
               - *f_background
               - *f_spacing
               - *f_width
@@ -408,6 +417,23 @@ collections:
                   - { label: General, value: general }
               - *f_link_label
               - *f_link_url
+              - name: media
+                label: Photo or video beside the questions
+                widget: select
+                required: false
+                options:
+                  - { label: Photo, value: image }
+                  - { label: Video (silent loop), value: video }
+              - { name: image, label: Photo, widget: image, required: false }
+              - { name: alt, label: Photo description, widget: string, required: false }
+              - { name: video, label: Video file (MP4), widget: file, required: false, accept: video/mp4, media_folder: /sfairboat-astro/public/videos, public_folder: /videos }
+              - name: side
+                label: Photo/video side
+                widget: select
+                default: left
+                options:
+                  - { label: Left, value: left }
+                  - { label: Right, value: right }
               - name: background
                 label: Background
                 widget: select
@@ -501,6 +527,11 @@ collections:
             fields:
               - { name: heading, label: Heading, widget: string, required: false, hint: "Default: “Ready to get out on the water?”" }
               - { name: subheading, label: Text, widget: string, required: false }
+              - *f_bg_media
+              - *f_video
+              - *f_bg_poster
+              - *f_bg_image
+              - *f_overlay
 
           # ---- Map
           - name: map
@@ -537,6 +568,35 @@ collections:
               - { name: divider, label: Show a thin line, widget: boolean, default: false }
               - *f_background
               - *f_anchor
+
+          # ---- Built-in parts of service and city pages
+          - name: servicePart
+            label: Service page part (service pages only)
+            summary: "Service page: {{fields.part}}"
+            fields:
+              - name: part
+                label: Part
+                widget: select
+                hint: Uses this service's own details. Only works in a service's Page layout.
+                options:
+                  - { label: Title band with booking buttons, value: hero }
+                  - { label: Description + trip highlights, value: overview }
+                  - { label: "Who it's for + what's included", value: details }
+                  - { label: Questions about this trip, value: faq }
+                  - { label: Other services, value: others }
+          - name: areaPart
+            label: City page part (city pages only)
+            summary: "City page: {{fields.part}}"
+            fields:
+              - name: part
+                label: Part
+                widget: select
+                hint: Uses this city's own details. Only works in a service area's Page layout.
+                options:
+                  - { label: Title band with intro, value: hero }
+                  - { label: Why guests from this city book, value: pitch }
+                  - { label: Services offered, value: services }
+                  - { label: Directions and drive time, value: logistics }
 
   # ---------------------------------------------------------------- Gallery
   - name: gallery
@@ -671,13 +731,32 @@ collections:
         multiple: true
         options: *faq_categories
       - { name: faqLimit, label: Number of FAQs shown, widget: number, value_type: int, default: 4 }
-      - name: sections
-        label: Extra sections
+      - name: cardImage
+        label: Card photo
+        widget: image
+        required: false
+        hint: Optional photo at the top of this service's card on the homepage.
+      - { name: heroImage, label: Title band background photo, widget: image, required: false }
+      - name: heroVideo
+        label: Title band background video (MP4)
+        widget: file
+        required: false
+        accept: video/mp4
+        media_folder: /sfairboat-astro/public/videos
+        public_folder: /videos
+        hint: Used instead of the photo when both are set. Keep it under about 10 MB.
+      - { name: heroPoster, label: Still image while the video loads, widget: image, required: false }
+      - &f_layout
+        name: layout
+        label: Page layout
         label_singular: Section
         widget: list
         collapsed: true
         required: false
-        hint: Optional sections shown near the bottom of this page, above the closing banner.
+        hint: >-
+          The page from top to bottom. Drag to reorder, and use “Add Section” to
+          place photos, videos, text and more anywhere. The “page part” sections
+          show this page's built-in content. Leave empty for the standard layout.
         types: *section_types
       - name: seoTitle
         label: Google title
@@ -728,14 +807,8 @@ collections:
       - { name: driveTime, label: Drive time, widget: string, hint: e.g. “About 25 minutes west.” }
       - { name: seoTitle, label: Google title, widget: string }
       - { name: metaDescription, label: Google description, widget: text }
-      - name: sections
-        label: Extra sections
-        label_singular: Section
-        widget: list
-        collapsed: true
-        required: false
-        hint: Optional sections shown near the bottom of this page, above the closing banner.
-        types: *section_types
+      - { name: heroImage, label: Title band background photo, widget: image, required: false }
+      - *f_layout
 
   # ------------------------------------------------------------ Site Design
   - name: design

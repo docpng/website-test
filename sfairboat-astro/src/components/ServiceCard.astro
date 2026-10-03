@@ -14,6 +14,17 @@ const iconMap = {
 ---
 
 <article class="group border border-moss-900/10 bg-bone p-7 hover:border-moss-600 transition">
+  {
+    service.cardImage && (
+      <img
+        src={service.cardImage}
+        alt=""
+        loading="lazy"
+        decoding="async"
+        class="-mx-7 -mt-7 mb-6 w-[calc(100%+3.5rem)] max-w-none aspect-[16/10] object-cover"
+      />
+    )
+  }
   <div class="flex items-start justify-between">
     <svg
       viewBox="0 0 64 64"

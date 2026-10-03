@@ -1,15 +1,23 @@
 ---
 // City page: title band with intro and drive time.
+import BackgroundMedia from "../BackgroundMedia.astro";
 import type { SectionSettings } from "../styles";
 import type { SectionContext } from "../../../data/sections";
 
 type Props = { section: SectionSettings; context: SectionContext };
 const area = Astro.props.context.area!;
+
+// Optional background photo behind the title
+const { heroImage } = area;
+const heroVideo = undefined;
+const heroPoster = undefined;
+const heroMedia = heroImage ? "image" : undefined;
 ---
 
 <!-- Hero -->
-<section class="bg-moss-900 text-bone">
-  <div class="max-w-7xl mx-auto px-5 lg:px-8 py-16 lg:py-24">
+<section class={heroMedia ? "relative overflow-hidden bg-moss-900 text-bone" : "bg-moss-900 text-bone"}>
+  {heroMedia && <BackgroundMedia media={heroMedia} video={heroVideo} poster={heroPoster} image={heroImage} />}
+  <div class={heroMedia ? "relative max-w-7xl mx-auto px-5 lg:px-8 py-16 lg:py-24" : "max-w-7xl mx-auto px-5 lg:px-8 py-16 lg:py-24"}>
     <nav class="text-xs text-sand-200 mb-6" aria-label="Breadcrumb">
       <ol class="flex items-center gap-2 flex-wrap">
         <li><a href="/" class="hover:text-bone">Home</a></li>

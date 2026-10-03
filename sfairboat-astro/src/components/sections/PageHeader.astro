@@ -1,8 +1,20 @@
 ---
 // Dark title band at the top of inner pages.
+import BackgroundMedia from "./BackgroundMedia.astro";
 import { fill, spacingOf, type SectionSettings } from "./styles";
 
-type Props = { section: SectionSettings & { eyebrow?: string; title: string; intro?: string } };
+type Props = {
+  section: SectionSettings & {
+    eyebrow?: string;
+    title: string;
+    intro?: string;
+    media?: "video" | "image" | "none" | "";
+    video?: string;
+    poster?: string;
+    image?: string;
+    overlay?: "light" | "medium" | "strong" | "";
+  };
+};
 const { section: s } = Astro.props;
 
 const padding = {
@@ -14,10 +26,12 @@ const padding = {
 const widths = { narrow: "max-w-4xl", medium: "max-w-5xl", wide: "max-w-7xl", full: "max-w-none" };
 const center = s.align === "center";
 const background = s.background === "brand" ? "bg-moss-800 text-bone" : "bg-moss-900 text-bone";
+const hasMedia = (s.media === "video" && s.video) || (s.media === "image" && s.image);
 ---
 
-<section id={s.anchor || undefined} class={background}>
-  <div class={`${widths[s.width || "wide"]} mx-auto px-5 lg:px-8 ${padding}${center ? " text-center" : ""}`}>
+<section id={s.anchor || undefined} class={hasMedia ? `relative overflow-hidden ${background}` : background}>
+  {hasMedia && <BackgroundMedia media={s.media} video={s.video} poster={s.poster} image={s.image} overlay={s.overlay} />}
+  <div class={`${hasMedia ? "relative " : ""}${widths[s.width || "wide"]} mx-auto px-5 lg:px-8 ${padding}${center ? " text-center" : ""}`}>
     {
       s.eyebrow && (
         <div class={center ? "flex items-center justify-center gap-3 mb-5" : "flex items-center gap-3 mb-5"}>

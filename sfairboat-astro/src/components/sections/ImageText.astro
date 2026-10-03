@@ -51,7 +51,7 @@ const button = dark
     <div>
       {s.eyebrow && <div class={`text-xs tracking-[0.2em] uppercase ${t.eyebrow} font-medium mb-3`}>{fill(s.eyebrow)}</div>}
       {s.heading && <h2 class={t.heading}>{fill(s.heading)}</h2>}
-      {s.body && <div class={`mt-6 space-y-5 ${t.body} rich-text`} set:html={markdown(s.body)} />}
+      {s.body && <div class={`mt-6 space-y-5 ${t.body} rich-text`} set:html={markdown(s.body, `a "Photo or video beside text" section${s.heading ? ` ("${s.heading}")` : ""}`)} />}
       {s.buttonLabel && href && <a href={href} class={`mt-8 ${button.link}`}><span class={button.label}>{fill(s.buttonLabel)}</span></a>}
     </div>
   </div>

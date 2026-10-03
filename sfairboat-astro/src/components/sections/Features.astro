@@ -11,7 +11,7 @@ type Props = {
     layout?: "side" | "stacked";
     columns?: 2 | 3 | 4;
     numbered?: boolean;
-    items: { title: string; body?: string }[];
+    items: { title: string; body?: string; image?: string; alt?: string }[];
   };
 };
 const { section: s } = Astro.props;
@@ -47,6 +47,7 @@ const hasIntro = Boolean(s.eyebrow || s.heading || s.intro);
         <div class={`lg:col-span-8 ${gridCols}`}>
           {s.items.map((item, i) => (
             <div class="relative">
+              {item.image && <img src={item.image} alt={fill(item.alt)} loading="lazy" decoding="async" class="mb-5 w-full aspect-[4/3] object-cover" />}
               {numbered && (
                 <div class="font-display text-sand-500 text-sm mb-2">
                   {String(i + 1).padStart(2, "0")}
@@ -72,6 +73,7 @@ const hasIntro = Boolean(s.eyebrow || s.heading || s.intro);
         <div class={`${hasIntro ? "mt-10 " : ""}${gridCols}${s.align === "center" ? " text-left" : ""}`}>
           {s.items.map((item, i) => (
             <div class="relative">
+              {item.image && <img src={item.image} alt={fill(item.alt)} loading="lazy" decoding="async" class="mb-5 w-full aspect-[4/3] object-cover" />}
               {numbered && (
                 <div class="font-display text-sand-500 text-sm mb-2">
                   {String(i + 1).padStart(2, "0")}
