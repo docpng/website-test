@@ -63,18 +63,22 @@ const navItems = [
         {
           navItems.map((item) =>
             item.children ? (
-              <div class="relative group">
+              <div class="relative group" data-dropdown>
                 <button
+                  type="button"
+                  data-dropdown-toggle
                   class="text-sm font-medium text-moss-900 hover:text-moss-600 py-2 inline-flex items-center gap-1"
                   aria-haspopup="true"
                   aria-expanded="false"
+                  aria-controls="services-menu"
                 >
                   {item.label}
-                  <svg class="w-3 h-3" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+                  <svg class="w-3 h-3 transition group-data-[open]:rotate-180" viewBox="0 0 12 12" fill="none" aria-hidden="true">
                     <path d="M3 5l3 3 3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
                   </svg>
                 </button>
-                <div class="absolute top-full left-0 pt-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible group-focus-within:opacity-100 group-focus-within:visible transition">
+                <!-- Opened/closed by the script at the bottom of this file (works for tap, click, hover, and keyboard) -->
+                <div id="services-menu" class="absolute top-full left-0 pt-2 opacity-0 invisible group-data-[open]:opacity-100 group-data-[open]:visible transition">
                   <div class="bg-bone border border-moss-900/10 shadow-lg min-w-[220px] py-2">
                     {item.children.map((child) => (
                       <a
@@ -111,7 +115,7 @@ const navItems = [
           href={business.bookingUrl}
           class="inline-flex items-center bg-moss-900 text-bone px-5 py-2.5 text-sm font-medium hover:bg-moss-800 transition"
         >
-         <span style="color: white;"> Book Now </span>
+          Book Now
         </a>
       </div>
 
@@ -201,5 +205,63 @@ const navItems = [
     const open = menu?.classList.toggle("hidden") === false;
     toggle.setAttribute("aria-expanded", String(open));
     toggle.setAttribute("aria-label", open ? "Close menu" : "Open menu");
+  });
+
+  // Desktop "Services" dropdown.
+  // Tap/click toggles it (iPad, phones, mouse). A mouse also opens it on hover.
+  // Tapping outside, pressing Escape, or tabbing away closes it.
+  document.querySelectorAll<HTMLElement>("[data-dropdown]").forEach((dropdown) => {
+    const button = dropdown.querySelector<HTMLButtonElement>("[data-dropdown-toggle]");
+    if (!button) return;
+
+    let openedByHover = false;
+    let closeTimer: ReturnType<typeof setTimeout> | undefined;
+
+    const isOpen = () => dropdown.hasAttribute("data-open");
+    const setOpen = (open: boolean) => {
+      dropdown.toggleAttribute("data-open", open);
+      button.setAttribute("aria-expanded", String(open));
+      if (!open) openedByHover = false;
+    };
+
+    button.addEventListener("click", () => {
+      if (openedByHover) {
+        // Menu was opened by hovering; a click keeps it open instead of closing it.
+        openedByHover = false;
+        return;
+      }
+      setOpen(!isOpen());
+    });
+
+    // Hover only for a real mouse; touch taps are handled by "click" above.
+    dropdown.addEventListener("pointerenter", (e) => {
+      if (e.pointerType !== "mouse") return;
+      clearTimeout(closeTimer);
+      if (!isOpen()) {
+        setOpen(true);
+        openedByHover = true;
+      }
+    });
+    dropdown.addEventListener("pointerleave", (e) => {
+      if (e.pointerType !== "mouse" || !openedByHover) return;
+      closeTimer = setTimeout(() => setOpen(false), 150);
+    });
+
+    // Keyboard: Escape closes; tabbing out of the menu closes it.
+    dropdown.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && isOpen()) {
+        setOpen(false);
+        button.focus();
+      }
+    });
+    dropdown.addEventListener("focusout", (e) => {
+      if (!dropdown.contains(e.relatedTarget as Node | null)) setOpen(false);
+    });
+
+    // Tap or click anywhere else closes it. "pointerdown" is used because
+    // iOS Safari doesn't send "click" events from plain page areas.
+    document.addEventListener("pointerdown", (e) => {
+      if (isOpen() && !dropdown.contains(e.target as Node)) setOpen(false);
+    });
   });
 </script>
