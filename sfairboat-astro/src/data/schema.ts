@@ -20,6 +20,7 @@ export const localBusinessSchema = () => ({
   "@id": BUSINESS_ID,
   name: business.name,
   image: `${business.siteUrl}/og-default.jpg`,
+  logo: `${business.siteUrl}/images/logo.png`,
   url: business.siteUrl,
   telephone: `+1-${business.phone}`,
   priceRange: "$$",
