@@ -186,6 +186,10 @@ deploys needed. Reviews still come from Google automatically.
   corners across the whole site. Settings left at their original values keep
   the original design exactly.
 - Videos are saved in `public/videos`; keep them under about 10 MB (25 MB max).
+- The **Hero** banner can also have a **smaller video for phones**: screens
+  narrower than 768px download only that file, and larger screens only the main
+  video. The homepage uses `hero-desktop.mp4` (full quality, 1080p) and
+  `hero-mobile.mp4` (720p, compressed).
 - Adding a **service** creates its page (at `/the-page-address`) and adds it to
   the menus and homepage. Adding a **service area** creates its city page.
 - Uploaded photos are converted to WebP and resized to at most 2000px automatically.
