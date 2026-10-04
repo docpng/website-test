@@ -114,6 +114,14 @@ collections:
                 media_folder: /sfairboat-astro/public/videos
                 public_folder: /videos
                 hint: Keep videos short and under about 10 MB so the page loads fast. 25 MB is the maximum.
+              - name: videoMobile
+                label: Smaller video for phones (MP4, optional)
+                widget: file
+                required: false
+                accept: video/mp4
+                media_folder: /sfairboat-astro/public/videos
+                public_folder: /videos
+                hint: "Phones play this instead of the video above, so the page loads faster on mobile data. Use a compressed version of the same video, ideally under 3 MB. Leave empty to use the main video everywhere."
               - &f_bg_poster { name: poster, label: Still image shown while the video loads, widget: image, required: false }
               - &f_bg_image { name: image, label: Background photo, widget: image, required: false }
               - &f_overlay

@@ -6,18 +6,20 @@ import { existsSync } from "node:fs";
 type Props = {
   media?: "video" | "image" | "none" | "";
   video?: string;
+  mobileVideo?: string; // optional smaller file for phones
   poster?: string;
   image?: string;
   overlay?: "light" | "medium" | "strong" | "";
   id?: string;
 };
-const { media, video, poster, image, overlay, id } = Astro.props;
+const { media, video, mobileVideo, poster, image, overlay, id } = Astro.props;
 
 // Only show media that actually exists, so a missing file never shows a broken player.
 const fileExists = (src?: string) =>
   Boolean(src) && (/^https?:\/\//.test(src!) || existsSync(`public${src}`));
 const showVideo = media === "video" && fileExists(video);
 const showImage = media === "image" && fileExists(image);
+const showMobile = showVideo && fileExists(mobileVideo);
 
 const overlays = {
   light: "absolute inset-0 bg-moss-950/35",
@@ -44,7 +46,15 @@ const overlayClass = overlays[overlay || "medium"];
             poster={poster || undefined}
             aria-hidden="true"
           >
-            <source src={video} type="video/mp4" />
+            {/* Browsers download only the first source that matches: phones get the smaller file */}
+            {showMobile ? (
+              <>
+                <source src={video} type="video/mp4" media="(min-width: 768px)" />
+                <source src={mobileVideo} type="video/mp4" />
+              </>
+            ) : (
+              <source src={video} type="video/mp4" />
+            )}
           </video>
         </>
       ) : (
