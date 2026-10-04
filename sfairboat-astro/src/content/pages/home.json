@@ -75,19 +75,27 @@
       "items": [
         {
           "title": "Veteran-owned, small business values",
-          "body": "As a veteran-owned small business, we bring discipline, dedication, and a personal touch to every airboat and fishing tour. We value integrity and take pride in delivering an experience that reflects our roots and commitment."
+          "body": "As a veteran-owned small business, we bring discipline, dedication, and a personal touch to every airboat and fishing tour. We value integrity and take pride in delivering an experience that reflects our roots and commitment.",
+          "image": "",
+          "alt": ""
         },
         {
           "title": "Private, tailored experiences",
-          "body": "We keep things personal. Our tours are private and crafted to fit your group, giving you the freedom to explore the Everglades on your own terms — not on someone else's schedule."
+          "body": "We keep things personal. Our tours are private and crafted to fit your group, giving you the freedom to explore the Everglades on your own terms — not on someone else's schedule.",
+          "image": "",
+          "alt": ""
         },
         {
           "title": "Custom tours, your way",
-          "body": "Every outing is shaped around what you want to do — whether it's fishing, sightseeing, or tracking the wild. We believe no two adventures should be the same."
+          "body": "Every outing is shaped around what you want to do — whether it's fishing, sightseeing, or tracking the wild. We believe no two adventures should be the same.",
+          "image": "",
+          "alt": ""
         },
         {
           "title": "Led by a true Gladesman",
-          "body": "You're not just getting a guide — you're riding with a real Gladesman. Born and raised in the culture of the Everglades, we bring generations of knowledge and an authentic edge to your tour."
+          "body": "You're not just getting a guide — you're riding with a real Gladesman. Born and raised in the culture of the Everglades, we bring generations of knowledge and an authentic edge to your tour.",
+          "image": "",
+          "alt": ""
         }
       ]
     },
@@ -106,15 +114,22 @@
       "type": "faq",
       "eyebrow": "Frequently asked",
       "heading": "Common questions, answered",
+      "media": "",
+      "video": "",
+      "image": "/images/uploads/5f26fe8e-ace1-46e5-a8ac-569d6aa10582.webp",
       "spacing": "",
       "width": "",
       "anchor": "",
       "background": "",
+      "alt": "Alligator opening its mouth out of the water",
+      "side": "left",
       "linkLabel": "See all FAQs",
       "link": "/faqs",
       "show": "first",
       "count": 4,
-      "categories": []
+      "categories": [
+        "general"
+      ]
     },
     {
       "type": "areas",
@@ -130,6 +145,11 @@
     {
       "type": "cta",
       "heading": "",
+      "media": "none",
+      "video": "",
+      "poster": "",
+      "image": "",
+      "overlay": "medium",
       "subheading": ""
     }
   ]
