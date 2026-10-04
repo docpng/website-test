@@ -114,7 +114,7 @@
       "type": "faq",
       "eyebrow": "Frequently asked",
       "heading": "Common questions, answered",
-      "media": "",
+      "media": "image",
       "video": "",
       "image": "/images/uploads/5f26fe8e-ace1-46e5-a8ac-569d6aa10582.webp",
       "spacing": "",
@@ -125,7 +125,7 @@
       "side": "left",
       "linkLabel": "See all FAQs",
       "link": "/faqs",
-      "show": "first",
+      "show": "categories",
       "count": 4,
       "categories": [
         "general"
